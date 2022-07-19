@@ -58,6 +58,7 @@
     <Compile Include="AudioStuff.cs" />
     <Compile Include="Camera\Camera.cs" />
     <Compile Include="Camera\CameraViewManager.cs" />
+    <Compile Include="Camera\LocalMouseEventState.cs" />
     <Compile Include="DrawingContext.cs" />
     <Compile Include="Fonts\Font2dShader.cs" />
     <Compile Include="Fonts\CharRegion.cs" />
