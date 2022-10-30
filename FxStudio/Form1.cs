@@ -12,6 +12,12 @@ namespace FxEngineEditor
             InitializeComponent();
             config.Load();
             UpdateRecentsList();
+
+            //init lib
+            Static.Library = new GameResourcesLibrary();
+            toolStripButton2.Enabled = true;
+            toolStripButton1.Enabled = true;
+            toolStripButton3.Enabled = true;
         }
 
         public void UpdateRecentsList()
@@ -34,7 +40,7 @@ namespace FxEngineEditor
 
         Config config = new Config();
 
-        
+
 
         private void toolStripButton1_Click(object sender, EventArgs e)
         {
@@ -42,7 +48,7 @@ namespace FxEngineEditor
         }
 
         public void OpenChild<T>() where T : Form, new()
-        {           
+        {
             if (MdiChildren.Any(z => z is T))
             {
                 var s = MdiChildren.First(z => z is T);
@@ -74,33 +80,26 @@ namespace FxEngineEditor
 
         private void sdfsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            SaveFileDialog sfd = new SaveFileDialog();
-            sfd.DefaultExt = ".xml";
-            sfd.Filter = "FxEngine Library (*.xml)|*.xml";
-            if (sfd.ShowDialog() == DialogResult.OK)
-            {
-                Static.Library = new GameResourcesLibrary();
-                Static.Library.Save(sfd.FileName);
-                toolStripButton2.Enabled = true;
-                toolStripButton1.Enabled = true;
-                toolStripButton3.Enabled = true;
-            }
+            Static.Library = new GameResourcesLibrary();            
+            toolStripButton2.Enabled = true;
+            toolStripButton1.Enabled = true;
+            toolStripButton3.Enabled = true;
         }
 
         private void saveToolStripMenuItem_Click(object sender, EventArgs e)
         {
             SaveFileDialog sfd = new SaveFileDialog();
-            if (sfd.ShowDialog() == DialogResult.OK)
-            {
-                Static.Library.Save(sfd.FileName);
-            }
+            sfd.Filter = "FxEngine Library (*.xml)|*.xml|Archived FxEngine Library (*.fxl)|*.fxl";
+            if (sfd.ShowDialog() != DialogResult.OK) return;
+
+            Static.Library.Save(sfd.FileName);
         }
 
 
         public void LoadLibrary(string path)
         {
             Static.Library = GameResourcesLibrary.LoadFromXml(path);
-            
+
             Text = "FxStudio Assets Editor: " + path + " ;  " + Static.Library.Name;
             toolStripButton2.Enabled = true;
             toolStripButton1.Enabled = true;
@@ -118,7 +117,7 @@ namespace FxEngineEditor
         {
 
             OpenFileDialog ofd = new OpenFileDialog();
-            ofd.Filter = "FxEngine Linrary (*.xml)|*.xml";
+            ofd.Filter = "FxEngine Library (*.xml)|*.xml|Compressed FxEngine Library (*.fxl)|*.fxl";
             if (ofd.ShowDialog() == DialogResult.OK)
             {
                 LoadLibrary(ofd.FileName);
@@ -180,7 +179,7 @@ namespace FxEngineEditor
             {
                 config.Save();
             }
-            
+
             if (Static.Library != null && Static.Library.Dirty)
             {
                 switch (ShowQuestion($"Save library changes: {Static.Library.Name}?"))
@@ -188,7 +187,7 @@ namespace FxEngineEditor
                     case DialogResult.Yes:
                         Static.Library.Save(Static.Library.LibraryPath);
                         break;
-                }                
+                }
             }
         }
 

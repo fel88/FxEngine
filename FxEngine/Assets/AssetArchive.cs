@@ -32,7 +32,7 @@ namespace FxEngine.Assets
             var fs = new FileInfo(path);
             AppendFile(new AssetFile(fs.FullName, bts));
         }
-        public void LoadFromFile(string fileName)
+        public void LoadFromBinaryFile(string fileName)
         {
             using (var fs = new FileStream(fileName, FileMode.Open, FileAccess.Read))
             {

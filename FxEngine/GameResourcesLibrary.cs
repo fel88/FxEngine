@@ -160,7 +160,7 @@ namespace FxEngine
         public static GameResourcesLibrary LoadFromAsset(string fileName)
         {
             AssetArchive arc = new Assets.AssetArchive();
-            arc.LoadFromFile(fileName);
+            arc.LoadFromBinaryFile(fileName);
             var fr = arc.Files.First(z => z.Path.EndsWith(".xml"));
             var ret = LoadFromXml(fr.Path, arc);
             return ret;

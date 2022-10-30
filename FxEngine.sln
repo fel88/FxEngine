@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30320.27
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FxEngine", "FxEngine\FxEngine.csproj", "{CDFDF6E5-E295-4407-A7A9-733C27E7B382}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FxStudio", "FxStudio\FxStudio.csproj", "{1229ABCF-E497-4CFA-B093-F3FE1B752E0D}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FxEngine", "FxEngine\FxEngine.csproj", "{071CAF30-632D-4C37-A6E4-4F1BCEDB0C5E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -13,14 +13,14 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{CDFDF6E5-E295-4407-A7A9-733C27E7B382}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{CDFDF6E5-E295-4407-A7A9-733C27E7B382}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{CDFDF6E5-E295-4407-A7A9-733C27E7B382}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{CDFDF6E5-E295-4407-A7A9-733C27E7B382}.Release|Any CPU.Build.0 = Release|Any CPU
 		{1229ABCF-E497-4CFA-B093-F3FE1B752E0D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{1229ABCF-E497-4CFA-B093-F3FE1B752E0D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1229ABCF-E497-4CFA-B093-F3FE1B752E0D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1229ABCF-E497-4CFA-B093-F3FE1B752E0D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{071CAF30-632D-4C37-A6E4-4F1BCEDB0C5E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{071CAF30-632D-4C37-A6E4-4F1BCEDB0C5E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{071CAF30-632D-4C37-A6E4-4F1BCEDB0C5E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{071CAF30-632D-4C37-A6E4-4F1BCEDB0C5E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

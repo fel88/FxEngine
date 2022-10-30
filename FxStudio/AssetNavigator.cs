@@ -2,6 +2,7 @@
 using System;
 using System.Drawing;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
@@ -20,10 +21,11 @@ namespace FxEngineEditor
         private void toolStripButton1_Click(object sender, EventArgs e)
         {
             OpenFileDialog ofd = new OpenFileDialog();
+            //ofd.Filter="FxEngine library (*.)"
             if (ofd.ShowDialog() == DialogResult.OK)
             {
                 Archive = new AssetArchive();
-                Archive.LoadFromFile(ofd.FileName);
+                Archive.LoadFromBinaryFile(ofd.FileName);
                 UpdateFilesList();
             }
         }
@@ -94,11 +96,7 @@ namespace FxEngineEditor
 
         private void toolStripButton3_Click(object sender, EventArgs e)
         {
-            SaveFileDialog sfd = new SaveFileDialog();
-            if (sfd.ShowDialog() == DialogResult.OK)
-            {
-                Archive.SaveToFile(sfd.FileName);
-            }
+            
         }
 
         private void copyToClipboardToolStripMenuItem_Click(object sender, EventArgs e)
@@ -145,6 +143,43 @@ namespace FxEngineEditor
         private void textBox1_TextChanged(object sender, EventArgs e)
         {
             UpdateFilesList();
+        }
+
+        private void binaryAssetToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            SaveFileDialog sfd = new SaveFileDialog();
+            if (sfd.ShowDialog() == DialogResult.OK)
+            {
+                Archive.SaveToFile(sfd.FileName);
+            }
+        }
+
+        private void archivedAssetToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            SaveFileDialog sfd = new SaveFileDialog();
+            sfd.Filter = "FxEngine library (*.fxl)|*.fxl";
+            if (sfd.ShowDialog() == DialogResult.OK)
+            {
+                //todo: modify lib.xml paths here!!
+                using (var fileStream = new FileStream(sfd.FileName, FileMode.Create))
+                {
+                    using (var archive = new ZipArchive(fileStream, ZipArchiveMode.Create, true))
+                    {
+                        foreach (var item in Archive.Files)
+                        {
+                            var fn = Path.GetFileName(item.Name);
+                            var demoFile = archive.CreateEntry(fn);
+                            using (MemoryStream mss = new MemoryStream(item.Data))
+                            {
+                                using (var entryStream = demoFile.Open())
+                                {
+                                    mss.CopyTo(entryStream);
+                                }                                                    
+                            }
+                        }                       
+                    }
+                }                           
+            }
         }
     }
 }

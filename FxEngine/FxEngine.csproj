@@ -1,286 +1,65 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{CDFDF6E5-E295-4407-A7A9-733C27E7B382}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>FxEngine</RootNamespace>
-    <AssemblyName>FxEngine</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile />
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <Authors>fel88</Authors>
+    <Company>https://github.com/fel88</Company>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/fel88/FxEngine</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/fel88/FxEngine</RepositoryUrl>
+    <Description>3D game engine</Description>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
-  </PropertyGroup>
+
   <ItemGroup>
-    <Reference Include="OpenTK, Version=3.0.1.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
-      <HintPath>..\packages\OpenTK.3.0.1\lib\net20\OpenTK.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="OpenTK.GLControl, Version=3.0.1.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
-      <HintPath>..\packages\OpenTK.GLControl.3.0.1\lib\net20\OpenTK.GLControl.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Net.Http" />
-    <Reference Include="System.Xml" />
+    <None Remove="Graphics\Shaders\font2d.fs" />
+    <None Remove="Graphics\Shaders\font2d.vs" />
+    <None Remove="Graphics\Shaders\fragmentShader1.glsl" />
+    <None Remove="Graphics\Shaders\model.fs" />
+    <None Remove="Graphics\Shaders\model.vs" />
+    <None Remove="Graphics\Shaders\model2.fs" />
+    <None Remove="Graphics\Shaders\model2.vs" />
+    <None Remove="Graphics\Shaders\model3.fs" />
+    <None Remove="Graphics\Shaders\model3.vs" />
+    <None Remove="Graphics\Shaders\rect.fs" />
+    <None Remove="Graphics\Shaders\rect.vs" />
+    <None Remove="Graphics\Shaders\rectTexture.fs" />
+    <None Remove="Graphics\Shaders\rectTexture.vs" />
+    <None Remove="Graphics\Shaders\sdf.fs" />
+    <None Remove="Graphics\Shaders\sdf.vs" />
+    <None Remove="Graphics\Shaders\vertexShader1.glsl" />
   </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Assets\AssetArchive.cs" />
-    <Compile Include="Assets\AssetFile.cs" />
-    <Compile Include="AudioStuff.cs" />
-    <Compile Include="Camera\Camera.cs" />
-    <Compile Include="Camera\CameraViewManager.cs" />
-    <Compile Include="Camera\LocalMouseEventState.cs" />
-    <Compile Include="DrawingContext.cs" />
-    <Compile Include="Fonts\Font2dShader.cs" />
-    <Compile Include="Fonts\CharRegion.cs" />
-    <Compile Include="Fonts\CharTextureInfo.cs" />
-    <Compile Include="ClickProcessorAttribute.cs" />
-    <Compile Include="GameFont.cs" />
-    <Compile Include="GameObject.cs" />
-    <Compile Include="GameObjectInstance.cs" />
-    <Compile Include="GameSound.cs" />
-    <Compile Include="Gui\BaseGlDrawingContext.cs" />
-    <Compile Include="Gui\GlControlDrawingContext.cs" />
-    <Compile Include="Gui\GuiAnchor.cs" />
-    <Compile Include="Gui\NativeCircularProgressBar.cs" />
-    <Compile Include="Gui\RectShader.cs" />
-    <Compile Include="Gui\RectTextureShader.cs" />
-    <Compile Include="Gui\VertexArray.cs" />
-    <Compile Include="Gui\VertexTextureArray.cs" />
-    <Compile Include="IDataProvider.cs" />
-    <Compile Include="Loaders\Collada\AnimatedModel.cs" />
-    <Compile Include="Loaders\Collada\AnimatedModelData.cs" />
-    <Compile Include="Loaders\Collada\AnimatedModelRenderer.cs" />
-    <Compile Include="Loaders\Collada\AnimatedModelShader.cs" />
-    <Compile Include="Loaders\Collada\Animation.cs" />
-    <Compile Include="Loaders\Collada\AnimationData.cs" />
-    <Compile Include="Loaders\Collada\Animator.cs" />
-    <Compile Include="Loaders\Collada.Experimental\ColladaAnimation.cs" />
-    <Compile Include="Loaders\Collada.Experimental\ColladaAnimationChannel.cs" />
-    <Compile Include="Loaders\Collada.Experimental\ColladaAnimationSampler.cs" />
-    <Compile Include="Loaders\Collada.Experimental\ColladaAnimationsLibrary.cs" />
-    <Compile Include="Loaders\Collada.Experimental\ColladaArray.cs" />
-    <Compile Include="Loaders\Collada.Experimental\ColladaChannelInfoType.cs" />
-    <Compile Include="Loaders\Collada.Experimental\ColladaController.cs" />
-    <Compile Include="Loaders\Collada.Experimental\ColladaControllersLibrary.cs" />
-    <Compile Include="Loaders\Collada.Experimental\ColladaElement.cs" />
-    <Compile Include="Loaders\Collada.Experimental\ColladaElementItem.cs" />
-    <Compile Include="Loaders\Collada.Experimental\ColladaFloatAccessor.cs" />
-    <Compile Include="Loaders\Collada.Experimental\ColladaFloatArray.cs" />
-    <Compile Include="Loaders\Collada.Experimental\ColladaGeomeryVerticiesItem.cs" />
-    <Compile Include="Loaders\Collada.Experimental\ColladaGeometryLibrary.cs" />
-    <Compile Include="Loaders\Collada.Experimental\ColladaImageLibrary.cs" />
-    <Compile Include="Loaders\Collada.Experimental\ColladaInput.cs" />
-    <Compile Include="Loaders\Collada.Experimental\ColladaInstanceController.cs" />
-    <Compile Include="Loaders\Collada.Experimental\ColladaJoint.cs" />
-    <Compile Include="Loaders\Collada.Experimental\ColladaLibrary.cs" />
-    <Compile Include="Loaders\Collada.Experimental\ColladaMaterialLibrary.cs" />
-    <Compile Include="Loaders\Collada.Experimental\ColladaMatrix4Accessor.cs" />
-    <Compile Include="Loaders\Collada.Experimental\ColladaModelInstance.cs" />
-    <Compile Include="Loaders\Collada.Experimental\ColladaNameAccessor.cs" />
-    <Compile Include="Loaders\Collada.Experimental\ColladaNameArray.cs" />
-    <Compile Include="Loaders\Collada.Experimental\ColladaNode.cs" />
-    <Compile Include="Loaders\Collada.Experimental\ColladaParseContext.cs" />
-    <Compile Include="Loaders\Collada.Experimental\ColladaRotateTransform.cs" />
-    <Compile Include="Loaders\Collada.Experimental\ColladaScaleTransform.cs" />
-    <Compile Include="Loaders\Collada.Experimental\ColladaSource.cs" />
-    <Compile Include="Loaders\Collada.Experimental\ColladaStuff.cs" />
-    <Compile Include="Loaders\Collada.Experimental\ColladaTextureLibrary.cs" />
-    <Compile Include="Loaders\Collada.Experimental\ColladaTransform.cs" />
-    <Compile Include="Loaders\Collada.Experimental\ColladaTranslateTransform.cs" />
-    <Compile Include="Loaders\Collada\CubeGenerator.cs" />
-    <Compile Include="Loaders\Collada\DisplayManager.cs" />
-    <Compile Include="Loaders\Collada\Extensions2.cs" />
-    <Compile Include="Loaders\Collada\GeometryLoader.cs" />
-    <Compile Include="Loaders\Collada\IColladaAccessor.cs" />
-    <Compile Include="Loaders\Collada\JointData.cs" />
-    <Compile Include="Loaders\Collada\JointTransform.cs" />
-    <Compile Include="Loaders\Collada\JointTransformData.cs" />
-    <Compile Include="Loaders\Collada\KeyFrame.cs" />
-    <Compile Include="Loaders\Collada\KeyFrameData.cs" />
-    <Compile Include="Loaders\Collada\MeshData.cs" />
-    <Compile Include="Loaders\Collada\MyFile.cs" />
-    <Compile Include="Loaders\Collada\OpenGlUtils.cs" />
-    <Compile Include="Loaders\Collada\ResourceManager.cs" />
-    <Compile Include="Loaders\Collada\ShaderProgram.cs" />
-    <Compile Include="Loaders\Collada\SkeletonData.cs" />
-    <Compile Include="Loaders\Collada\SkyboxRenderer.cs" />
-    <Compile Include="Loaders\Collada\SkyboxShader.cs" />
-    <Compile Include="Loaders\Collada\TextureLocal.cs" />
-    <Compile Include="Loaders\Collada\Uniform.cs" />
-    <Compile Include="Loaders\Collada\UniformMat4Array.cs" />
-    <Compile Include="Loaders\Collada\UniformMatrix.cs" />
-    <Compile Include="Loaders\Collada\UniformSampler.cs" />
-    <Compile Include="Loaders\Collada\UniformVec3.cs" />
-    <Compile Include="Loaders\Collada\Vao.cs" />
-    <Compile Include="Loaders\Collada\Vbo.cs" />
-    <Compile Include="Loaders\Collada\Vertex.cs" />
-    <Compile Include="Loaders\Collada\VertexSkinData.cs" />
-    <Compile Include="Loaders\Obj\BoundingBox.cs" />
-    <Compile Include="Loaders\Obj\FaceItem.cs" />
-    <Compile Include="Loaders\Obj\FaceItem2.cs" />
-    <Compile Include="Loaders\Obj\Stuff.cs" />
-    <Compile Include="Loaders\Obj\TempVertex.cs" />
-    <Compile Include="Loaders\Obj\TextureDescriptor.cs" />
-    <Compile Include="MatrixGenerator.cs" />
-    <Compile Include="ModelInstance.cs" />
-    <Compile Include="PhysicalFilesystemDataProvider.cs" />
-    <Compile Include="Shaders\IShader.cs" />
-    <Compile Include="Shaders\ITextShader.cs" />
-    <Compile Include="Loaders\Collada\AnimationLoader.cs" />
-    <Compile Include="Loaders\Collada\ICamera.cs" />
-    <Compile Include="DrawPolygon.cs" />
-    <Compile Include="DrawVertex.cs" />
-    <Compile Include="Extensions.cs" />
-    <Compile Include="Game.cs" />
-    <Compile Include="GameLevel.cs" />
-    <Compile Include="GameScreen.cs" />
-    <Compile Include="Fonts\GDI.cs" />
-    <Compile Include="Gui\GuiLoader.cs" />
-    <Compile Include="Gui\GlButton.cs" />
-    <Compile Include="Gui\GlDrawingContext.cs" />
-    <Compile Include="Gui\GlGuiElement.cs" />
-    <Compile Include="Gui\GuiBounds.cs" />
-    <Compile Include="Gui\NativeButton.cs" />
-    <Compile Include="Gui\NativeButtonCore.cs" />
-    <Compile Include="Gui\NativeCheckBox.cs" />
-    <Compile Include="Gui\NativeCheckBoxCore.cs" />
-    <Compile Include="Gui\NativeDrawProvider.cs" />
-    <Compile Include="Gui\NativeGlGuiElement.cs" />
-    <Compile Include="Gui\NativeLabel.cs" />
-    <Compile Include="Gui\NativeMark.cs" />
-    <Compile Include="Gui\NativePanel.cs" />
-    <Compile Include="Gui\NativePanelCore.cs" />
-    <Compile Include="Gui\NativeProgressBar.cs" />
-    <Compile Include="Gui\NativePropertyDebugPanel.cs" />
-    <Compile Include="Gui\NativeStackPanel.cs" />
-    <Compile Include="Gui\NativeTextBox.cs" />
-    <Compile Include="Gui\NativeTrackBar.cs" />
-    <Compile Include="Helpers.cs" />
-    <Compile Include="IntersectInfo.cs" />
-    <Compile Include="IntersectStuff.cs" />
-    <Compile Include="Fonts\KERNINGPAIR.cs" />
-    <Compile Include="LightSource.cs" />
-    <Compile Include="Loaders\Collada.Experimental\ColladaAnimationLoader.cs" />
-    <Compile Include="Loaders\Collada.Experimental\ColladaEffect.cs" />
-    <Compile Include="Loaders\Collada.Experimental\ColladaEffectChannelInfo.cs" />
-    <Compile Include="Loaders\Collada.Experimental\ColladaEffectsLibrary.cs" />
-    <Compile Include="Loaders\Collada.Experimental\ColladaGeometry.cs" />
-    <Compile Include="Loaders\Collada.Experimental\ColladaImage.cs" />
-    <Compile Include="Loaders\Collada.Experimental\ColladaImporter.cs" />
-    <Compile Include="Loaders\Collada.Experimental\ColladaJointsInfo.cs" />
-    <Compile Include="Loaders\Collada.Experimental\ColladaLoader.cs" />
-    <Compile Include="Loaders\Collada.Experimental\ColladaMaterial.cs" />
-    <Compile Include="Loaders\Collada.Experimental\ColladaModel.cs" />
-    <Compile Include="Loaders\Collada.Experimental\ColladaPolygonsInfo.cs" />
-    <Compile Include="Loaders\Collada.Experimental\ColladaScene.cs" />
-    <Compile Include="Loaders\Collada.Experimental\ColladaSkin.cs" />
-    <Compile Include="Loaders\Collada.Experimental\ColladaTexture.cs" />
-    <Compile Include="Loaders\Collada.Experimental\ColladaVertexWeightsInfo.cs" />
-    <Compile Include="Loaders\Obj\FaceVertex.cs" />
-    <Compile Include="Loaders\Obj\ListBoxItem.cs" />
-    <Compile Include="Loaders\Obj\Material.cs" />
-    <Compile Include="Loaders\Obj\MaterialStuff.cs" />
-    <Compile Include="Loaders\Obj\ModelPathItem.cs" />
-    <Compile Include="Loaders\Obj\ObjVolume.cs" />
-    <Compile Include="Loaders\Obj\TextureReplacer.cs" />
-    <Compile Include="Loaders\Obj\Volume.cs" />
-    <Compile Include="Shaders\Model3DrawShader.cs" />
-    <Compile Include="ModelBlueprint.cs" />
-    <Compile Include="Shaders\ModelDrawShader.cs" />
-    <Compile Include="MouseRay.cs" />
-    <Compile Include="Plane.cs" />
-    <Compile Include="ResourceFile.cs" />
-    <Compile Include="Camera\CameraViewManagerExt.cs" />
-    <Compile Include="Scene.cs" />
-    <Compile Include="SceneManager.cs" />
-    <Compile Include="Shaders\Shader.cs" />
-    <Compile Include="Fonts\TextRenderer.cs" />
-    <Compile Include="Tiles\Tile.cs" />
-    <Compile Include="Fonts\Atlas.cs" />
-    <Compile Include="GlLabel.cs" />
-    <Compile Include="GameResourcesLibrary.cs" />
-    <Compile Include="Fonts\SDF\SdfTextRoutine.cs" />
-    <Compile Include="Fonts\SDF\SdfShader.cs" />
-    <Compile Include="Fonts\KerningRoutine.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Tiles\TileDrawItem.cs" />
-    <Compile Include="Shaders\VaoModel.cs" />
-    <Compile Include="Shaders\VaoModelItem.cs" />
-    <Compile Include="VboRoutine.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Graphics\Shaders\sdf.vs" />
-    <EmbeddedResource Include="Graphics\Shaders\fragmentShader1.glsl" />
-    <EmbeddedResource Include="Graphics\Shaders\font2d.vs" />
-    <EmbeddedResource Include="Graphics\Shaders\model.vs" />
-    <EmbeddedResource Include="Graphics\Shaders\model2.vs" />
-    <EmbeddedResource Include="Graphics\Shaders\model3.vs" />
-    <EmbeddedResource Include="Graphics\Shaders\rect.vs" />
-    <EmbeddedResource Include="Graphics\Shaders\rectTexture.vs" />
-    <None Include="OpenTK.dll.config" />
-    <None Include="packages.config" />
-    <EmbeddedResource Include="Graphics\Shaders\vertexShader1.glsl" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Graphics\Shaders\sdf.fs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Kinematics\" />
-  </ItemGroup>
+
   <ItemGroup>
     <EmbeddedResource Include="Graphics\Shaders\font2d.fs" />
-  </ItemGroup>
-  <ItemGroup>
+    <EmbeddedResource Include="Graphics\Shaders\font2d.vs" />
+    <EmbeddedResource Include="Graphics\Shaders\fragmentShader1.glsl" />
     <EmbeddedResource Include="Graphics\Shaders\model.fs" />
-  </ItemGroup>
-  <ItemGroup>
+    <EmbeddedResource Include="Graphics\Shaders\model.vs" />
     <EmbeddedResource Include="Graphics\Shaders\model2.fs" />
-  </ItemGroup>
-  <ItemGroup>
+    <EmbeddedResource Include="Graphics\Shaders\model2.vs" />
     <EmbeddedResource Include="Graphics\Shaders\model3.fs" />
-  </ItemGroup>
-  <ItemGroup>
+    <EmbeddedResource Include="Graphics\Shaders\model3.vs" />
     <EmbeddedResource Include="Graphics\Shaders\rect.fs" />
-  </ItemGroup>
-  <ItemGroup>
+    <EmbeddedResource Include="Graphics\Shaders\rect.vs" />
     <EmbeddedResource Include="Graphics\Shaders\rectTexture.fs" />
+    <EmbeddedResource Include="Graphics\Shaders\rectTexture.vs" />
+    <EmbeddedResource Include="Graphics\Shaders\sdf.fs" />
+    <EmbeddedResource Include="Graphics\Shaders\sdf.vs" />
+    <EmbeddedResource Include="Graphics\Shaders\vertexShader1.glsl" />
   </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
+    <PackageReference Include="OpenTK" Version="3.0.1" />
+    <PackageReference Include="OpenTK.GLControl" Version="3.0.1" />
+    <PackageReference Include="System.Drawing.Common" Version="6.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="System.Windows.Forms">
+      <HintPath>..\..\..\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.5.2\System.Windows.Forms.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
 </Project>
