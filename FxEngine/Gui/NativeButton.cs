@@ -1,59 +1,12 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using OpenTK.Graphics.OpenGL;
 using System.Drawing;
 using OpenTK;
 
 namespace FxEngine.Gui
 {
-    public class NativeButton : NativeGlGuiElement
+    public class NativeButton : AbstractNativeButton
     {
-        public GameSound ClickSound;
-        public override void Event(BaseGlDrawingContext dc, GlGuiEvent ev)
-        {
-            if (!Enabled) return;
-            if (Parent is NativePanel)
-            {
-                if (!(Parent as NativePanel).IsChildsVisible)
-                {
-                    return;
-                }
-            }
-            if (!Visible) return;
-            IsHovered = false;
-            if (Rect.IntersectsWith(ev.Position.X, ev.Position.Y))
-            {
-                IsHovered = true;
-                if (Hovered != null)
-                {
-                    Hovered();
-                }
-            }
-
-            if (ev is MouseClickGlGuiEvent)
-            {
-                if (IsHovered)
-                {
-                    if (Click != null)
-                    {
-                        if (ClickSound != null)
-                        {
-                            AudioStuff.Stuff.Play(ClickSound.Path);
-                        }
-                        Click();
-                    }
-                    ev.Handled = true;
-                }
-            }
-            base.Event(dc, ev);
-        }
-        public bool IsHovered = false;
-        public string Caption;
-
-        BaseGlDrawingContext DrawingContext;
-        public Action Click { get; set; }
-        public Action Hovered { get; set; }
-
         public override void Draw(BaseGlDrawingContext dc)
         {
             if (!Visible) return;
@@ -106,10 +59,6 @@ namespace FxEngine.Gui
         }
 
         public float TextScale = 0.3f;
-
-        public override void Update(BaseGlDrawingContext dc)
-        {
-
-        }
+     
     }
 }

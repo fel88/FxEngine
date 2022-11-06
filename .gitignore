@@ -4,3 +4,4 @@ obj/
 *.zip
 !FxEngine/Loaders/Obj
 packages/
+old_FxEngine.Framework/

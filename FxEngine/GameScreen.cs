@@ -10,7 +10,7 @@ namespace FxEngine
 {
     public class GameScreen
     {
-        public List<GlGuiElement> GuiElements = new List<GlGuiElement>();
+        public List<IGuiElement> GuiElements = new List<IGuiElement>();
 
         public virtual void Init(BaseGlDrawingContext ctx)
         {
