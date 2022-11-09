@@ -7,10 +7,12 @@ using FxEngine.Loaders.OBJ;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
 using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
 using System.Globalization;
 using System.IO;
+using System.IO.Ports;
 using System.Linq;
 using System.Windows.Forms;
 using System.Xml.Linq;
@@ -20,6 +22,7 @@ namespace FxEngineEditor
     public partial class PrefabEditor : Form
     {
         GLControl gl;
+        MessageFilter mf = null;
         CameraViewManagerExt cvm = new CameraViewManagerExt();
         public PrefabEditor()
         {
@@ -28,7 +31,7 @@ namespace FxEngineEditor
             camera.CamFrom = new Vector3(-50, -50, 50);
             camera.CamTo = new Vector3(0, 0, 0);
 
-            gl = new GLControl(new OpenTK.Graphics.GraphicsMode(32, 24, 0, 8));            
+            gl = new GLControl(new OpenTK.Graphics.GraphicsMode(32, 24, 0, 8));
             gl.Margin = new Padding(0);
 
             timer1.Interval = 10;
@@ -41,13 +44,15 @@ namespace FxEngineEditor
             gl.Resize += gl_Resize;
             gl.Paint += gl_Paint;
             gl.Load += gl_Load;
-            
+
             UpdatePrefabsList();
             cvm.Attach(gl, camera);
-            gl.MouseDown += cvm.Control_MouseDown1;            
+            gl.MouseDown += cvm.Control_MouseDown1;
+
+            mf = new MessageFilter();
+            Application.AddMessageFilter(mf);
         }
 
-        
         public void UpdatePrefabsList()
         {
             listView1.Items.Clear();
@@ -103,7 +108,7 @@ namespace FxEngineEditor
         private float rotation = 0;
         void Render()
         {
-            if (!loaded) 
+            if (!loaded)
                 return;
             if (Static.Library != null)
             {
@@ -121,7 +126,7 @@ namespace FxEngineEditor
 
             camera.Setup(gl);
 
-            if (gl.Focused) 
+            if (gl.Focused)
                 GL.Color3(Color.Yellow);
             else
             {
@@ -153,8 +158,8 @@ namespace FxEngineEditor
 
 
             GL.PushMatrix();
-            GL.Rotate(rotation, Vector3.UnitZ); 
-                                                
+            GL.Rotate(rotation, Vector3.UnitZ);
+
             if (CurrentBlueprint != null)
             {
 
@@ -191,7 +196,7 @@ namespace FxEngineEditor
                         var minx = model.GetVerts().Min(x => x.X);
                         var maxy = model.GetVerts().Max(x => x.Y);
                         var miny = model.GetVerts().Min(x => x.Y);
-                                                
+
                         GL.Color3(Color.White);
 
                         int indiceat = 0;
@@ -391,44 +396,7 @@ namespace FxEngineEditor
             }
         }
 
-        private void Form1_Load(object sender, EventArgs e)
-        {
-
-        }
-
-        private void toolStripButton1_Click_1(object sender, EventArgs e)
-        {
-            OpenFileDialog ofd = new OpenFileDialog();           
-
-            if (ofd.ShowDialog() == DialogResult.OK)
-            {
-                var ll = (ObjVolume.LoadFromFile(ofd.FileName, Matrix4.Identity));
-                var ff = new FileInfo(ofd.FileName);
-                Static.Library.AddModel(new FxEngine.ModelBlueprint("obj export: " + ff.Name, ll) { Id = Static.Library.ModelNewId });
-
-                UpdatePrefabsList();
-            }
-        }
-
-
-        private void toolStripButton2_Click(object sender, EventArgs e)
-        {
-            SaveFileDialog sfd = new SaveFileDialog();
-            sfd.InitialDirectory = Static.Library.LibraryPath;
-            sfd.DefaultExt = ".dae";
-            sfd.Filter = "COLLADA files (*.dae)|*.dae";
-            if (sfd.ShowDialog() == DialogResult.OK)
-            {
-                ColladaRoutine.Export(CurrentBlueprint, sfd.FileName);
-            }
-        }
-
-        private void toolStripButton3_Click(object sender, EventArgs e)
-        {
-            Static.Library.AddModel(new ModelBlueprint("new model01"));
-            UpdatePrefabsList();
-        }
-
+        
         private void listView1_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (listView1.FirstSelected() != null)
@@ -495,107 +463,135 @@ namespace FxEngineEditor
 
         private void toolStripButton4_Click(object sender, EventArgs e)
         {
-            OpenFileDialog ofd = new OpenFileDialog();
-            ofd.Filter = "Collada model (*.dae)|*.dae";
-            if (ofd.ShowDialog() == DialogResult.OK)
-            {
-                var fi = new FileInfo(ofd.FileName);
-                var clm = ColladaImporter.Load(ofd.FileName, new PhysicalFilesystemDataProvider());
-                clm.InitLibraries();
 
-                var mb = new FxEngine.ModelBlueprint("collada export: " + fi.Name, fi.FullName) { Id = Static.Library.ModelNewId };
-                mb.Model = clm;
-                Static.Library.AddModel(mb);
-
-                UpdatePrefabsList();
-            }
         }
 
         private void toolStripButton5_Click(object sender, EventArgs e)
         {
-
+            fitAll();
         }
 
-
-        void AppendDae(AssetArchive arch, string path)
+        void fitAll()
         {
-            arch.AppendFile(path);
-
-            var doc = XDocument.Load(path);
-            var fr = doc.Descendants().First();
-            var v = fr.Attribute("xmlns").Value;
-
-            var xn = XName.Get("init_from", v);
-
-            foreach (var xitem in doc.Descendants(xn))
-            {
-                var a = xitem.Value;
-                var fin = new FileInfo(path);
-                var comb = Path.Combine(fin.DirectoryName, a);
-                if (File.Exists(comb))
-                {
-                    arch.AppendFile(comb);
-                }
-            }
+            var vv = getAllPoints();
+            if (vv.Length == 0) return;
+            FitToPoints(vv, camera);
         }
-        void AppendObj(AssetArchive arch, ModelBlueprint model)
+
+        Vector3d[] getAllPoints()
         {
-            var path = model.FilePath;
-            foreach (var item in model.Objs)
+            var bbox = CurrentBlueprint.GetBoundingBoxModel(Matrix4.Identity);
+            List<Vector3d> ret = new List<Vector3d>();
+            foreach (var item in bbox)
             {
-                foreach (var titem in item.mat.textures2)
-                {
-                    arch.AppendFile(titem.Value);                  
-                }
+                ret.AddRange(item.Vertices.Select(z => z.Position.ToVector3d()));
             }
-            arch.AppendFile(path);
-            var nm1 = Path.GetFileNameWithoutExtension(path);
-            var d = Path.GetDirectoryName(path);
-            var mtlp = Path.Combine(d, nm1 + ".mtl");
-            if (File.Exists(mtlp))
-            {
-                arch.AppendFile(mtlp);
-            }
+            return ret.ToArray();
         }
+
+        public void FitToPoints(Vector3d[] pnts, Camera cam, float gap = 10)
+        {
+            List<Vector2d> vv = new List<Vector2d>();
+            foreach (var vertex in pnts)
+            {
+                var p = MouseRay.Project(vertex.ToVector3(), cam.ProjectionMatrix, cam.ViewMatrix, new Size(cam.viewport[2], cam.viewport[3]));
+                vv.Add(p.Xy.ToVector2d());
+            }
+
+            //prjs->xy coords
+            var minx = vv.Min(z => z.X) - gap;
+            var maxx = vv.Max(z => z.X) + gap;
+            var miny = vv.Min(z => z.Y) - gap;
+            var maxy = vv.Max(z => z.Y) + gap;
+
+            var dx = (maxx - minx);
+            var dy = (maxy - miny);
+
+            var cx = dx / 2;
+            var cy = dy / 2;
+            var dir = cam.CamTo - cam.CamFrom;
+            //center back to 3d
+
+            var mr = new MouseRay((float)(cx + minx), (float)(cy + miny), cam);
+            var v0 = mr.Start;
+
+            cam.CamFrom = v0;
+            cam.CamTo = cam.CamFrom + dir;
+
+            var aspect = gl.Width / (float)(gl.Height);
+
+            dx /= gl.Width;
+            dx *= cam.OrthoWidth;
+            dy /= gl.Height;
+            dy *= cam.OrthoWidth;
+
+            cam.OrthoWidth = (float)Math.Max(dx, dy);
+        }
+        
         private void toolStripButton6_Click(object sender, EventArgs e)
         {
-            AssetArchive asset = new AssetArchive();
-            asset.AppendFile(Static.Library.LibraryPath);
-            var lib = Static.Library;
+            
+        }
 
-            //load dae/mtl and so on.
-            foreach (var item in lib.Fonts)
+        private void objToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void objToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog ofd = new OpenFileDialog();
+
+            if (ofd.ShowDialog() != DialogResult.OK) return;
+
+            var ll = (ObjVolume.LoadFromFile(ofd.FileName, Matrix4.Identity));
+            var ff = new FileInfo(ofd.FileName);
+            Static.Library.AddModel(new FxEngine.ModelBlueprint("obj export: " + ff.Name, ll) { Id = Static.Library.ModelNewId });
+
+            UpdatePrefabsList();
+        }
+
+        private void colladaToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog ofd = new OpenFileDialog();
+            ofd.Filter = "Collada model (*.dae)|*.dae";
+            if (ofd.ShowDialog() != DialogResult.OK) return;
+
+            var fi = new FileInfo(ofd.FileName);
+            var clm = ColladaImporter.Load(ofd.FileName, new PhysicalFilesystemDataProvider());
+            clm.InitLibraries();
+
+            var mb = new FxEngine.ModelBlueprint("collada export: " + fi.Name, fi.FullName) { Id = Static.Library.ModelNewId };
+            mb.Model = clm;
+            Static.Library.AddModel(mb);
+
+            UpdatePrefabsList();
+
+        }
+
+        private void newToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Static.Library.AddModel(new ModelBlueprint("new model01"));
+            UpdatePrefabsList();
+        }
+
+        private void exportToColladaToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (CurrentBlueprint == null) return;
+            SaveFileDialog sfd = new SaveFileDialog();
+            sfd.InitialDirectory = Static.Library.LibraryPath;
+            sfd.DefaultExt = ".dae";
+            sfd.Filter = "COLLADA files (*.dae)|*.dae";
+            if (sfd.ShowDialog() == DialogResult.OK)
             {
-                asset.AppendFile(item.Path);
-                var doc = XDocument.Load(item.Path);
-                var f = doc.Descendants("root").First();
-                var path1 = f.Attribute("image").Value;
-                asset.AppendFile(Path.Combine(new FileInfo(item.Path).DirectoryName, path1));
+                ColladaRoutine.Export(CurrentBlueprint, sfd.FileName);
             }
-            foreach (var item in lib.Models)
-            {
-                if (item.FilePath.EndsWith("obj"))
-                {
-                    AppendObj(asset, item);
-                    continue;
-                }
-                if (item.FilePath.EndsWith("dae"))
-                {
-                    AppendDae(asset, item.FilePath);
-                    continue;
-                }
-                
-                asset.AppendFile(item.FilePath);
-            }
-            foreach (var item in lib.Tiles)
-            {
-                asset.AppendFile(item.Path);
-            }
-            foreach (var item in lib.Sounds)
-            {
-                asset.AppendFile(item.Path);
-            }
-            asset.SaveToFile("temp.asset");
+        }
+
+        private void toolStripButton1_Click(object sender, EventArgs e)
+        {
+            camera.CamFrom = new Vector3(-50, -50, 50);
+            camera.CamTo = new Vector3(0, 0, 0);
         }
     }
 }

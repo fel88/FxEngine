@@ -11,6 +11,11 @@ namespace FxEngine
             return Bitmap.FromFile(path) as Bitmap;
         }
 
+        public string GetDirectoryName(string path)
+        {
+            return Path.GetDirectoryName(path);
+        }
+
         public byte[] GetFile(string path)
         {
             return File.ReadAllBytes(path);

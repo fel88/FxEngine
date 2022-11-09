@@ -44,7 +44,7 @@ namespace FxEngine
         public static int[] viewport = new int[4];
         public static Matrix4 modelMatrix, projMatrix;
 
-        public static Vector2 Project(Vector3 point, Matrix4 projection, Matrix4 view, Size viewport)
+        public static Vector3 Project(Vector3 point, Matrix4 projection, Matrix4 view, Size viewport)
         {
             return Project(point, projection, view, Matrix4.Identity, viewport.Width, viewport.Height);            
         }
@@ -55,7 +55,7 @@ namespace FxEngine
 
             return (-1.401293E-45f <= num) && (num <= float.Epsilon);
         }
-        public static Vector2 Project(Vector3 source, Matrix4 projection, Matrix4 view, Matrix4 world, int wid, int heig)
+        public static Vector3 Project(Vector3 source, Matrix4 projection, Matrix4 view, Matrix4 world, int wid, int heig)
         {
             Vector3 ret = new Vector3();
             float MaxDepth = 10;
@@ -73,7 +73,7 @@ namespace FxEngine
             vector.X = (((vector.X + 1f) * 0.5f) * wid) + thisX;
             vector.Y = (((-vector.Y + 1f) * 0.5f) * heig) + thisY;
             vector.Z = (vector.Z * (MaxDepth - MinDepth)) + MinDepth;
-            return vector.Xy;
+            return vector.Xyz;
 
         }
         public static void UpdateMatrices()

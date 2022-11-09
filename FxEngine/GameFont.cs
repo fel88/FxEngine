@@ -17,8 +17,8 @@ namespace FxEngine
             //var doc = XDocument.Load(Path);
             var f = doc.Descendants("root").First();
             var path1 = f.Attribute("image").Value;
-            var fi = new FileInfo(Path);
-            var p1 = System.IO.Path.Combine(fi.DirectoryName, path1);
+            var dn = dp.GetDirectoryName(Path);            
+            var p1 = System.IO.Path.Combine(dn, path1);
             Bitmap = dp.GetBitmap(p1);
             //Bitmap = Bitmap.FromFile() as Bitmap;
         }

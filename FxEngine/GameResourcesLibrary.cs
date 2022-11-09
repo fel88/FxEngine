@@ -14,6 +14,7 @@ using System.Text;
 using System.Xml.Linq;
 using FxEngine.Cameras;
 using FxEngine.Loaders.OBJ;
+using System.IO.Compression;
 
 namespace FxEngine
 {
@@ -166,6 +167,25 @@ namespace FxEngine
             return ret;
         }
 
+        public static GameResourcesLibrary LoadFromZipAsset(string fileName, IDataProvider datap = null)
+        {
+            if (datap == null)
+            {
+                datap = new ZipAssetFilesystemDataProvider(fileName);
+            }
+            string libName = string.Empty;
+            using (var zip = ZipFile.Open(fileName, ZipArchiveMode.Read))
+            {
+                var xmls = zip.Entries.First(z => z.Name.EndsWith(".xml") && z.Name.Contains("lib"));
+                using (var stream = xmls.Open())
+                {
+                    libName = xmls.Name;
+                }
+            }
+            var ret = LoadFromXml(libName, datap);
+            return ret;
+        }
+
         public static GameResourcesLibrary LoadFromXml(string fileName, IDataProvider datap = null)
         {
             if (datap == null)
@@ -175,6 +195,7 @@ namespace FxEngine
             GameResourcesLibrary ret = new GameResourcesLibrary();
             ret.DataProvider = datap;
             ret.LibraryPath = fileName;
+            //Directory.SetCurrentDirectory(new FileInfo(ret.LibraryPath).Directory.FullName);
             var doc = datap.LoadXml(fileName);
             var root = doc.Element("library");
             ret.Name = root.Attribute("name").Value;
@@ -188,8 +209,10 @@ namespace FxEngine
                     var id = int.Parse((item.Attribute("id").Value));
                     var nm = (item.Attribute("name").Value);
                     var path = (item.Attribute("path").Value);
+                    var path2 = Path.Combine(datap.GetDirectoryName(fileName), path);
 
-                    var font = new FxEngine.GameFont() { Id = id, Name = nm, Path = path };
+
+                    var font = new FxEngine.GameFont() { Id = id, Name = nm, Path = path2 };
                     font.PreLoad(datap);
 
                     ret.Fonts.Add(font);
@@ -209,10 +232,13 @@ namespace FxEngine
                     {
                         mtr4 = LoadTransforms(fr);
                     }
-                    var obj = ObjVolume.LoadFromFile(filePath, mtr4, datap);
+                    var path2 = Path.Combine(datap.GetDirectoryName(fileName), filePath);
+
+                    var obj = ObjVolume.LoadFromFile(path2, mtr4, datap);
                     var t = new ModelBlueprint(nm, obj);
                     t.Id = int.Parse(item.Attribute("id").Value);
-                    t.FilePath = (item.Attribute("path").Value);
+                    //t.FilePath = (item.Attribute("path").Value);
+                    t.FilePath = path2;
                     ret.AddModel(t);
                 }
                 if (filePath.EndsWith("dae"))
@@ -221,28 +247,33 @@ namespace FxEngine
                     ret.AddModel(t);
                     t.Id = int.Parse(item.Attribute("id").Value);
                     t.FilePath = (item.Attribute("path").Value);
-                    t.Model = ColladaImporter.Load(t.FilePath, datap);
+                    var path2 = Path.Combine(datap.GetDirectoryName(fileName), t.FilePath);
+                    t.FilePath = path2;
+                    t.Model = ColladaImporter.Load(path2, datap);
                 }
             }
 
             #region tiles load
             var tiles = root.Element("tiles");
-            foreach (var item in tiles.Elements("tile"))
-            {
-                Tile t = new Tile();
-                ret.AddTile(t);
-                t.Id = int.Parse(item.Attribute("id").Value);
-                t.Path = (item.Attribute("path").Value);
-                t.Name = (item.Attribute("name").Value);
-                if (item.Attribute("w") != null)
+            if (tiles != null)
+                foreach (var item in tiles.Elements("tile"))
                 {
-                    var ww = int.Parse(item.Attribute("w").Value);
-                    var hh = int.Parse(item.Attribute("h").Value);
-                    t.Width = ww;
-                    t.Height = hh;
-                    t.ForceSizePreLoad = true;
+                    Tile t = new Tile();
+                    ret.AddTile(t);
+                    t.Id = int.Parse(item.Attribute("id").Value);
+
+                    t.Path = Path.Combine(datap.GetDirectoryName(fileName), (item.Attribute("path").Value));
+                    
+                    t.Name = (item.Attribute("name").Value);
+                    if (item.Attribute("w") != null)
+                    {
+                        var ww = int.Parse(item.Attribute("w").Value);
+                        var hh = int.Parse(item.Attribute("h").Value);
+                        t.Width = ww;
+                        t.Height = hh;
+                        t.ForceSizePreLoad = true;
+                    }
                 }
-            }
 
             #endregion
             #region sounds load
@@ -525,6 +556,6 @@ namespace FxEngine
                 }
             }
         }
-    }    
+    }
 }
 

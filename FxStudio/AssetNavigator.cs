@@ -1,5 +1,6 @@
 ﻿using FxEngine.Assets;
 using System;
+using System.Data.Odbc;
 using System.Drawing;
 using System.IO;
 using System.IO.Compression;
@@ -179,6 +180,91 @@ namespace FxEngineEditor
                         }                       
                     }
                 }                           
+            }
+        }
+
+        private void xmlfxlToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            SaveFileDialog sfd = new SaveFileDialog();
+            sfd.Filter = "FxEngine zip-asset (*.fxl)|*.fxl";
+            if (sfd.ShowDialog() != DialogResult.OK)
+                return;
+            var lib = Static.Library;
+
+            if (File.Exists(sfd.FileName))
+            {
+                //ask for replace. use autoDialog?
+                File.Copy(sfd.FileName, sfd.FileName + ".backup", true);
+                File.Delete(sfd.FileName);
+            }
+
+            using (var archive = ZipFile.Open(sfd.FileName, ZipArchiveMode.Create))
+            {
+                var ff = new FileInfo(Static.Library.LibraryPath);
+                var txt = File.ReadAllText(ff.FullName);
+
+
+                foreach (var item in lib.Fonts)
+                {
+                    var fff = new FileInfo(item.Path);
+                    archive.CreateEntryFromFile(fff.FullName, fff.Name);
+                    txt = txt.Replace(item.Path, fff.Name);
+
+
+                    var doc = XDocument.Load(item.Path);
+                    var f = doc.Descendants("root").First();
+                    var path1 = f.Attribute("image").Value;
+
+                    var imgPath = Path.Combine(new FileInfo(item.Path).DirectoryName, path1);
+                    fff = new FileInfo(imgPath);
+                    archive.CreateEntryFromFile(fff.FullName, fff.Name);
+                    txt = txt.Replace(imgPath, fff.Name);
+                }
+
+                foreach (var item in lib.Models)
+                {
+                    var fff = new FileInfo(item.FilePath);
+                    archive.CreateEntryFromFile(fff.FullName, fff.Name);
+                    txt = txt.Replace(item.FilePath, fff.Name);
+                }
+                foreach (var item in lib.Tiles)
+                {
+                    var fff = new FileInfo(item.Path);
+                    archive.CreateEntryFromFile(fff.FullName, fff.Name);
+                    txt = txt.Replace(item.Path, fff.Name);
+
+                }
+                foreach (var item in lib.Tiles)
+                {
+                    var fff = new FileInfo(item.Path);
+                    archive.CreateEntryFromFile(fff.FullName, fff.Name);
+                    txt = txt.Replace(item.Path, fff.Name);
+
+                }
+
+                foreach (var item in lib.Sounds)
+                {
+                    var fff = new FileInfo(item.Path);
+                    archive.CreateEntryFromFile(fff.FullName, fff.Name);
+                    txt = txt.Replace(item.Path, fff.Name);
+                }
+
+                var xmlEntry = archive.CreateEntry(ff.Name);
+
+                //repalce all pathes in xml here!!!
+
+                using (var stream = xmlEntry.Open())
+                {
+                    using (var sw = new StreamWriter(stream))
+                    {
+                        sw.Write(txt);
+                    }
+                    //    using (var stream2 = ff.OpenRead())
+                    //      stream2.CopyTo(stream);
+                }
+
+
+
             }
         }
     }

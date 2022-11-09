@@ -51,6 +51,7 @@
       <HintPath>..\packages\System.Drawing.Common.6.0.0\lib\net461\System.Drawing.Common.dll</HintPath>
     </Reference>
     <Reference Include="System.IO.Compression" />
+    <Reference Include="System.IO.Compression.FileSystem" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -96,6 +97,7 @@
     <Compile Include="LibrarySettings.Designer.cs">
       <DependentUpon>LibrarySettings.cs</DependentUpon>
     </Compile>
+    <Compile Include="MessageFilter.cs" />
     <Compile Include="PrefabEditor.cs">
       <SubType>Form</SubType>
     </Compile>

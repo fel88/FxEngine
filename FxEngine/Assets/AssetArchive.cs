@@ -135,5 +135,10 @@ namespace FxEngine.Assets
             var str = enc.GetString(p);
             return str;
         }
+
+        public string GetDirectoryName(string path)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -21,14 +21,15 @@ namespace FxEngine.Loaders.Collada
                 ret.Name = name;
             }
             ret.Id = sid;
-
+            
             if (iitem.Attribute("source") != null)
             {
                 var source = iitem.Attribute("source").Value;
 
 
-                var f = new System.IO.FileInfo(ctx.Model.FilePath);
-                var path = System.IO.Path.Combine(f.Directory.FullName, source);
+                var dn = ctx.DataProvider.GetDirectoryName(ctx.Model.FilePath);
+
+                var path = System.IO.Path.Combine(dn, source);
                 ret.Source = path;
                 ret.Bitmap = Bitmap.FromFile(path) as Bitmap;
 
@@ -38,8 +39,9 @@ namespace FxEngine.Loaders.Collada
             {
                 var frfr = iitem.Descendants(XName.Get("init_from", ctx.Ns)).First();
 
-                var f = new System.IO.FileInfo(ctx.Model.FilePath);
-                var path = System.IO.Path.Combine(f.Directory.FullName, frfr.Value);
+                var dn = ctx.DataProvider.GetDirectoryName(ctx.Model.FilePath);
+                
+                var path = System.IO.Path.Combine(dn, frfr.Value);
                 ret.Source = path;
                 ret.Bitmap = ctx.DataProvider.GetBitmap(path);
                 //ret.Bitmap = Bitmap.FromFile(path) as Bitmap;

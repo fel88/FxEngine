@@ -1,7 +1,14 @@
 ﻿using FxEngine;
+using FxEngine.Assets;
+using FxEngine.Loaders.Collada;
 using System;
+using System.IO;
+using System.IO.Compression;
 using System.Linq;
+using System.Reflection;
+using System.Text;
 using System.Windows.Forms;
+using System.Xml.Linq;
 
 namespace FxEngineEditor
 {
@@ -47,20 +54,21 @@ namespace FxEngineEditor
             OpenChild<PrefabEditor>();
         }
 
-        public void OpenChild<T>() where T : Form, new()
+        public T OpenChild<T>() where T : Form, new()
         {
             if (MdiChildren.Any(z => z is T))
             {
-                var s = MdiChildren.First(z => z is T);
+                var s = MdiChildren.OfType<T>().First();
                 s.Show();
                 s.Activate();
                 s.Focus();
-                return;
+                return s;
 
             }
             T p = new T();
             p.MdiParent = this;
             p.Show();
+            return p;
         }
 
         private void toolStripButton2_Click(object sender, EventArgs e)
@@ -80,7 +88,7 @@ namespace FxEngineEditor
 
         private void sdfsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Static.Library = new GameResourcesLibrary();            
+            Static.Library = new GameResourcesLibrary();
             toolStripButton2.Enabled = true;
             toolStripButton1.Enabled = true;
             toolStripButton3.Enabled = true;
@@ -98,7 +106,10 @@ namespace FxEngineEditor
 
         public void LoadLibrary(string path)
         {
-            Static.Library = GameResourcesLibrary.LoadFromXml(path);
+            if (path.EndsWith(".fxl"))
+                Static.Library = GameResourcesLibrary.LoadFromZipAsset(path);
+            else
+                Static.Library = GameResourcesLibrary.LoadFromXml(path);
 
             Text = "FxStudio Assets Editor: " + path + " ;  " + Static.Library.Name;
             toolStripButton2.Enabled = true;
@@ -115,13 +126,13 @@ namespace FxEngineEditor
 
         private void loadToolStripMenuItem_Click(object sender, EventArgs e)
         {
-
             OpenFileDialog ofd = new OpenFileDialog();
-            ofd.Filter = "FxEngine Library (*.xml)|*.xml|Compressed FxEngine Library (*.fxl)|*.fxl";
-            if (ofd.ShowDialog() == DialogResult.OK)
-            {
-                LoadLibrary(ofd.FileName);
-            }
+            ofd.Filter = "All FxEngine Libraries formats (*.xml, *.fxl)|*.xml;*.fxl|Compressed FxEngine Library (*.fxl)|*.fxl";
+            if (ofd.ShowDialog() != DialogResult.OK) return;
+
+            var w = OpenChild<PrefabEditor>();
+            LoadLibrary(ofd.FileName);
+            w.UpdatePrefabsList();
         }
 
         private void toolStripButton2_MouseHover(object sender, EventArgs e)
@@ -212,6 +223,251 @@ namespace FxEngineEditor
         private void toolStripButton8_Click(object sender, EventArgs e)
         {
             OpenChild<AssetNavigator>();
+        }
+        void AppendDae(AssetArchive arch, string path)
+        {
+            arch.AppendFile(path);
+
+            var doc = XDocument.Load(path);
+            var fr = doc.Descendants().First();
+            var v = fr.Attribute("xmlns").Value;
+
+            var xn = XName.Get("init_from", v);
+
+            foreach (var xitem in doc.Descendants(xn))
+            {
+                var a = xitem.Value;
+                var fin = new FileInfo(path);
+                var comb = Path.Combine(fin.DirectoryName, a);
+                if (File.Exists(comb))
+                {
+                    arch.AppendFile(comb);
+                }
+            }
+        }
+        void AppendObj(AssetArchive arch, ModelBlueprint model)
+        {
+            var path = model.FilePath;
+            foreach (var item in model.Objs)
+            {
+                foreach (var titem in item.mat.textures2)
+                {
+                    arch.AppendFile(titem.Value);
+                }
+            }
+            arch.AppendFile(path);
+            var nm1 = Path.GetFileNameWithoutExtension(path);
+            var d = Path.GetDirectoryName(path);
+            var mtlp = Path.Combine(d, nm1 + ".mtl");
+            if (File.Exists(mtlp))
+            {
+                arch.AppendFile(mtlp);
+            }
+        }
+        private void binaryAssetToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            SaveFileDialog sfd = new SaveFileDialog();
+            sfd.Filter = "FxEngine asset (*.asset)|*.asset";
+            if (sfd.ShowDialog() != DialogResult.OK) return;
+            AssetArchive asset = new AssetArchive();
+            asset.AppendFile(Static.Library.LibraryPath);
+            var lib = Static.Library;
+
+            //load dae/mtl and so on.
+            foreach (var item in lib.Fonts)
+            {
+                asset.AppendFile(item.Path);
+                var doc = XDocument.Load(item.Path);
+                var f = doc.Descendants("root").First();
+                var path1 = f.Attribute("image").Value;
+                asset.AppendFile(Path.Combine(new FileInfo(item.Path).DirectoryName, path1));
+            }
+            foreach (var item in lib.Models)
+            {
+                if (item.FilePath.EndsWith("obj"))
+                {
+                    AppendObj(asset, item);
+                    continue;
+                }
+                if (item.FilePath.EndsWith("dae"))
+                {
+                    AppendDae(asset, item.FilePath);
+                    continue;
+                }
+
+                asset.AppendFile(item.FilePath);
+            }
+            foreach (var item in lib.Tiles)
+            {
+                asset.AppendFile(item.Path);
+            }
+            foreach (var item in lib.Sounds)
+            {
+                asset.AppendFile(item.Path);
+            }
+            asset.SaveToFile(sfd.FileName);
+        }
+
+        private void archivedAssetToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            SaveFileDialog sfd = new SaveFileDialog();
+            sfd.Filter = "FxEngine zip-asset (*.fxl)|*.fxl";
+            if (sfd.ShowDialog() != DialogResult.OK)
+                return;
+            var lib = Static.Library;
+
+            if (File.Exists(sfd.FileName))
+            {
+                //ask for replace. use autoDialog?
+                File.Copy(sfd.FileName, sfd.FileName + ".backup", true);
+                File.Delete(sfd.FileName);
+            }
+
+            using (var archive = ZipFile.Open(sfd.FileName, ZipArchiveMode.Create))
+            {
+                var ff = new FileInfo(Static.Library.LibraryPath);
+                var txt = File.ReadAllText(ff.FullName);
+
+
+                foreach (var item in lib.Fonts)
+                {
+                    var fff = new FileInfo(item.Path);
+                    archive.CreateEntryFromFile(fff.FullName, fff.Name);
+                    txt = txt.Replace(item.Path, fff.Name);
+
+
+                    var doc = XDocument.Load(item.Path);
+                    var f = doc.Descendants("root").First();
+                    var path1 = f.Attribute("image").Value;
+
+                    var imgPath = Path.Combine(new FileInfo(item.Path).DirectoryName, path1);
+                    fff = new FileInfo(imgPath);
+                    archive.CreateEntryFromFile(fff.FullName, fff.Name);
+                    txt = txt.Replace(imgPath, fff.Name);
+                }
+
+                foreach (var item in lib.Models)
+                {
+                    var fff = new FileInfo(item.FilePath);
+                    archive.CreateEntryFromFile(fff.FullName, fff.Name);
+                    txt = txt.Replace(item.FilePath, fff.Name);
+                }
+                foreach (var item in lib.Tiles)
+                {
+                    var fff = new FileInfo(item.Path);
+                    archive.CreateEntryFromFile(fff.FullName, fff.Name);
+                    txt = txt.Replace(item.Path, fff.Name);
+
+                }
+                foreach (var item in lib.Tiles)
+                {
+                    var fff = new FileInfo(item.Path);
+                    archive.CreateEntryFromFile(fff.FullName, fff.Name);
+                    txt = txt.Replace(item.Path, fff.Name);
+
+                }
+
+                foreach (var item in lib.Sounds)
+                {
+                    var fff = new FileInfo(item.Path);
+                    archive.CreateEntryFromFile(fff.FullName, fff.Name);
+                    txt = txt.Replace(item.Path, fff.Name);
+                }
+
+                var xmlEntry = archive.CreateEntry(ff.Name);
+
+                //repalce all pathes in xml here!!!
+
+                using (var stream = xmlEntry.Open())
+                {
+                    using (var sw = new StreamWriter(stream))
+                    {
+                        sw.Write(txt);
+                    }
+                    //    using (var stream2 = ff.OpenRead())
+                    //      stream2.CopyTo(stream);
+                }
+
+
+
+            }
+
+
+        }
+
+        private void zipAssetToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            SaveFileDialog sfd = new SaveFileDialog();
+            sfd.Filter = "FxEngine zip-asset (*.fxl)|*.fxl";
+            if (sfd.ShowDialog() != DialogResult.OK)
+                return;
+            var lib = Static.Library;
+
+            if (File.Exists(sfd.FileName))
+            {
+                //ask for replace. use autoDialog?
+                File.Copy(sfd.FileName, sfd.FileName + ".backup", true);
+                File.Delete(sfd.FileName);
+            }
+
+            using (var archive = ZipFile.Open(sfd.FileName, ZipArchiveMode.Create))
+            {
+                StringBuilder sb = new StringBuilder();
+                sb.AppendLine("<?xml version=\"1.0\"?>");
+                sb.AppendLine($"<library name=\"{Name}\">");
+                sb.AppendLine($"<models>");
+                foreach (var item in Static.Library.Models)
+                {
+                    var dir = Path.GetFileNameWithoutExtension(item.Name);
+                    if (item.Model != null)
+                    {
+                        foreach (var library in item.Model.Libraries)
+                        {
+                            if (library is ColladaImageLibrary cil)
+                            {
+                                foreach (var img in cil.Images)
+                                {
+                                    var mpath2 = Path.Combine(dir, Path.GetFileName(img.Source));
+
+                                    var bts2 = File.ReadAllBytes(img.Source);
+                                    using (var ms = new MemoryStream(bts2))
+                                    {
+                                        var ent1 = archive.CreateEntry(mpath2);
+                                        using (var stream = ent1.Open())
+                                        {
+                                            ms.CopyTo(stream);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                  
+                    var mpath = Path.Combine(dir, Path.GetFileName(item.FilePath));
+                    sb.AppendLine($"<model id=\"{item.Id}\" name=\"{item.Name}\" path=\"{mpath}\"/>");
+                    var bts = File.ReadAllBytes(item.FilePath);
+                    using (var ms = new MemoryStream(bts))
+                    {
+                        var ent1 = archive.CreateEntry(mpath);
+                        using (var stream = ent1.Open())
+                        {
+                            ms.CopyTo(stream);
+                        }
+                    }
+                }
+                sb.AppendLine($"</models>");
+
+                sb.AppendLine("</library>");
+
+                var ent = archive.CreateEntry("lib.xml");
+                using (var stream = ent.Open())
+                {
+                    using (var writer = new StreamWriter(stream))
+                    {
+                        writer.WriteLine(sb.ToString());
+                    }
+                }
+            }
         }
     }
 }
