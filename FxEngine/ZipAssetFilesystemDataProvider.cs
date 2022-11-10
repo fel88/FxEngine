@@ -3,6 +3,7 @@ using System.IO.Compression;
 using System.IO;
 using System.Xml.Linq;
 using System;
+using System.Linq;
 
 namespace FxEngine
 {
@@ -78,6 +79,11 @@ namespace FxEngine
         public string GetDirectoryName(string path)
         {
             return Path.GetDirectoryName(path);
+        }
+
+        public bool IsFileExists(string amb1)
+        {
+            return Archive.Entries.Any(z => z.Name == amb1);
         }
     }
 }

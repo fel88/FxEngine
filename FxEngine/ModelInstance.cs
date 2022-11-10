@@ -42,14 +42,9 @@ namespace FxEngine
                 GL.MultMatrix(ref Matrix);
             }
 
-            if (oldStyle)
-            {
-                Blueprint.Model.DrawOldStyle();
-            }
-            else
-            {
-                Blueprint.Model.Draw(camera, shdp);
-            }
+
+            Blueprint.Draw(oldStyle, camera, shdp);
+            
 
             GL.PopMatrix();
         }

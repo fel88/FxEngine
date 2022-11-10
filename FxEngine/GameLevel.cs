@@ -80,7 +80,12 @@ namespace FxEngine
         {
             StringBuilder sb = new StringBuilder();
             sb.AppendLine("<?xml version=\"1.0\"?>");
-            sb.AppendLine("<level>");
+            StoreXml(sb);            
+            File.WriteAllText(path, sb.ToString());
+        }
+        public void StoreXml(StringBuilder sb)
+        {            
+            sb.AppendLine($"<level id=\"{Id}\" name=\"{Name}\">");
             foreach (var item in Tiles)
             {
                 sb.AppendLine($"<tile x=\"{item.Position.X}\" y=\"{item.Position.Y}\" z=\"{item.Z}\" tileId=\"{item.Tile.Id}\" scale=\"{item.Scale}\"/>");
@@ -89,8 +94,7 @@ namespace FxEngine
             {
                 sb.AppendLine($"<modelInstance x=\"{item.Blueprint.Id}\" matrix=\"{item.Matrix.ToXml()}\"/>");
             }
-            sb.AppendLine("</level>");
-            File.WriteAllText(path, sb.ToString());
+            sb.AppendLine("</level>");         
         }
     }
 }

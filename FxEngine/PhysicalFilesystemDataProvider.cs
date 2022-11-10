@@ -26,6 +26,11 @@ namespace FxEngine
             return File.ReadAllText(path);
         }
 
+        public bool IsFileExists(string path)
+        {
+            return File.Exists(path);
+        }
+
         public XDocument LoadXml(string path)
         {
             return XDocument.Load(path);

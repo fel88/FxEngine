@@ -1,15 +1,18 @@
-﻿using FxEngine.Loaders.Collada;
+﻿using FxEngine.Cameras;
 using FxEngine.Loaders.OBJ;
 using FxEngine.Shaders;
 using OpenTK;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace FxEngine
-{
+{    
     public class ModelBlueprint
     {
+        public ModelBlueprint()
+        {
+
+        }
+
         public DrawPolygon[] GetBoundingBoxModel(Matrix4 matrix)
         {
 
@@ -79,13 +82,7 @@ namespace FxEngine
         public int Id { get; set; }
         public string FilePath { get; set; }
 
-        public bool IsLoaded
-        {
-            get
-            {
-                return Objs != null;
-            }
-        }
+
         public string Name { get; set; }
         public ModelBlueprint(string name, string path)
         {
@@ -99,102 +96,33 @@ namespace FxEngine
         }
         public Matrix4 Matrix;
 
-        public void ImportObj()
-        {
-            Objs = new List<ObjVolume>();
-            Objs.AddRange(ObjVolume.LoadFromFile(FilePath, Matrix4.Identity));
-        }
+
 
         public VaoModel VaoModel;
 
-        public ModelBlueprint(string name, IEnumerable<ObjVolume> vols)
-        {
-            Name = name;
-            Objs = new List<ObjVolume>();
-            Objs.AddRange(vols);
-            VaoModel = new VaoModel();
-            VaoModel.ModelInit(Objs.ToArray());
-            Vector3 res = new Vector3();
-            int cnt = 0;
-            foreach (var item in vols)
-            {
-                foreach (var fitem in item.faces)
-                {
-                    var tx = fitem.Vertexes.Sum(z => z.Position.X);
-                    var ty = fitem.Vertexes.Sum(z => z.Position.Y);
-                    var tz = fitem.Vertexes.Sum(z => z.Position.Z);
-                    res.X += tx;
-                    res.Y += ty;
-                    res.Z += tz;
-                    cnt++;
-                }
-            }
-            res /= cnt;
 
-            foreach (var item in vols)
-            {
-                foreach (var fitem in item.faces)
-                {
-                    for (int i = 0; i < fitem.Vertexes.Count(); i++)
-                    {
-                        //                        fitem.Vertexes[i].Position -= res;
-                    }
-                }
-            }
-        }
 
-        public List<ObjVolume> Objs;
-        public ColladaModel Model;
+
 
         public bool BBoxDirty = true;
         public float[] MinsBbox;
         public float[] MaxsBbox;
 
-        Matrix4 oldbbox = Matrix4.Identity;
-        public Vector3 GetBbox(Matrix4? mtr = null)
+        protected Matrix4 oldbbox = Matrix4.Identity;
+
+
+        public virtual void Draw(bool oldStyle, Camera camera, int shaderProgram)
         {
-            if (mtr == null)
-            {
-                mtr = Matrix4.Identity;
-            }
-            bool inited = false;
 
-            if (oldbbox != mtr.Value)
-            {
-                BBoxDirty = true;
-            }
-            if (BBoxDirty)
-            {
-                oldbbox = mtr.Value;
-                MinsBbox = new float[3];
-                MaxsBbox = new float[3];
-                foreach (var mitem in Objs)
-                {
-                    foreach (var item in mitem.faces)
-                    {
-                        var d = new DrawPolygon();
-                        List<DrawVertex> dv = new List<DrawVertex>();
-                        foreach (var vitem in item.Vertexes)
-                        {
-                            var pos = new Vector4(vitem.Position, 1) * mtr.Value;
-                            for (int i = 0; i < 3; i++)
-                            {
-                                if (!inited)
-                                {
-                                    MinsBbox[i] = pos[i];
-                                    MaxsBbox[i] = pos[i];
-                                }
-                                MinsBbox[i] = Math.Min(MinsBbox[i], pos[i]);
-                                MaxsBbox[i] = Math.Max(MaxsBbox[i], pos[i]);
-                            }
-                            inited = true;
-                        }
-                    }
-                }
-                BBoxDirty = false;
+        }
 
-            }
-            return new Vector3(MaxsBbox[0] - MinsBbox[0], MaxsBbox[1] - MinsBbox[1], MaxsBbox[2] - MinsBbox[2]);
+        public virtual void Init()
+        {
+
+        }
+        public virtual Vector3 GetBbox(Matrix4? mtr = null)
+        {
+            return new Vector3();
         }
     }
 }

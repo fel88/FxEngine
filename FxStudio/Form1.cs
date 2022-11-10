@@ -7,6 +7,8 @@ using System.IO.Compression;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml.Linq;
 
@@ -104,6 +106,10 @@ namespace FxEngineEditor
         }
 
 
+        public async Task LoadLibraryAsync(string path)
+        {
+            await Task.Run(() => { LoadLibrary(path); });
+        }
         public void LoadLibrary(string path)
         {
             if (path.EndsWith(".fxl"))
@@ -124,14 +130,14 @@ namespace FxEngineEditor
             UpdateRecentsList();
         }
 
-        private void loadToolStripMenuItem_Click(object sender, EventArgs e)
+        private async void loadToolStripMenuItem_Click(object sender, EventArgs e)
         {
             OpenFileDialog ofd = new OpenFileDialog();
             ofd.Filter = "All FxEngine Libraries formats (*.xml, *.fxl)|*.xml;*.fxl|Compressed FxEngine Library (*.fxl)|*.fxl";
             if (ofd.ShowDialog() != DialogResult.OK) return;
 
             var w = OpenChild<PrefabEditor>();
-            LoadLibrary(ofd.FileName);
+            await LoadLibraryAsync(ofd.FileName);
             w.UpdatePrefabsList();
         }
 
@@ -224,8 +230,9 @@ namespace FxEngineEditor
         {
             OpenChild<AssetNavigator>();
         }
-        void AppendDae(AssetArchive arch, string path)
+        void AppendDae(AssetArchive arch, ColladaModelBlueprint cmb)
         {
+            var path = cmb.FilePath;
             arch.AppendFile(path);
 
             var doc = XDocument.Load(path);
@@ -245,7 +252,7 @@ namespace FxEngineEditor
                 }
             }
         }
-        void AppendObj(AssetArchive arch, ModelBlueprint model)
+        void AppendObj(AssetArchive arch, ObjModelBlueprint model)
         {
             var path = model.FilePath;
             foreach (var item in model.Objs)
@@ -284,14 +291,16 @@ namespace FxEngineEditor
             }
             foreach (var item in lib.Models)
             {
-                if (item.FilePath.EndsWith("obj"))
+                //if (item.FilePath.EndsWith("obj"))
+                if(item is ObjModelBlueprint omb)
                 {
-                    AppendObj(asset, item);
+                    AppendObj(asset, omb);
                     continue;
                 }
-                if (item.FilePath.EndsWith("dae"))
+                //if (item.FilePath.EndsWith("dae"))
+                if (item is ColladaModelBlueprint cmb)
                 {
-                    AppendDae(asset, item.FilePath);
+                    AppendDae(asset, cmb);
                     continue;
                 }
 
@@ -419,9 +428,40 @@ namespace FxEngineEditor
                 foreach (var item in Static.Library.Models)
                 {
                     var dir = Path.GetFileNameWithoutExtension(item.Name);
-                    if (item.Model != null)
+                    if (item is ObjModelBlueprint omb)
                     {
-                        foreach (var library in item.Model.Libraries)
+                        var mats = omb.Objs.Select(z => z.mat).Distinct().ToArray();
+                        foreach (var mat in mats)
+                        {
+                            var mpath2 = Path.Combine(dir, Path.GetFileName(mat.FilePath));
+                            var bts2 = File.ReadAllBytes(mat.FilePath);
+                            using (var ms = new MemoryStream(bts2))
+                            {
+                                var ent1 = archive.CreateEntry(mpath2);
+                                using (var stream = ent1.Open())
+                                {
+                                    ms.CopyTo(stream);
+                                }
+                            }
+
+                            foreach (var titem in mat.TDesc)
+                            {
+                                var mpath3 = Path.Combine(dir, Path.GetFileName(titem.FilePath));
+                                var bts3 = File.ReadAllBytes(titem.FilePath);
+                                using (var ms = new MemoryStream(bts3))
+                                {
+                                    var ent1 = archive.CreateEntry(mpath3);
+                                    using (var stream = ent1.Open())
+                                    {
+                                        ms.CopyTo(stream);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    if (item is ColladaModelBlueprint cmb)
+                    {
+                        foreach (var library in cmb.Model.Libraries)
                         {
                             if (library is ColladaImageLibrary cil)
                             {
@@ -442,7 +482,7 @@ namespace FxEngineEditor
                             }
                         }
                     }
-                  
+
                     var mpath = Path.Combine(dir, Path.GetFileName(item.FilePath));
                     sb.AppendLine($"<model id=\"{item.Id}\" name=\"{item.Name}\" path=\"{mpath}\"/>");
                     var bts = File.ReadAllBytes(item.FilePath);
@@ -456,7 +496,48 @@ namespace FxEngineEditor
                     }
                 }
                 sb.AppendLine($"</models>");
+                sb.AppendLine($"<tiles>");
+                foreach (var item in Static.Library.Tiles)
+                {
+                    var mpath = Path.Combine("Tiles", Path.GetFileName(item.Path));
+                    sb.AppendLine($"<tile id=\"{item.Id}\" name=\"{item.Name}\" path=\"{mpath}\"/>");
+                    var readPath = Path.Combine(Path.GetDirectoryName(lib.LibraryPath), item.Path);
+                    var bts = File.ReadAllBytes(readPath);
+                    using (var ms = new MemoryStream(bts))
+                    {
+                        var ent1 = archive.CreateEntry(mpath);
+                        using (var stream = ent1.Open())
+                        {
+                            ms.CopyTo(stream);
+                        }
+                    }
+                }
+                sb.AppendLine($"</tiles>");
+                sb.AppendLine($"<sounds>");
 
+                foreach (var item in Static.Library.Sounds)
+                {
+                    var mpath = Path.Combine("Sounds", Path.GetFileName(item.Path));
+                    sb.AppendLine($"<sound id=\"{item.Id}\" name=\"{item.Name}\" path=\"{mpath}\"/>");
+                    var readPath = Path.Combine(Path.GetDirectoryName(lib.LibraryPath), item.Path);
+                    var bts = File.ReadAllBytes(readPath);
+                    using (var ms = new MemoryStream(bts))
+                    {
+                        var ent1 = archive.CreateEntry(mpath);
+                        using (var stream = ent1.Open())
+                        {
+                            ms.CopyTo(stream);
+                        }
+                    }
+                }
+
+                sb.AppendLine($"</sounds>");
+                sb.AppendLine($"<levels>");
+                foreach (var level in Static.Library.Levels)
+                {
+                    level.StoreXml(sb);
+                }
+                sb.AppendLine($"</levels>");
                 sb.AppendLine("</library>");
 
                 var ent = archive.CreateEntry("lib.xml");
@@ -468,6 +549,11 @@ namespace FxEngineEditor
                     }
                 }
             }
+        }
+
+        private void saveAsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

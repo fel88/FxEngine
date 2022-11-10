@@ -10,7 +10,7 @@ namespace FxEngine
         byte[] GetFile(string path);
         string GetFileAsString(string path);
         XDocument LoadXml(string path);
-
+        bool IsFileExists(string amb1);
     }
 }
 

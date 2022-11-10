@@ -5,14 +5,17 @@ using System.Drawing.Imaging;
 using System.IO;
 using OpenTK.Graphics.OpenGL;
 using FxEngine;
+using System.Windows.Forms;
 
 namespace FxEngine.Loaders.OBJ
 {
     public class MaterialStuff
-    {        
-        public void LoadMaterials(string dir, String filename, IDataProvider dp)
+    {
+        public string FilePath;
+        public void LoadMaterials(string dir, string filename, IDataProvider dp)
         {
             var pp = Path.Combine(dir, filename);
+            FilePath = pp;
             foreach (var mat in Material.LoadFromFile(pp, dp))
             {
                 if (!materials.ContainsKey(mat.Key))
@@ -21,7 +24,7 @@ namespace FxEngine.Loaders.OBJ
                 }
             }
             var d = new FileInfo(pp);
-            var name = d.DirectoryName;            
+            var name = d.DirectoryName;
 
             // Load textures
             foreach (Material mat in materials.Values)
@@ -42,9 +45,10 @@ namespace FxEngine.Loaders.OBJ
             {
                 amb1 = Path.Combine(dir, mapp);
             }
+            
             var finf = new FileInfo(amb1);
-            if (finf.Exists && !textures.ContainsKey(mapp))
-            {                                
+            if (dp.IsFileExists(amb1) && !textures.ContainsKey(mapp))
+            {
                 td = loadImage(finf.FullName, dp);
                 TDesc.Add(td);
                 textures.Add(mapp, td.Index);
@@ -87,7 +91,7 @@ namespace FxEngine.Loaders.OBJ
                 //)
                 {
                     file.RotateFlip(RotateFlipType.RotateNoneFlipY);
-                    return new TextureDescriptor() { Index = loadImage(file, dp), Preview = file };
+                    return new TextureDescriptor() { FilePath = filename, Index = loadImage(file, dp), Preview = file };
                 }
             }
             catch (FileNotFoundException e)

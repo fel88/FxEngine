@@ -333,11 +333,10 @@ namespace FxEngine.Loaders.OBJ
                     string temp = line.Substring("mtllib ".Length);
 
                     mtllibPath = temp;
-                    var d = new FileInfo(path);
-                    var name = d.DirectoryName;
+                    var dn = dp.GetDirectoryName(path);                    
                     var curd = Directory.GetCurrentDirectory();
                     //Directory.SetCurrentDirectory(name);
-                    mat.LoadMaterials(name, mtllibPath.Replace("\r", ""), dp);
+                    mat.LoadMaterials(dn, mtllibPath.Replace("\r", ""), dp);
                     // Directory.SetCurrentDirectory(curd);
 
                     //mat.loadMaterials(mtllibPath.Replace("\r", ""));

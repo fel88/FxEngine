@@ -102,7 +102,7 @@ namespace FxEngineEditor
                 listView2.Items.Add(new ListViewItem(new string[] { item.Id + "", item.Name }) { Tag = item });
             }
         }
-        
+
         float startPosX;
         float startPosY;
         Vector3 cameraFromStart;
@@ -186,7 +186,7 @@ namespace FxEngineEditor
             var cp = gl.PointToClient(Cursor.Position);
 
             var f = GetFloorPosition();
-            return new PointF(f.X, f.Y);            
+            return new PointF(f.X, f.Y);
         }
 
         public PointF GetPositionGridSnap()
@@ -322,7 +322,7 @@ namespace FxEngineEditor
         {
             var curp = Cursor.Position;
 
-            MouseRay mr = new MouseRay(gl.PointToClient(curp));            
+            MouseRay mr = new MouseRay(gl.PointToClient(curp));
             var nearPoint3D = mr.Start;
             var dir1 = mr.Dir;
             //find intersection with plane
@@ -357,8 +357,8 @@ namespace FxEngineEditor
                 {
                     BrushModel.MatrixDriver.Scale = startScale + (startPosY - pos.Y);
                 }
-            }            
-            
+            }
+
             if (IsKeyPressed(Keys.PageDown))
             {
                 camera.CamFrom += camera.CamUp * 10;
@@ -370,7 +370,7 @@ namespace FxEngineEditor
 
             }
             if (IsKeyPressed(Keys.Home))
-            {                
+            {
                 var dir2 = camera.CamFrom - camera.CamTo;
                 dir2 = dir2 * Matrix3.CreateRotationZ(0.03f);
                 camera.CamFrom = camera.CamTo + dir2;
@@ -421,7 +421,7 @@ namespace FxEngineEditor
             }
 
 
-            if (!loaded) 
+            if (!loaded)
                 return;
 
             UpdateKeys();
@@ -449,18 +449,18 @@ namespace FxEngineEditor
             GL.Enable(EnableCap.DepthTest);
 
             camera.Setup(gl);
-            MouseRay.UpdateMatrices();      
+            MouseRay.UpdateMatrices();
 
             GL.Enable(EnableCap.Lighting);
 
             GL.ShadeModel(ShadingModel.Smooth);
             float[] mat_specular = { 1.0f, 1.0f, 1.0f, 1.0f };
             float[] mat_shininess = { 50.0f };
-                        
+
             GL.Enable(EnableCap.ColorMaterial);
-            
+
             GL.PushMatrix();
-            GL.Rotate(rotation, Vector3.UnitZ); 
+            GL.Rotate(rotation, Vector3.UnitZ);
             ls.Setup(0);
 
             DrawAxis();
@@ -497,14 +497,14 @@ namespace FxEngineEditor
 
                 GL.MultMatrix(ref BrushModel.Matrix);
 
-                BrushModel.Blueprint.Model.DrawOldStyle();
+                BrushModel.Blueprint.Draw(true, null, -1);
                 GL.PopMatrix();
                 //GL.Color3(Color.White);
             }
 
 
             if (Level != null)
-            {                
+            {
                 Level.Draw(camera, oldStyleDraw);
                 Level.DrawTiles(camera);
             }
@@ -550,7 +550,7 @@ namespace FxEngineEditor
             var modelview = Matrix4.LookAt(new Vector3(0, 0, 1000), new Vector3(), Vector3.UnitY);
             GL.MatrixMode(MatrixMode.Modelview);
             GL.LoadMatrix(ref modelview);
-            
+
             float tscl = 0.5f;
 
             tr.SetGamma(0.2f);
@@ -574,7 +574,7 @@ namespace FxEngineEditor
 
         float dt = 100;
         SdfTextRoutine tr = new SdfTextRoutine();
-        
+
         void gl_Paint(object sender, PaintEventArgs e)
         {
             Stopwatch sw = new Stopwatch();
@@ -597,7 +597,7 @@ namespace FxEngineEditor
         {
 
         }
-        
+
 
         public GameLevel Level;
         private void newToolStripMenuItem_Click(object sender, EventArgs e)

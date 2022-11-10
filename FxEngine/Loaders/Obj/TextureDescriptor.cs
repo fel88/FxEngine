@@ -6,5 +6,6 @@ namespace FxEngine.Loaders.OBJ
     {
         public int Index { get; set; }
         public Bitmap Preview { get; set; }
+        public string FilePath;
     }
 }

@@ -140,5 +140,10 @@ namespace FxEngine.Assets
         {
             throw new NotImplementedException();
         }
+
+        public bool IsFileExists(string amb1)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

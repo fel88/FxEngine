@@ -235,7 +235,7 @@ namespace FxEngine
                     var path2 = Path.Combine(datap.GetDirectoryName(fileName), filePath);
 
                     var obj = ObjVolume.LoadFromFile(path2, mtr4, datap);
-                    var t = new ModelBlueprint(nm, obj);
+                    var t = new ObjModelBlueprint(nm, obj);
                     t.Id = int.Parse(item.Attribute("id").Value);
                     //t.FilePath = (item.Attribute("path").Value);
                     t.FilePath = path2;
@@ -243,7 +243,7 @@ namespace FxEngine
                 }
                 if (filePath.EndsWith("dae"))
                 {
-                    ModelBlueprint t = new ModelBlueprint(nm);
+                    ColladaModelBlueprint t = new ColladaModelBlueprint(nm);
                     ret.AddModel(t);
                     t.Id = int.Parse(item.Attribute("id").Value);
                     t.FilePath = (item.Attribute("path").Value);
@@ -535,10 +535,7 @@ namespace FxEngine
             }
             foreach (var m in models)
             {
-                if (m.Model != null)
-                {
-                    m.Model.InitLibraries();
-                }
+                m.Init();                
             }
         }
 

@@ -33,6 +33,8 @@
             this.dfsdfToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.sdfsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.saveAsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.zipAssetToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.loadToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.recentLibsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -47,8 +49,6 @@
             this.toolStripButton6 = new System.Windows.Forms.ToolStripButton();
             this.toolStripButton7 = new System.Windows.Forms.ToolStripButton();
             this.toolStripButton8 = new System.Windows.Forms.ToolStripButton();
-            this.saveAsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.zipAssetToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -91,6 +91,22 @@
             this.saveToolStripMenuItem.Text = "Save";
             this.saveToolStripMenuItem.Click += new System.EventHandler(this.saveToolStripMenuItem_Click);
             // 
+            // saveAsToolStripMenuItem
+            // 
+            this.saveAsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.zipAssetToolStripMenuItem});
+            this.saveAsToolStripMenuItem.Name = "saveAsToolStripMenuItem";
+            this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.saveAsToolStripMenuItem.Text = "Save as";
+            this.saveAsToolStripMenuItem.Click += new System.EventHandler(this.saveAsToolStripMenuItem_Click);
+            // 
+            // zipAssetToolStripMenuItem
+            // 
+            this.zipAssetToolStripMenuItem.Name = "zipAssetToolStripMenuItem";
+            this.zipAssetToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.zipAssetToolStripMenuItem.Text = "zip asset";
+            this.zipAssetToolStripMenuItem.Click += new System.EventHandler(this.zipAssetToolStripMenuItem_Click);
+            // 
             // loadToolStripMenuItem
             // 
             this.loadToolStripMenuItem.Name = "loadToolStripMenuItem";
@@ -117,14 +133,14 @@
             // binaryAssetToolStripMenuItem
             // 
             this.binaryAssetToolStripMenuItem.Name = "binaryAssetToolStripMenuItem";
-            this.binaryAssetToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.binaryAssetToolStripMenuItem.Size = new System.Drawing.Size(148, 22);
             this.binaryAssetToolStripMenuItem.Text = "binary asset";
             this.binaryAssetToolStripMenuItem.Click += new System.EventHandler(this.binaryAssetToolStripMenuItem_Click);
             // 
             // archivedAssetToolStripMenuItem
             // 
             this.archivedAssetToolStripMenuItem.Name = "archivedAssetToolStripMenuItem";
-            this.archivedAssetToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.archivedAssetToolStripMenuItem.Size = new System.Drawing.Size(148, 22);
             this.archivedAssetToolStripMenuItem.Text = "archived asset";
             this.archivedAssetToolStripMenuItem.Click += new System.EventHandler(this.archivedAssetToolStripMenuItem_Click);
             // 
@@ -229,21 +245,6 @@
             this.toolStripButton8.Size = new System.Drawing.Size(92, 22);
             this.toolStripButton8.Text = "Asset navigator";
             this.toolStripButton8.Click += new System.EventHandler(this.toolStripButton8_Click);
-            // 
-            // saveAsToolStripMenuItem
-            // 
-            this.saveAsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.zipAssetToolStripMenuItem});
-            this.saveAsToolStripMenuItem.Name = "saveAsToolStripMenuItem";
-            this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.saveAsToolStripMenuItem.Text = "Save as";
-            // 
-            // zipAssetToolStripMenuItem
-            // 
-            this.zipAssetToolStripMenuItem.Name = "zipAssetToolStripMenuItem";
-            this.zipAssetToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.zipAssetToolStripMenuItem.Text = "zip asset";
-            this.zipAssetToolStripMenuItem.Click += new System.EventHandler(this.zipAssetToolStripMenuItem_Click);
             // 
             // Form1
             // 

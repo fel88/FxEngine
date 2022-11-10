@@ -163,9 +163,9 @@ namespace FxEngineEditor
             if (CurrentBlueprint != null)
             {
 
-                if (CurrentBlueprint.Model != null)
+                if (CurrentBlueprint is ColladaModelBlueprint cmb)
                 {
-                    var clm = CurrentBlueprint.Model;
+                    var clm = cmb.Model;
                     if (clm.Scenes.First().Nodes.Any(z => z.Controller != null))
                     {
                         var cntrl = clm.Scenes.First().Nodes.First(z => z.Controller != null).Controller;
@@ -181,14 +181,14 @@ namespace FxEngineEditor
 
                     clm.DrawOldStyle();
                 }
-                else
+                else if(CurrentBlueprint is ObjModelBlueprint omb)
                 {
-                    var bboxes = CurrentBlueprint.Objs.Select(z => z.GetBoundingBox(Transform)).ToArray();
+                    var bboxes = omb.Objs.Select(z => z.GetBoundingBox(Transform)).ToArray();
                     Vector3 mins = new Vector3(bboxes.Min(z => z.Position.X), bboxes.Min(z => z.Position.Y), bboxes.Min(z => z.Position.Z));
                     Vector3 maxs = new Vector3(bboxes.Max(z => z.Position.X + z.Size.X), bboxes.Max(z => z.Position.Y + z.Size.Y), bboxes.Max(z => z.Position.Z + z.Size.Z));
                     BoundingBox bbox = new BoundingBox() { Position = mins, Size = maxs - mins };
                     label2.Text = $"x:{bbox.Size.X} y:{bbox.Size.Y} z:{bbox.Size.Z}";
-                    foreach (var v in CurrentBlueprint.Objs)
+                    foreach (var v in omb.Objs)
                     {
                         var model = v;
 
@@ -323,18 +323,16 @@ namespace FxEngineEditor
             if (CurrentBlueprint != null)
             {
                 nm = CurrentBlueprint.Name;
-
-
-
             }
+
             tr.DrawText("name: " + nm, new PointF(0, 0));
             if (CurrentBlueprint != null)
             {
-                if (CurrentBlueprint.Model == null)
+                if ((CurrentBlueprint is ObjModelBlueprint omb))
                 {
                     GL.Translate(0, -60, 0);
 
-                    var bboxes = CurrentBlueprint.Objs.Select(z => z.GetBoundingBox(Transform)).ToArray();
+                    var bboxes = omb.Objs.Select(z => z.GetBoundingBox(Transform)).ToArray();
                     Vector3 mins = new Vector3(bboxes.Min(z => z.Position.X), bboxes.Min(z => z.Position.Y), bboxes.Min(z => z.Position.Z));
                     Vector3 maxs = new Vector3(bboxes.Max(z => z.Position.X + z.Size.X), bboxes.Max(z => z.Position.Y + z.Size.Y), bboxes.Max(z => z.Position.Z + z.Size.Z));
                     BoundingBox bbox = new BoundingBox() { Position = mins, Size = maxs - mins };
@@ -410,10 +408,10 @@ namespace FxEngineEditor
         public void UpdateObjsList()
         {
             listView2.Items.Clear();
-            if (CurrentBlueprint.Model != null) { }
-            else
+            if (CurrentBlueprint is ColladaModelBlueprint) { }
+            else if(CurrentBlueprint is ObjModelBlueprint omb)
             {
-                foreach (var item in CurrentBlueprint.Objs)
+                foreach (var item in omb.Objs)
                 {
                     listView2.Items.Add(new ListViewItem(new string[] { item.Name + ".." }) { Tag = item });
                 }
@@ -546,7 +544,7 @@ namespace FxEngineEditor
 
             var ll = (ObjVolume.LoadFromFile(ofd.FileName, Matrix4.Identity));
             var ff = new FileInfo(ofd.FileName);
-            Static.Library.AddModel(new FxEngine.ModelBlueprint("obj export: " + ff.Name, ll) { Id = Static.Library.ModelNewId });
+            Static.Library.AddModel(new ObjModelBlueprint("obj export: " + ff.Name, ll) { Id = Static.Library.ModelNewId });
 
             UpdatePrefabsList();
         }
@@ -561,7 +559,7 @@ namespace FxEngineEditor
             var clm = ColladaImporter.Load(ofd.FileName, new PhysicalFilesystemDataProvider());
             clm.InitLibraries();
 
-            var mb = new FxEngine.ModelBlueprint("collada export: " + fi.Name, fi.FullName) { Id = Static.Library.ModelNewId };
+            var mb = new ColladaModelBlueprint("collada export: " + fi.Name, fi.FullName) { Id = Static.Library.ModelNewId };
             mb.Model = clm;
             Static.Library.AddModel(mb);
 
@@ -577,14 +575,16 @@ namespace FxEngineEditor
 
         private void exportToColladaToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (CurrentBlueprint == null) return;
+            if (CurrentBlueprint == null || !(CurrentBlueprint is ObjModelBlueprint omb)) 
+                return;
+
             SaveFileDialog sfd = new SaveFileDialog();
             sfd.InitialDirectory = Static.Library.LibraryPath;
             sfd.DefaultExt = ".dae";
             sfd.Filter = "COLLADA files (*.dae)|*.dae";
             if (sfd.ShowDialog() == DialogResult.OK)
             {
-                ColladaRoutine.Export(CurrentBlueprint, sfd.FileName);
+                ColladaRoutine.Export(omb, sfd.FileName);
             }
         }
 

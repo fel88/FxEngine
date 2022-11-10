@@ -42,7 +42,7 @@ namespace FxEngineEditor
             sb.AppendLine("</source>");
         }
 
-        public static void Export(ModelBlueprint model, string path)
+        public static void Export(ObjModelBlueprint model, string path)
         {
             StringBuilder sb = new StringBuilder();
             sb.AppendLine("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
