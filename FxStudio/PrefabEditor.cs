@@ -1,10 +1,9 @@
 ﻿using FxEngine;
-using FxEngine.Assets;
 using FxEngine.Cameras;
 using FxEngine.Fonts.SDF;
 using FxEngine.Loaders.Collada;
 using FxEngine.Loaders.OBJ;
-using OpenTK;
+using OpenTK.Mathematics;
 using OpenTK.Graphics.OpenGL;
 using System;
 using System.Collections.Generic;
@@ -12,10 +11,9 @@ using System.Data;
 using System.Drawing;
 using System.Globalization;
 using System.IO;
-using System.IO.Ports;
 using System.Linq;
 using System.Windows.Forms;
-using System.Xml.Linq;
+using OpenTK.GLControl;
 
 namespace FxEngineEditor
 {
@@ -31,7 +29,13 @@ namespace FxEngineEditor
             camera.CamFrom = new Vector3(-50, -50, 50);
             camera.CamTo = new Vector3(0, 0, 0);
 
-            gl = new GLControl(new OpenTK.Graphics.GraphicsMode(32, 24, 0, 8));
+            GLControlSettings settings = new GLControlSettings();
+            settings.NumberOfSamples = 8;
+            settings.StencilBits = 0;
+            settings.DepthBits = 24;
+            settings.Profile = OpenTK.Windowing.Common.ContextProfile.Compatability;
+            gl = new OpenTK.GLControl.GLControl(settings);
+            //gl = new GLControl(new OpenTK.Graphics.GraphicsMode(32, 24, 0, 8));
             gl.Margin = new Padding(0);
 
             timer1.Interval = 10;

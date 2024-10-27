@@ -1,23 +1,30 @@
 ﻿using FxEngine.Tiles;
-using OpenTK;
+using OpenTK.Mathematics;
 using OpenTK.Graphics.OpenGL;
 using System;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using OpenTK.GLControl;
 
 namespace FxEngineEditor
 {
     public partial class TileEditor : Form
     {
-        GLControl gl;
+        OpenTK.GLControl.GLControl gl;
 
         public TileEditor()
         {
             InitializeComponent();
             UpdateList();
 
-            gl = new OpenTK.GLControl(new OpenTK.Graphics.GraphicsMode(32, 24, 0, 8));
+            GLControlSettings settings = new GLControlSettings();
+            settings.NumberOfSamples = 8;
+            settings.StencilBits = 0;
+            settings.DepthBits = 24;
+            settings.Profile = OpenTK.Windowing.Common.ContextProfile.Compatability;            
+            gl = new OpenTK.GLControl.GLControl(settings);
+            //gl = new OpenTK.GLControl.GLControl(new OpenTK.Graphics.GraphicsMode(32, 24, 0, 8));
             // 
             gl.Margin = new Padding(0);
 

@@ -9,7 +9,7 @@ namespace FxEngineEditor
         public GuiEditor()
         {
             InitializeComponent();
-            OpenTK.GLControl c = new OpenTK.GLControl();
+            OpenTK.GLControl.GLControl c = new OpenTK.GLControl.GLControl();
             c.Dock = DockStyle.Fill;
             tableLayoutPanel1.Controls.Add(c, 0, 1);
             dc.GameWindow = c;

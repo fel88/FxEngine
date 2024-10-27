@@ -5,20 +5,23 @@ using FxEngine.Shaders;
 using FxEngine.Tiles;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
-using OpenTK.Input;
+using OpenTK.Mathematics;
+using OpenTK.Windowing.Desktop;
+using OpenTK.Windowing.GraphicsLibraryFramework;
 using System;
 using System.Diagnostics;
 using System.Drawing;
 using System.Globalization;
 using System.Linq;
 using System.Windows.Forms;
-using ModelInstance = FxEngine.ModelInstance;
+using Keys = OpenTK.Windowing.GraphicsLibraryFramework.Keys;
+
 namespace FxEngineEditor
 {
     public partial class LevelEditor : Form
     {
-        GLControl gl;
-
+        OpenTK.GLControl.GLControl gl;
+     
         public LevelEditor()
         {
 
@@ -30,7 +33,14 @@ namespace FxEngineEditor
             UpdateTilesList();
             UpdateModelsList();
             UpdateLevels();
-            gl = new OpenTK.GLControl(new OpenTK.Graphics.GraphicsMode(32, 24, 0, 8));
+            OpenTK.GLControl.GLControlSettings settings = new OpenTK.GLControl.GLControlSettings();
+            settings.NumberOfSamples = 8;
+            settings.StencilBits = 0;
+            settings.DepthBits = 24;
+            settings.Profile = OpenTK.Windowing.Common.ContextProfile.Compatability;
+            gl = new OpenTK.GLControl.GLControl(settings);
+
+            //gl = new OpenTK.GLControl.GLControl(new OpenTK.Graphics.GraphicsMode(32, 24, 0, 8));
             // 
             gl.Margin = new Padding(0);
 
@@ -83,9 +93,9 @@ namespace FxEngineEditor
                 keys[code] = true;
             }
         }
-
-        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+        protected override bool ProcessCmdKey(ref Message msg, System.Windows.Forms.Keys keyData)
         {
+          
             int code = (int)keyData;
             if (code >= 0 && code <= 255)
             {
@@ -183,7 +193,9 @@ namespace FxEngineEditor
             {
                 return GetPositionGridSnap();
             }
-            var cp = gl.PointToClient(Cursor.Position);
+        
+            var v = System.Windows.Forms.Cursor.Position;
+            var cp = gl.PointToClient(v);
 
             var f = GetFloorPosition();
             return new PointF(f.X, f.Y);
@@ -197,7 +209,7 @@ namespace FxEngineEditor
 
         public Point GetRawPositionGridSnap()
         {
-            var cp = gl.PointToClient(Cursor.Position);
+            var cp = gl.PointToClient(System.Windows.Forms.Cursor.Position);
             float cpx = cp.X - gl.Width / 2;
             float cpy = -cp.Y + gl.Height / 2;
             cpx += (int)camera.CamTo.X;
@@ -260,9 +272,10 @@ namespace FxEngineEditor
         Camera camera = new Camera();
         void Form1_MouseWheel(object sender, System.Windows.Forms.MouseEventArgs e)
         {
+            
             float zoomK = 100;
             if (
-     gl.ClientRectangle.IntersectsWith(new Rectangle(gl.PointToClient(Cursor.Position),
+     gl.ClientRectangle.IntersectsWith(new Rectangle(gl.PointToClient(System.Windows.Forms.Cursor.Position),
                                                               new Size(1, 1))))
             {
                 if (e.Delta > 0)
@@ -312,7 +325,7 @@ namespace FxEngineEditor
         {
             get
             {
-                return gl.PointToClient(Cursor.Position);
+                return gl.PointToClient(System.Windows.Forms.Cursor.Position);
             }
         }
         bool drag = false;
@@ -320,7 +333,7 @@ namespace FxEngineEditor
 
         public Vector2 GetFloorPosition()
         {
-            var curp = Cursor.Position;
+            var curp = System.Windows.Forms.Cursor.Position;
 
             MouseRay mr = new MouseRay(gl.PointToClient(curp));
             var nearPoint3D = mr.Start;
@@ -397,12 +410,13 @@ namespace FxEngineEditor
                 firstInited = false;
                 ModelShader.Init();
             }
-            var state = GamePad.GetState(0);
+            
+            /*var state = GamePad.GetState(0);
             listBox1.Items.Clear();
             listBox1.Items.Add(state.Buttons.A);
             listBox1.Items.Add(state.Buttons.B);
             listBox1.Items.Add(state.Buttons.X);
-            listBox1.Items.Add(state.ThumbSticks.Left);
+            listBox1.Items.Add(state.ThumbSticks.Left);*/
             if (Level != null && checkBox3.Checked)
             {
                 //var p = Level.Models.First(z => z.Blueprint.Name.Contains("actor"));
@@ -410,14 +424,14 @@ namespace FxEngineEditor
                 p.UseMatrixDriver = true;
                 p.MatrixDriver.Scale = 20;
                 p.MatrixDriver.PositionZ = 80;
-                var vec = state.ThumbSticks.Left;
+                /*var vec = state.ThumbSticks.Left;
                 if (vec.Length > 0.1)
                 {
                     var atan2 = Math.Atan2(vec.Y, vec.X);
                     p.MatrixDriver.RotationZ = (float)atan2 * 180.0f / (float)Math.PI;
 
                     p.MatrixDriver.position -= 6 * new Vector3(vec.X, vec.Y, 0);
-                }
+                }*/
             }
 
 
