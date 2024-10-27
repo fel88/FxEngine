@@ -44,6 +44,9 @@ namespace FxEngine.Shaders
             {
                 foreach (var objVolumeFace in objVolume.faces)
                 {
+                    if (objVolumeFace.Material == null) 
+                        continue;
+
                     if (!dic1.ContainsKey(objVolumeFace.Material))
                     {
                         dic1.Add(objVolumeFace.Material, new List<FaceItem2>());

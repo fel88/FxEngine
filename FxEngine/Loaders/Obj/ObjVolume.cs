@@ -18,9 +18,9 @@ namespace FxEngine.Loaders.OBJ
 
         public object Tag { get; set; }
 
-        
+
         public int ID_VBO;
-        
+
         public int ID_EBO;
         public int ID_EBO_Wireframe;
         public int IndiciesWireframeLength;
@@ -28,7 +28,7 @@ namespace FxEngine.Loaders.OBJ
         public uint[] Indices;
 
         public ModelPathItem Parent;
-        
+
         public string Name;
         public Vector3[] vertices;
         public Vector3[] normals;
@@ -38,7 +38,7 @@ namespace FxEngine.Loaders.OBJ
         public Vector3[] origNorms;
         Vector3[] colors;
         public Vector2[] texturecoords;
-        
+
         public static bool ReverseVertexOrder { get; set; }
         public List<FaceItem2> faces = new List<FaceItem2>();
 
@@ -47,7 +47,7 @@ namespace FxEngine.Loaders.OBJ
         public override int ColorDataCount { get { return colors.Length; } }
         public float? Volume { get; set; }
 
-      
+
         public override Vector3[] GetVerts()
         {
             List<Vector3> verts = new List<Vector3>();
@@ -62,7 +62,7 @@ namespace FxEngine.Loaders.OBJ
             return verts.Distinct().ToArray();
         }
 
-      
+
         public override int[] GetIndices(int offset = 0)
         {
             var gv = GetVerts().ToList();
@@ -72,18 +72,18 @@ namespace FxEngine.Loaders.OBJ
                 foreach (var tempVertex in faceItem2.ParentFace.V)
                 {
                     ind.Add(tempVertex.Vertex);
-                }                
+                }
             }
-            return ind.ToArray();            
+            return ind.ToArray();
         }
 
-     
+
         public override Vector3[] GetColorData()
         {
             return new Vector3[ColorDataCount];
         }
 
-   
+
         public override Vector2[] GetTextureCoords()
         {
             List<Vector2> coords = new List<Vector2>();
@@ -104,7 +104,7 @@ namespace FxEngine.Loaders.OBJ
             ModelMatrix = Matrix4.CreateScale(Scale) * Matrix4.CreateRotationX(Rotation.X) * Matrix4.CreateRotationY(Rotation.Y) * Matrix4.CreateRotationZ(Rotation.Z) * Matrix4.CreateTranslation(Position);
         }
 
-     
+
         public static ObjVolume[] LoadFromFile(string filename, Matrix4 loadTransform, IDataProvider dp = null)
         {
             if (dp == null)
@@ -112,28 +112,28 @@ namespace FxEngine.Loaders.OBJ
                 dp = new PhysicalFilesystemDataProvider();
             }
             ObjVolume[] obj;
-            
-            var fs = dp.GetFileAsString(filename);            
-            obj = LoadFromString(fs, filename, loadTransform, dp);            
+
+            var fs = dp.GetFileAsString(filename);
+            obj = LoadFromString(fs, filename, loadTransform, dp);
 
             return obj;
         }
 
 
         public static ObjVolume[] LoadFromString(string obj, string path, Matrix4 loadTransform, IDataProvider dp)
-        {            
+        {
             List<string> lines = new List<string>(obj.Split('\n'));
-            
+
             List<Vector3> verts = new List<Vector3>();
             List<Vector3> vertn = new List<Vector3>();
             List<Vector2> texs = new List<Vector2>();
             List<FaceItem> faces = new List<FaceItem>();
 
             // Base values            
-            ObjVolume vol = null;            
+            ObjVolume vol = null;
             string lastMtl = "";
             string mtllibPath = "";
-            
+
             List<ObjVolume> ret = new List<ObjVolume>();
             MaterialStuff mat = new MaterialStuff();
             int vstart = 0;
@@ -146,7 +146,7 @@ namespace FxEngine.Loaders.OBJ
                 if (line.StartsWith("o ")) // object def
                 {
                     if (vol != null)
-                    {                        
+                    {
                         List<int> ind = new List<int>();
                         List<Vector3> vvrts = new List<Vector3>();
                         List<Vector3> vnrts = new List<Vector3>();
@@ -195,8 +195,19 @@ namespace FxEngine.Loaders.OBJ
                                 fv.Add(v1);
                             }
 
-                            vol.faces.Add(new FaceItem2() { ParentFace = face, Parent = vol, Vertexes = fv.ToArray(), Material = mat.materials[face.Material] });
-                        }                                                
+                            var ff = new FaceItem2()
+                            {
+                                ParentFace = face,
+                                Parent = vol,
+                                Vertexes = fv.ToArray()
+                            };
+
+                            if (mat.materials.ContainsKey(face.Material))
+                                ff.Material = mat.materials[face.Material];
+
+                            vol.faces.Add(ff);
+
+                        }
                     }
                     vol = new ObjVolume();
 
@@ -333,7 +344,7 @@ namespace FxEngine.Loaders.OBJ
                     string temp = line.Substring("mtllib ".Length);
 
                     mtllibPath = temp;
-                    var dn = dp.GetDirectoryName(path);                    
+                    var dn = dp.GetDirectoryName(path);
                     var curd = Directory.GetCurrentDirectory();
                     //Directory.SetCurrentDirectory(name);
                     mat.LoadMaterials(dn, mtllibPath.Replace("\r", ""), dp);
@@ -403,7 +414,14 @@ namespace FxEngine.Loaders.OBJ
             texs.Add(new Vector2());
             if (vol != null)
             {
-                LoadVol(vol, faces, verts, vertn, texs, mat, vstart);
+                try
+                {
+                    LoadVol(vol, faces, verts, vertn, texs, mat, vstart);
+                }
+                catch (Exception ex)
+                {
+
+                }
             }
 
             foreach (var objVolume in ret)

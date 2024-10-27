@@ -191,6 +191,8 @@ namespace FxEngineEditor
                     foreach (var v in omb.Objs)
                     {
                         var model = v;
+                        if (model.GetVerts().Length == 0) 
+                            continue;
 
                         var maxx = model.GetVerts().Max(x => x.X);
                         var minx = model.GetVerts().Min(x => x.X);
