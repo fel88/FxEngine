@@ -1,16 +1,15 @@
-<Project Sdk="Microsoft.NET.Sdk">
-
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <UseWindowsForms>true</UseWindowsForms>
     <Authors>fel88</Authors>
     <Company>https://github.com/fel88</Company>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/fel88/FxEngine</PackageProjectUrl>
     <RepositoryUrl>https://github.com/fel88/FxEngine</RepositoryUrl>
     <Description>3D game engine</Description>
-    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
-
   <ItemGroup>
     <None Remove="Graphics\Shaders\font2d.fs" />
     <None Remove="Graphics\Shaders\font2d.vs" />
@@ -29,7 +28,6 @@
     <None Remove="Graphics\Shaders\sdf.vs" />
     <None Remove="Graphics\Shaders\vertexShader1.glsl" />
   </ItemGroup>
-
   <ItemGroup>
     <EmbeddedResource Include="Graphics\Shaders\font2d.fs" />
     <EmbeddedResource Include="Graphics\Shaders\font2d.vs" />
@@ -48,18 +46,12 @@
     <EmbeddedResource Include="Graphics\Shaders\sdf.vs" />
     <EmbeddedResource Include="Graphics\Shaders\vertexShader1.glsl" />
   </ItemGroup>
-
   <ItemGroup>
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
-    <PackageReference Include="OpenTK" Version="3.0.1" />
-    <PackageReference Include="OpenTK.GLControl" Version="3.0.1" />
-    <PackageReference Include="System.Drawing.Common" Version="6.0.0" />
+    <PackageReference Include="OpenTK.GLControl" Version="3.3.3" />
+    <PackageReference Include="System.Drawing.Common" Version="8.0.10" />
   </ItemGroup>
-
   <ItemGroup>
-    <Reference Include="System.Windows.Forms">
-      <HintPath>..\..\..\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.5.2\System.Windows.Forms.dll</HintPath>
-    </Reference>
+    
   </ItemGroup>
-
 </Project>

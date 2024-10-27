@@ -541,8 +541,10 @@ namespace FxEngineEditor
         private void objToolStripMenuItem1_Click(object sender, EventArgs e)
         {
             OpenFileDialog ofd = new OpenFileDialog();
+            ofd.Filter = "OBJ models (*.obj)|*.obj";
 
-            if (ofd.ShowDialog() != DialogResult.OK) return;
+            if (ofd.ShowDialog() != DialogResult.OK)
+                return;
 
             var ll = (ObjVolume.LoadFromFile(ofd.FileName, Matrix4.Identity));
             var ff = new FileInfo(ofd.FileName);
