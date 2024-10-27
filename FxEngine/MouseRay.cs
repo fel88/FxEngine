@@ -1,6 +1,7 @@
 ﻿using FxEngine.Cameras;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
+using OpenTK.Mathematics;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -62,7 +63,7 @@ namespace FxEngine
             float MinDepth = 1;
             float thisX = 0;
             float thisY = 0;
-            Matrix4 matrix = OpenTK.Matrix4.Mult(Matrix4.Mult(world, view), projection);
+            Matrix4 matrix = Matrix4.Mult(Matrix4.Mult(world, view), projection);
             //Vector3 vector = Vector3.Transform(source, matrix);
             Vector4 vector = (new Vector4(source, 1) * matrix);
             float a = (((source.X * matrix.M14) + (source.Y * matrix.M24) + (source.Z * matrix.M34))) + matrix.M44;
@@ -125,8 +126,10 @@ namespace FxEngine
             Matrix4 viewInv = Matrix4.Invert(view);
             Matrix4 projInv = Matrix4.Invert(projection);
 
-            Vector4.Transform(ref vec, ref projInv, out vec);
-            Vector4.Transform(ref vec, ref viewInv, out vec);
+            vec *= projInv;
+            vec *= viewInv;
+            //Vector4.Transform(ref vec, ref projInv, out vec);
+            //Vector4.Transform(ref vec, ref viewInv, out vec);
 
             if (vec.W > 0.000001f || vec.W < -0.000001f)
             {

@@ -1,6 +1,6 @@
 ﻿using FxEngine.Fonts.SDF;
 using FxEngine.Shaders;
-using OpenTK;
+using OpenTK.Mathematics;
 using OpenTK.Graphics.OpenGL;
 using System;
 using System.IO;

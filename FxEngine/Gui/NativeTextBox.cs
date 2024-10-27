@@ -1,10 +1,10 @@
 ﻿using System.Linq;
 using OpenTK.Graphics.OpenGL;
 using System.Drawing;
-using OpenTK;
-using OpenTK.Input;
+using OpenTK.Mathematics;
 using System;
 using System.Diagnostics;
+using OpenTK.Windowing.GraphicsLibraryFramework;
 
 namespace FxEngine.Gui
 {
@@ -41,7 +41,7 @@ namespace FxEngine.Gui
             if (ev is KeyGlGuiEvent && Focused)
             {
                 var kev = ev as KeyGlGuiEvent;
-                if (kev.Key == Key.Enter)
+                if (kev.Key == Keys.Enter)
                 {
                     if (EnterAction != null)
                     {
@@ -50,33 +50,33 @@ namespace FxEngine.Gui
                     }
                 }
                 else
-                if (kev.Key == Key.Comma || kev.Key == Key.Period)
+                if (kev.Key == Keys.Comma || kev.Key == Keys.Period)
                 {
                     Text = Text.Insert(Position, ".");
                     Position++;
                 }
                 else
-                if (kev.Key >= Key.Number0 && kev.Key <= Key.Number9)
+                if (kev.Key >= Keys.KeyPad0 && kev.Key <= Keys.KeyPad9)
                 {
-                    var ind = (kev.Key - Key.Number0);
+                    var ind = (kev.Key - Keys.KeyPad0);
                     Text = Text.Insert(Position, (char)('0' + ind) + "");
                     Position++;
                 }
                 else
-                     if (kev.Key >= Key.Keypad0 && kev.Key <= Key.Keypad9)
+                     if (kev.Key >= Keys.KeyPad0 && kev.Key <= Keys.KeyPad9)
                 {
-                    var ind = (kev.Key - Key.Keypad0);
+                    var ind = (kev.Key - Keys.KeyPad0);
                     Text = Text.Insert(Position, (char)('0' + ind) + "");
                     Position++;
                 }
                 else
-                     if (kev.Key == Key.Left)
+                     if (kev.Key == Keys.Left)
                 {
                     Position--;
                     if (Position < 0) { Position = 0; }
                 }
                 else
-                     if (kev.Key == Key.Right)
+                     if (kev.Key == Keys.Right)
                 {
                     Position++;
                     if (Position > Text.Length)
@@ -85,7 +85,7 @@ namespace FxEngine.Gui
                     }
                 }
                 else
-                if (kev.Key == Key.BackSpace)
+                if (kev.Key == Keys.Backspace)
                 {
                     if (Text.Any() && Position > 0)
                     {
@@ -94,7 +94,7 @@ namespace FxEngine.Gui
                     }
                 }
                 else
-                if (kev.Key == Key.Delete)
+                if (kev.Key == Keys.Delete)
                 {
                     if (Text.Any() && Position < Text.Length)
                     {

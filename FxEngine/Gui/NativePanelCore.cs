@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using OpenTK.Graphics.OpenGL;
-using OpenTK;
+using OpenTK.Mathematics;
 
 namespace FxEngine.Gui
 {

@@ -1,5 +1,5 @@
 ﻿using FxEngine.Cameras;
-using OpenTK;
+using OpenTK.Mathematics;
 using OpenTK.Graphics.OpenGL;
 using System;
 using System.Collections.Generic;

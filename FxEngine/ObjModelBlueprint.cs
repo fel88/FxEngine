@@ -1,6 +1,6 @@
 ﻿using FxEngine.Loaders.OBJ;
 using FxEngine.Shaders;
-using OpenTK;
+using OpenTK.Mathematics;
 using System;
 using System.Collections.Generic;
 using System.Linq;

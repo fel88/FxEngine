@@ -1,4 +1,4 @@
-﻿using OpenTK;
+﻿using OpenTK.Mathematics;
 using System.Linq;
 
 namespace FxEngine.Loaders.Collada

@@ -1,10 +1,10 @@
 ﻿using FxEngine;
 using FxEngine.Gui;
-using OpenTK.Input;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 using System.Reflection;
+using OpenTK.Windowing.Common;
 
 namespace FxEngine
 {

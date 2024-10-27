@@ -1,8 +1,12 @@
 ﻿using OpenTK;
+using OpenTK.Mathematics;
 using System;
 using System.Drawing;
 using System.Windows.Forms;
 using FxEngine.Gui;
+using OpenTK.GLControl;
+using OpenTK.Windowing.Common;
+using OpenTK.Windowing.Desktop;
 
 namespace FxEngine.Cameras
 {
@@ -70,6 +74,7 @@ namespace FxEngine.Cameras
             control.KeyDown += Control_KeyDown;
             control.MouseWheel += Control_MouseWheel;
         }
+
         public override void Attach(GLControl control, Camera camera)
         {
             base.Attach(control, camera);
@@ -128,17 +133,20 @@ namespace FxEngine.Cameras
             control.MouseWheel -= Control_MouseWheel;
         }
 
-        private void Control_MouseWheel(object sender, OpenTK.Input.MouseWheelEventArgs e)
+        private void Control_MouseWheel(MouseWheelEventArgs e)
         {
-            if (!Enable) return;
-            MouseWheel(e.Delta);
+            if (!Enable) 
+                return;
+
+            //MouseWheel(e.Delta);
+            MouseWheel((int)e.OffsetY);
         }
 
         public Point PointToClient(Point p)
         {
             if (GameWindow != null)
             {
-                return GameWindow.PointToClient(p);
+                return GameWindow.PointToClient(p.ToVector2i()).ToPoint();
             }
             return GlControl.PointToClient(p);
         }
@@ -159,7 +167,7 @@ namespace FxEngine.Cameras
             {
                 if (GameWindow != null)
                 {
-                    return GameWindow.Width;
+                    return GameWindow.Width();
                 }
                 return GlControl.Width;
             }
@@ -171,7 +179,7 @@ namespace FxEngine.Cameras
             {
                 if (GameWindow != null)
                 {
-                    return GameWindow.ClientRectangle;
+                    return GameWindow.ClientRectangle.ToRectangle();
                 }
                 return GlControl.ClientRectangle;
             }
@@ -257,7 +265,7 @@ namespace FxEngine.Cameras
             }
         }
 
-        private void Control_KeyDown(object sender, OpenTK.Input.KeyboardKeyEventArgs e)
+        private void Control_KeyDown(KeyboardKeyEventArgs e)
         {
             if (e.Shift)
             {
@@ -265,7 +273,7 @@ namespace FxEngine.Cameras
             }
         }
 
-        private void Control_KeyUp(object sender, OpenTK.Input.KeyboardKeyEventArgs e)
+        private void Control_KeyUp(KeyboardKeyEventArgs e)
         {
             lshift = false;
         }
@@ -286,12 +294,12 @@ namespace FxEngine.Cameras
 
         public bool SnapMode = false;
         public bool SnapModePlane = false;
-        public void Control_MouseDown(object sender, OpenTK.Input.MouseEventArgs e)
+        public void Control_MouseDown(MouseButtonEventArgs e)
         {
             var ee = new LocalMouseEventState();
-            ee.IsLeftPressed = e.Mouse.LeftButton == OpenTK.Input.ButtonState.Pressed;
-            ee.IsRightPressed = e.Mouse.RightButton == OpenTK.Input.ButtonState.Pressed;
-            ee.IsMiddlePressed = e.Mouse.MiddleButton == OpenTK.Input.ButtonState.Pressed;
+            ee.IsLeftPressed = e.Button == OpenTK.Windowing.GraphicsLibraryFramework.MouseButton.Left && e.IsPressed;
+            ee.IsRightPressed = e.Button == OpenTK.Windowing.GraphicsLibraryFramework.MouseButton.Right && e.IsPressed;
+            ee.IsMiddlePressed = e.Button == OpenTK.Windowing.GraphicsLibraryFramework.MouseButton.Middle && e.IsPressed;
             MouseDown(ee);
         }
 
@@ -363,7 +371,7 @@ namespace FxEngine.Cameras
             {
                 if (GameWindow != null)
                 {
-                    return GameWindow.PointToClient(Cursor.Position);
+                    return GameWindow.PointToClient(Cursor.Position.ToVector2i()).ToPoint();
                 }
                 return GlControl.PointToClient(Cursor.Position);
             }
@@ -371,7 +379,7 @@ namespace FxEngine.Cameras
         bool drag = false;
         public bool drag2 = false;
 
-        private void Control_MouseUp(object sender, OpenTK.Input.MouseEventArgs e)
+        private void Control_MouseUp(MouseButtonEventArgs e)
         {
             drag = false;
             drag2 = false;

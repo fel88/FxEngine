@@ -2,7 +2,7 @@
 using FxEngine.Gui;
 using FxEngine.Loaders.Collada;
 using FxEngine.Tiles;
-using OpenTK;
+using OpenTK.Mathematics;
 using OpenTK.Graphics.OpenGL;
 using System;
 using System.Collections.Generic;

@@ -2,7 +2,7 @@
 using System.Linq;
 using OpenTK.Graphics.OpenGL;
 using System.Drawing;
-using OpenTK;
+using OpenTK.Mathematics;
 using FxEngine.Fonts.SDF;
 
 namespace FxEngine.Gui

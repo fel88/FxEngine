@@ -11,7 +11,7 @@ namespace FxEngine.Gui
 
         public override bool Focused { get => GameWindow.Focused; }
 
-        public GLControl GameWindow;
+        public OpenTK.GLControl.GLControl GameWindow;
         public override int Width { get => GameWindow.Width; set => GameWindow.Width = value; }
         public override int Height { get => GameWindow.Height; set => GameWindow.Height = value; }
 

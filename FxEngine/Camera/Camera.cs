@@ -1,7 +1,9 @@
 ﻿using System;
-using OpenTK;
 using OpenTK.Graphics.OpenGL;
+using OpenTK.Mathematics;
 using FxEngine.Gui;
+using OpenTK.Windowing.Desktop;
+using OpenTK.GLControl;
 
 namespace FxEngine.Cameras
 {
@@ -19,18 +21,18 @@ namespace FxEngine.Cameras
                 UpdateMatricies(cс.GameWindow);
             }
         }
-        public void UpdateMatricies(GameWindow glControl)
+        public void UpdateMatricies(OpenTK.Windowing.Desktop.GameWindow glControl)
         {
 
             viewport[0] = 0;
             viewport[1] = 0;
-            viewport[2] = glControl.Width;
-            viewport[3] = glControl.Height;
-            var aspect = glControl.Width / (float)glControl.Height;
+            viewport[2] = glControl.Width();
+            viewport[3] = glControl.Height();
+            var aspect = glControl.Width() / (float)glControl.Height();
             var o = Matrix4.CreateOrthographic(OrthoWidth, OrthoWidth / aspect, -25e4f, 25e4f);
 
             Matrix4 mp = Matrix4.CreatePerspectiveFieldOfView((float)(Fov * Math.PI / 180) * zoom,
-                glControl.Width / (float)glControl.Height, 1, 25e4f);
+                glControl.Width() / (float)glControl.Height(), 1, 25e4f);
 
 
             if (IsOrtho)
@@ -44,11 +46,11 @@ namespace FxEngine.Cameras
 
             }
 
-            Matrix4 modelview = Matrix4.LookAt(CamFrom, CamTo, CamUp);
+            OpenTK.Mathematics.Matrix4 modelview = OpenTK.Mathematics.Matrix4.LookAt(CamFrom, CamTo, CamUp);
             ViewMatrix = modelview;
         }
 
-        public void UpdateMatricies(GLControl glControl)
+        public void UpdateMatricies(OpenTK.GLControl.GLControl glControl)
         {
 
             viewport[0] = 0;
@@ -100,17 +102,17 @@ namespace FxEngine.Cameras
 
         public void SetupCore(GameWindow glControl)
         {
-            GL.Viewport(0, 0, glControl.Width, glControl.Height);
+            GL.Viewport(0, 0, glControl.Width(), glControl.Height());
             { var er = GL.GetError(); }
             viewport[0] = 0;
             viewport[1] = 0;
-            viewport[2] = glControl.Width;
-            viewport[3] = glControl.Height;
-            var aspect = glControl.Width / (float)glControl.Height;
+            viewport[2] = glControl.Width();
+            viewport[3] = glControl.Height();
+            var aspect = glControl.Width() / (float)glControl.Height();
             var o = Matrix4.CreateOrthographic(OrthoWidth, OrthoWidth / aspect, -25e4f, 25e4f);
 
             Matrix4 mp = Matrix4.CreatePerspectiveFieldOfView((float)(Fov * Math.PI / 180) * zoom,
-                glControl.Width / (float)glControl.Height, 1, 25e4f);
+                glControl.Width() / (float)glControl.Height(), 1, 25e4f);
 
 
             if (IsOrtho)
@@ -140,17 +142,17 @@ namespace FxEngine.Cameras
         public void Setup(GameWindow glControl)
         {
 
-            GL.Viewport(0, 0, glControl.Width, glControl.Height);
+            GL.Viewport(0, 0, glControl.Width(), glControl.Height());
 
             viewport[0] = 0;
             viewport[1] = 0;
-            viewport[2] = glControl.Width;
-            viewport[3] = glControl.Height;
-            var aspect = glControl.Width / (float)glControl.Height;
+            viewport[2] = glControl.Width();
+            viewport[3] = glControl.Height();
+            var aspect = glControl.Width() / (float)glControl.Height();
             var o = Matrix4.CreateOrthographic(OrthoWidth, OrthoWidth / aspect, -25e4f, 25e4f);
 
             Matrix4 mp = Matrix4.CreatePerspectiveFieldOfView((float)(Fov * Math.PI / 180) * zoom,
-                glControl.Width / (float)glControl.Height, 1, 25e4f);
+                glControl.Width() / (float)glControl.Height(), 1, 25e4f);
 
             GL.MatrixMode(MatrixMode.Projection);
 

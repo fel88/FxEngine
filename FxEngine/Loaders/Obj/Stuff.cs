@@ -2,24 +2,25 @@
 using System.Collections.Generic;
 using System.Text;
 using OpenTK;
+using OpenTK.Mathematics;
 
 namespace FxEngine.Loaders.OBJ
 {
     public class Stuff
     {
-        public static OpenTK.Quaternion ToQuaternion(object f)
+        public static Quaternion ToQuaternion(object f)
         {
             if (f is Quaternion)
             {
                 var q = (Quaternion)f;
-                return new OpenTK.Quaternion(q.X, q.Y, q.Z, q.W);
+                return new Quaternion(q.X, q.Y, q.Z, q.W);
             }
-            if (f is OpenTK.Quaternion)
+            if (f is Quaternion)
             {
-                return (OpenTK.Quaternion)f;
+                return (Quaternion)f;
             }
 
-            throw new ArgumentException("cant cast " + f.GetType().Name + " to opentk.quaternion");
+            throw new ArgumentException($"cant cast {f.GetType().Name} to opentk.quaternion");
         }
 
         public static Vector3 ToVector3(Vector3 position)

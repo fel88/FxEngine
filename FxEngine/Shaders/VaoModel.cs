@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using OpenTK;
+using OpenTK.Mathematics;
 using OpenTK.Graphics.OpenGL;
 using FxEngine.Loaders.OBJ;
 

@@ -67,7 +67,7 @@ namespace FxEngine
         {
             if (!SoundsEnable) return;
             Thread th = new Thread(() => {
-                using (AudioContext context = new AudioContext())
+                //using (AudioContext context = new AudioContext())
                 {
                     int buffer = AL.GenBuffer();
                     int source = AL.GenSource();
@@ -75,7 +75,7 @@ namespace FxEngine
 
                     int channels, bits_per_sample, sample_rate;
                     byte[] sound_data = LoadWave(File.Open(filename, FileMode.Open), out channels, out bits_per_sample, out sample_rate);
-                    AL.BufferData(buffer, GetSoundFormat(channels, bits_per_sample), sound_data, sound_data.Length, sample_rate);
+                    AL.BufferData(buffer, GetSoundFormat(channels, bits_per_sample), sound_data, sample_rate);
 
                     AL.Source(source, ALSourcei.Buffer, buffer);
                     AL.SourcePlay(source);

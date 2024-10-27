@@ -5,7 +5,7 @@ using System.Text;
 using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
 using System.Drawing;
-using OpenTK;
+using OpenTK.Mathematics;
 
 
 namespace FxEngine.Gui
