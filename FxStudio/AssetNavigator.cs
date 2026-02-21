@@ -1,6 +1,8 @@
 ﻿using FxEngine;
 using FxEngine.Assets;
+using OpenTK.Graphics.ES20;
 using System;
+using System.Collections.Generic;
 using System.Data.Odbc;
 using System.Drawing;
 using System.IO;
@@ -22,15 +24,7 @@ namespace FxEngineEditor
 
         private void toolStripButton1_Click(object sender, EventArgs e)
         {
-            OpenFileDialog ofd = new OpenFileDialog();
-            //ofd.Filter="FxEngine library (*.)"
-            if (ofd.ShowDialog() == DialogResult.OK)
-            {
 
-                Archive = new AssetArchive();
-                Archive.LoadFromBinaryFile(ofd.FileName);
-                UpdateFilesList();
-            }
         }
         /*public void AppendListDir(TreeNode tn, AssetDirectory d)
         {
@@ -302,6 +296,85 @@ namespace FxEngineEditor
             StaticData.DataProvider = Archive;
             Static.Library = GameResourcesLibrary.LoadFromXml(file.Path, Archive);
 
+        }
+
+        private void loadToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog ofd = new OpenFileDialog();
+            //ofd.Filter="FxEngine library (*.)"
+            if (ofd.ShowDialog() == DialogResult.OK)
+            {
+
+                Archive = new AssetArchive();
+                Archive.LoadFromBinaryFile(ofd.FileName);
+                UpdateFilesList();
+            }
+        }
+
+        private void saveAsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            SaveFileDialog sfd = new SaveFileDialog();
+            if (sfd.ShowDialog() != DialogResult.OK)
+                return;
+
+            Archive.SaveToFile(sfd.FileName);
+        }
+
+        private void replaceDataWithFileToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (listView1.SelectedItems.Count <= 0)
+                return;
+
+            var file = listView1.SelectedItems[0].Tag as AssetFile;
+            OpenFileDialog ofd = new OpenFileDialog();
+            ofd.FileName = file.Name;
+            if (ofd.ShowDialog() != DialogResult.OK)
+                return;
+
+            var data = File.ReadAllBytes(ofd.FileName);
+            file.Data = data;
+        }
+
+        private void editToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (listView1.SelectedItems.Count <= 0)
+                return;
+
+            var file = listView1.SelectedItems[0].Tag as AssetFile;
+            var d = AutoDialog.DialogHelpers.StartDialog();
+            d.AddStringField("name", "Name", file.Name);
+            d.AddStringField("path", "Path", file.Path);
+
+
+            if (!d.ShowDialog())
+                return;
+
+            file.Name = d.GetStringField("name");
+            file.Path = d.GetStringField("path");
+            UpdateFilesList();
+        }
+
+        private void addToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog ofd = new OpenFileDialog();
+            ofd.Multiselect = true;
+            if (ofd.ShowDialog() != DialogResult.OK)
+                return;
+
+            List<string> skipped = new List<string>();
+            for (int i = 0; i < ofd.FileNames.Length; i++)
+            {
+                if (Archive.Files.Any(z => z.Name == Path.GetFileName(ofd.FileNames[i])))
+                {
+                    skipped.Add(ofd.FileNames[i]);
+                    continue;
+                }
+                Archive.Files.Add(new AssetFile() { Name = Path.GetFileName(ofd.FileNames[i]), Path = ofd.FileNames[i], Data = File.ReadAllBytes(ofd.FileNames[i]) });
+            }
+            if (skipped.Count > 0)
+                GuiHelpers.ShowWarning($"skipped: ({skipped.Count}) {string.Join(", ", skipped)}", Text);
+
+            UpdateFilesList();
         }
     }
 }

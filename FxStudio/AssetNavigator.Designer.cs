@@ -32,7 +32,9 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(AssetNavigator));
             tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             toolStrip1 = new System.Windows.Forms.ToolStrip();
-            toolStripButton1 = new System.Windows.Forms.ToolStripButton();
+            toolStripDropDownButton3 = new System.Windows.Forms.ToolStripDropDownButton();
+            loadToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            saveAsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             toolStripButton2 = new System.Windows.Forms.ToolStripButton();
             toolStripDropDownButton1 = new System.Windows.Forms.ToolStripDropDownButton();
             binaryAssetToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -48,9 +50,13 @@
             contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(components);
             copyToClipboardToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             saveToFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            loadLibraryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            replaceDataWithFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            editToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            deleteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             panel2 = new System.Windows.Forms.Panel();
             textBox1 = new System.Windows.Forms.TextBox();
-            loadLibraryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            addToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             tableLayoutPanel1.SuspendLayout();
             toolStrip1.SuspendLayout();
             contextMenuStrip1.SuspendLayout();
@@ -80,21 +86,37 @@
             // toolStrip1
             // 
             tableLayoutPanel1.SetColumnSpan(toolStrip1, 2);
-            toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { toolStripButton1, toolStripButton2, toolStripDropDownButton1, toolStripDropDownButton2, toolStripButton3 });
+            toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { toolStripDropDownButton3, toolStripButton2, toolStripDropDownButton1, toolStripDropDownButton2, toolStripButton3 });
             toolStrip1.Location = new System.Drawing.Point(0, 0);
             toolStrip1.Name = "toolStrip1";
             toolStrip1.Size = new System.Drawing.Size(911, 25);
             toolStrip1.TabIndex = 1;
             toolStrip1.Text = "toolStrip1";
             // 
-            // toolStripButton1
+            // toolStripDropDownButton3
             // 
-            toolStripButton1.Image = FxStudio.Properties.Resources.books_stack;
-            toolStripButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
-            toolStripButton1.Name = "toolStripButton1";
-            toolStripButton1.Size = new System.Drawing.Size(83, 22);
-            toolStripButton1.Text = "open asset";
-            toolStripButton1.Click += toolStripButton1_Click;
+            toolStripDropDownButton3.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { loadToolStripMenuItem, saveAsToolStripMenuItem });
+            toolStripDropDownButton3.Image = FxStudio.Properties.Resources.books_stack;
+            toolStripDropDownButton3.ImageTransparentColor = System.Drawing.Color.Magenta;
+            toolStripDropDownButton3.Name = "toolStripDropDownButton3";
+            toolStripDropDownButton3.Size = new System.Drawing.Size(69, 22);
+            toolStripDropDownButton3.Text = "library";
+            // 
+            // loadToolStripMenuItem
+            // 
+            loadToolStripMenuItem.Image = FxStudio.Properties.Resources.folder_open;
+            loadToolStripMenuItem.Name = "loadToolStripMenuItem";
+            loadToolStripMenuItem.Size = new System.Drawing.Size(111, 22);
+            loadToolStripMenuItem.Text = "load";
+            loadToolStripMenuItem.Click += loadToolStripMenuItem_Click;
+            // 
+            // saveAsToolStripMenuItem
+            // 
+            saveAsToolStripMenuItem.Image = FxStudio.Properties.Resources.disk;
+            saveAsToolStripMenuItem.Name = "saveAsToolStripMenuItem";
+            saveAsToolStripMenuItem.Size = new System.Drawing.Size(111, 22);
+            saveAsToolStripMenuItem.Text = "save as";
+            saveAsToolStripMenuItem.Click += saveAsToolStripMenuItem_Click;
             // 
             // toolStripButton2
             // 
@@ -198,23 +220,52 @@
             // 
             // contextMenuStrip1
             // 
-            contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { copyToClipboardToolStripMenuItem, saveToFileToolStripMenuItem, loadLibraryToolStripMenuItem });
+            contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { copyToClipboardToolStripMenuItem, saveToFileToolStripMenuItem, loadLibraryToolStripMenuItem, replaceDataWithFileToolStripMenuItem, addToolStripMenuItem, editToolStripMenuItem, deleteToolStripMenuItem });
             contextMenuStrip1.Name = "contextMenuStrip1";
-            contextMenuStrip1.Size = new System.Drawing.Size(181, 92);
+            contextMenuStrip1.Size = new System.Drawing.Size(184, 180);
             // 
             // copyToClipboardToolStripMenuItem
             // 
             copyToClipboardToolStripMenuItem.Name = "copyToClipboardToolStripMenuItem";
-            copyToClipboardToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            copyToClipboardToolStripMenuItem.Size = new System.Drawing.Size(183, 22);
             copyToClipboardToolStripMenuItem.Text = "copy to clipboard";
             copyToClipboardToolStripMenuItem.Click += copyToClipboardToolStripMenuItem_Click;
             // 
             // saveToFileToolStripMenuItem
             // 
             saveToFileToolStripMenuItem.Name = "saveToFileToolStripMenuItem";
-            saveToFileToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            saveToFileToolStripMenuItem.Size = new System.Drawing.Size(183, 22);
             saveToFileToolStripMenuItem.Text = "save to file";
             saveToFileToolStripMenuItem.Click += saveToFileToolStripMenuItem_Click;
+            // 
+            // loadLibraryToolStripMenuItem
+            // 
+            loadLibraryToolStripMenuItem.Name = "loadLibraryToolStripMenuItem";
+            loadLibraryToolStripMenuItem.Size = new System.Drawing.Size(183, 22);
+            loadLibraryToolStripMenuItem.Text = "load library";
+            loadLibraryToolStripMenuItem.Click += loadLibraryToolStripMenuItem_Click;
+            // 
+            // replaceDataWithFileToolStripMenuItem
+            // 
+            replaceDataWithFileToolStripMenuItem.Name = "replaceDataWithFileToolStripMenuItem";
+            replaceDataWithFileToolStripMenuItem.Size = new System.Drawing.Size(183, 22);
+            replaceDataWithFileToolStripMenuItem.Text = "replace data with file";
+            replaceDataWithFileToolStripMenuItem.Click += replaceDataWithFileToolStripMenuItem_Click;
+            // 
+            // editToolStripMenuItem
+            // 
+            editToolStripMenuItem.Image = FxStudio.Properties.Resources.pencil;
+            editToolStripMenuItem.Name = "editToolStripMenuItem";
+            editToolStripMenuItem.Size = new System.Drawing.Size(183, 22);
+            editToolStripMenuItem.Text = "edit";
+            editToolStripMenuItem.Click += editToolStripMenuItem_Click;
+            // 
+            // deleteToolStripMenuItem
+            // 
+            deleteToolStripMenuItem.Image = FxStudio.Properties.Resources.cross;
+            deleteToolStripMenuItem.Name = "deleteToolStripMenuItem";
+            deleteToolStripMenuItem.Size = new System.Drawing.Size(183, 22);
+            deleteToolStripMenuItem.Text = "delete";
             // 
             // panel2
             // 
@@ -236,12 +287,13 @@
             textBox1.TabIndex = 0;
             textBox1.TextChanged += textBox1_TextChanged;
             // 
-            // loadLibraryToolStripMenuItem
+            // addToolStripMenuItem
             // 
-            loadLibraryToolStripMenuItem.Name = "loadLibraryToolStripMenuItem";
-            loadLibraryToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            loadLibraryToolStripMenuItem.Text = "load library";
-            loadLibraryToolStripMenuItem.Click += loadLibraryToolStripMenuItem_Click;
+            addToolStripMenuItem.Image = FxStudio.Properties.Resources.plus;
+            addToolStripMenuItem.Name = "addToolStripMenuItem";
+            addToolStripMenuItem.Size = new System.Drawing.Size(183, 22);
+            addToolStripMenuItem.Text = "add";
+            addToolStripMenuItem.Click += addToolStripMenuItem_Click;
             // 
             // AssetNavigator
             // 
@@ -267,7 +319,6 @@
 
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
         private System.Windows.Forms.ToolStrip toolStrip1;
-        private System.Windows.Forms.ToolStripButton toolStripButton1;
         private System.Windows.Forms.ToolStripButton toolStripButton2;
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
@@ -286,5 +337,12 @@
         private System.Windows.Forms.ColumnHeader columnHeader3;
         private System.Windows.Forms.ToolStripButton toolStripButton3;
         private System.Windows.Forms.ToolStripMenuItem loadLibraryToolStripMenuItem;
+        private System.Windows.Forms.ToolStripDropDownButton toolStripDropDownButton3;
+        private System.Windows.Forms.ToolStripMenuItem loadToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem saveAsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem replaceDataWithFileToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem editToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem deleteToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem addToolStripMenuItem;
     }
 }

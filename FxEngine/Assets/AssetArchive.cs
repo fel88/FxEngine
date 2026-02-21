@@ -9,7 +9,7 @@ using System.Xml.Linq;
 
 namespace FxEngine.Assets
 {
-    public class AssetArchive : IDataProvider
+    public class AssetArchive : IDataProvider,ISearchFileProvider
     {
         public List<AssetFile> Files = new List<AssetFile>();
         public byte[] GetFile(string path)
@@ -17,7 +17,7 @@ namespace FxEngine.Assets
             var full = new FileInfo(path).FullName.ToLower();
             var ar1 = path.Split(new char[] { '\\' }, StringSplitOptions.RemoveEmptyEntries).ToArray();
             var fr = Files.First(z => z.Path.ToLower() == full);
-            
+
 
             return fr.Data;
         }
@@ -116,7 +116,7 @@ namespace FxEngine.Assets
         }
 
         public XDocument LoadXml(string path)
-        {            
+        {
             return XDocument.Parse(GetFileAsString(path));
         }
 
@@ -139,12 +139,17 @@ namespace FxEngine.Assets
 
         public string GetDirectoryName(string path)
         {
-            return Path.GetDirectoryName(path);            
+            return Path.GetDirectoryName(path);
         }
 
         public bool IsFileExists(string amb1)
         {
             return Files.Any(z => z.Path == amb1);
+        }
+
+        public IFile TrySearchFileByName(string name)
+        {
+            return Files.FirstOrDefault(z => z.Name == name);
         }
     }
 }

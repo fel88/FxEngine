@@ -244,8 +244,18 @@ namespace FxEngine
                         }
                         var path2 = Path.Combine(datap.GetDirectoryName(fileName), filePath);
 
-                        var obj = ObjVolume.LoadFromFile(path2, mtr4, datap);
-                        var t = new ObjModelBlueprint(nm, obj);
+                        ObjVolume[] obj = null;
+                        if (datap.IsFileExists(path2))
+                        obj = ObjVolume.LoadFromFile(path2, mtr4, datap);
+                        else if(datap is ISearchFileProvider sfp)
+                        {
+                            var file = sfp.TrySearchFileByName(Path.GetFileName(path2));
+                            if (file != null)
+                            {
+                                obj = ObjVolume.LoadFromFile(file.Path, mtr4, datap);
+                            }
+                        }
+                            var t = new ObjModelBlueprint(nm, obj);
                         t.Id = int.Parse(item.Attribute("id").Value);
                         //t.FilePath = (item.Attribute("path").Value);
                         t.FilePath = path2;
@@ -418,29 +428,41 @@ namespace FxEngine
                     {
                         foreach (var titem in modelModels.Elements("model"))
                         {
-                            var mid = float.Parse(titem.Attribute("modelId").Value);
-                            var id = int.Parse(titem.Attribute("id").Value);
-                            var nm = (titem.Attribute("name").Value);
+                            try
+                            {
+                                var mid = float.Parse(titem.Attribute("modelId").Value);
+                                var id = int.Parse(titem.Attribute("id").Value);
+                                var nm = (titem.Attribute("name").Value);
 
-                            Matrix4 mtr = Matrix4.Identity;
-                            if (titem.Attribute("matrix") != null)
-                            {
-                                mtr = ColladaStuff.MatrixFromArray((titem.Attribute("matrix").Value).Split(new char[] { ' ', '\n', '\r', ';' }, StringSplitOptions.RemoveEmptyEntries).Select(x => float.Parse(x.Replace(",", "."), CultureInfo.InvariantCulture)).ToArray(), true);
-                            }
+                                Matrix4 mtr = Matrix4.Identity;
+                                if (titem.Attribute("matrix") != null)
+                                {
+                                    mtr = ColladaStuff.MatrixFromArray((titem.Attribute("matrix").Value).Split(new char[] { ' ', '\n', '\r', ';' }, StringSplitOptions.RemoveEmptyEntries).Select(x => float.Parse(x.Replace(",", "."), CultureInfo.InvariantCulture)).ToArray(), true);
+                                }
 
-                            var fr = titem.Descendants().FirstOrDefault(z => z.Name == "transforms");
-                            if (fr != null)
+                                var fr = titem.Descendants().FirstOrDefault(z => z.Name == "transforms");
+                                try
+                                {
+                                    if (fr != null)
+                                    {
+                                        mtr = Matrix4.Identity;//should it accum?
+                                        mtr = mtr * LoadTransforms(fr);
+                                    }
+                                }catch(Exception ex)
+                                {
+
+                                }
+                                t.Models.Add(new ModelInstance()
+                                {
+                                    Id = id,
+                                    Name = nm,
+                                    Blueprint = ret.Models.First(z => z.Id == mid),
+                                    Matrix = mtr
+                                });
+                            }catch(Exception ex)
                             {
-                                mtr = Matrix4.Identity;//should it accum?
-                                mtr = mtr * LoadTransforms(fr);
+
                             }
-                            t.Models.Add(new ModelInstance()
-                            {
-                                Id = id,
-                                Name = nm,
-                                Blueprint = ret.Models.First(z => z.Id == mid),
-                                Matrix = mtr
-                            });
                         }
 
                         foreach (var titem in modelModels.Elements("modelGrid"))

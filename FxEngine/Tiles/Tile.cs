@@ -34,7 +34,20 @@ namespace FxEngine.Tiles
             }
 
             texture = GL.GenTexture();
-            bmpt = dp.GetBitmap(path);
+            if (dp.IsFileExists(path))
+                bmpt = dp.GetBitmap(path);
+            else if(dp is ISearchFileProvider sbfp)
+            {
+                var file = sbfp.TrySearchFileByName(System.IO.Path.GetFileName(path));
+                if (file != null)
+                {
+                    bmpt = dp.GetBitmap(file.Path);
+                }
+            }
+            else
+            {
+
+            }
 
             if (ForceSizePreLoad)
             {
@@ -235,6 +248,9 @@ namespace FxEngine.Tiles
         public void Draw()
         {
             if (!Visible)
+                return;
+
+            if (bmpt == null)
                 return;
 
             GL.Color4(Color.FromArgb(Opacity, MainColor));
