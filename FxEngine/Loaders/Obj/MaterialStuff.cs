@@ -4,8 +4,8 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using OpenTK.Graphics.OpenGL;
-using FxEngine;
 using System.Windows.Forms;
+using FxEngine.Interfaces;
 
 namespace FxEngine.Loaders.OBJ
 {

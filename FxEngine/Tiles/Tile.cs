@@ -2,6 +2,7 @@
 using OpenTK.Graphics.OpenGL;
 using System.Collections.Generic;
 using System.Drawing;
+using FxEngine.Interfaces;
 
 namespace FxEngine.Tiles
 {
@@ -22,7 +23,10 @@ namespace FxEngine.Tiles
 
         public void Init(string path, IDataProvider dp = null)
         {
-            if (dp == null) { dp = new PhysicalFilesystemDataProvider(); }
+            if (dp == null)
+            {
+                dp = new PhysicalFilesystemDataProvider();
+            }
             Path = path;
             if (bmpt != null)
             {
@@ -230,7 +234,9 @@ namespace FxEngine.Tiles
 
         public void Draw()
         {
-            if (!Visible) return;
+            if (!Visible)
+                return;
+
             GL.Color4(Color.FromArgb(Opacity, MainColor));
             GL.Enable(EnableCap.Blend);
 

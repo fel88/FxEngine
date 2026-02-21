@@ -51,7 +51,7 @@ namespace FxEngineEditor
         {
             if (!Static.Library.Inited)
             {
-                Static.Library.Init();
+                Static.Library.Init(StaticData.DataProvider);
             }
             gl.MakeCurrent();
 
@@ -260,10 +260,16 @@ namespace FxEngineEditor
         {
             if (listView1.SelectedItems.Count > 0)
             {
-                var s = listView1.SelectedItems[0].Tag as Tile;
+                try
+                {
+                    var s = listView1.SelectedItems[0].Tag as Tile;
 
-                SelectedTile = s;
-                propertyGrid1.SelectedObject = s;
+                    SelectedTile = s;
+                    propertyGrid1.SelectedObject = s;
+                }catch(Exception ex)
+                {
+
+                }
 
 
             }

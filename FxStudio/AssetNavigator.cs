@@ -1,4 +1,5 @@
-﻿using FxEngine.Assets;
+﻿using FxEngine;
+using FxEngine.Assets;
 using System;
 using System.Data.Odbc;
 using System.Drawing;
@@ -25,6 +26,7 @@ namespace FxEngineEditor
             //ofd.Filter="FxEngine library (*.)"
             if (ofd.ShowDialog() == DialogResult.OK)
             {
+
                 Archive = new AssetArchive();
                 Archive.LoadFromBinaryFile(ofd.FileName);
                 UpdateFilesList();
@@ -283,6 +285,23 @@ namespace FxEngineEditor
 
             File.WriteAllBytes(sfd.FileName, file.Data);
             GuiHelpers.ShowInfo($"File saved to : {sfd.FileName}", Text);
+        }
+
+        private void toolStripButton3_Click_1(object sender, EventArgs e)
+        {
+            StaticData.DataProvider = Archive;
+        }
+
+        private void loadLibraryToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (listView1.SelectedItems.Count <= 0)
+                return;
+
+            var file = listView1.SelectedItems[0].Tag as AssetFile;
+
+            StaticData.DataProvider = Archive;
+            Static.Library = GameResourcesLibrary.LoadFromXml(file.Path, Archive);
+
         }
     }
 }

@@ -15,6 +15,7 @@ using System.Xml.Linq;
 using FxEngine.Cameras;
 using FxEngine.Loaders.OBJ;
 using System.IO.Compression;
+using FxEngine.Interfaces;
 
 namespace FxEngine
 {
@@ -206,50 +207,71 @@ namespace FxEngine
             {
                 foreach (var item in fonts.Descendants("font"))
                 {
-                    var id = int.Parse((item.Attribute("id").Value));
-                    var nm = (item.Attribute("name").Value);
-                    var path = (item.Attribute("path").Value);
-                    var path2 = Path.Combine(datap.GetDirectoryName(fileName), path);
+                    try
+                    {
+                        var id = int.Parse((item.Attribute("id").Value));
+                        var nm = (item.Attribute("name").Value);
+                        var path = (item.Attribute("path").Value);
+                        var path2 = Path.Combine(datap.GetDirectoryName(fileName), path);
 
 
-                    var font = new FxEngine.GameFont() { Id = id, Name = nm, Path = path2 };
-                    font.PreLoad(datap);
+                        var font = new FxEngine.GameFont() { Id = id, Name = nm, Path = path2 };
+                        font.PreLoad(datap);
 
-                    ret.Fonts.Add(font);
+                        ret.Fonts.Add(font);
+                    }
+                    catch (Exception ex)
+                    {
+
+                    }
                 }
             }
 
             foreach (var item in models.Descendants("model"))
             {
-                var nm = (item.Attribute("name").Value);
-                var filePath = (item.Attribute("path").Value);
-
-                if (filePath.EndsWith("obj"))
+                try
                 {
-                    Matrix4 mtr4 = Matrix4.Identity;
-                    var fr = item.Descendants().FirstOrDefault(z => z.Name == "transforms");
-                    if (fr != null)
+                    var nm = (item.Attribute("name").Value);
+                    var filePath = (item.Attribute("path").Value);
+
+                    if (filePath.EndsWith("obj"))
                     {
-                        mtr4 = LoadTransforms(fr);
-                    }
-                    var path2 = Path.Combine(datap.GetDirectoryName(fileName), filePath);
+                        Matrix4 mtr4 = Matrix4.Identity;
+                        var fr = item.Descendants().FirstOrDefault(z => z.Name == "transforms");
+                        if (fr != null)
+                        {
+                            mtr4 = LoadTransforms(fr);
+                        }
+                        var path2 = Path.Combine(datap.GetDirectoryName(fileName), filePath);
 
-                    var obj = ObjVolume.LoadFromFile(path2, mtr4, datap);
-                    var t = new ObjModelBlueprint(nm, obj);
-                    t.Id = int.Parse(item.Attribute("id").Value);
-                    //t.FilePath = (item.Attribute("path").Value);
-                    t.FilePath = path2;
-                    ret.AddModel(t);
+                        var obj = ObjVolume.LoadFromFile(path2, mtr4, datap);
+                        var t = new ObjModelBlueprint(nm, obj);
+                        t.Id = int.Parse(item.Attribute("id").Value);
+                        //t.FilePath = (item.Attribute("path").Value);
+                        t.FilePath = path2;
+                        ret.AddModel(t);
+                    }
+                    if (filePath.EndsWith("dae"))
+                    {
+                        try
+                        {
+                            ColladaModelBlueprint t = new ColladaModelBlueprint(nm);
+                            ret.AddModel(t);
+                            t.Id = int.Parse(item.Attribute("id").Value);
+                            t.FilePath = (item.Attribute("path").Value);
+                            var path2 = Path.Combine(datap.GetDirectoryName(fileName), t.FilePath);
+                            t.FilePath = path2;
+                            t.Model = ColladaImporter.Load(path2, datap);
+                        }
+                        catch (Exception ex)
+                        {
+
+                        }
+                    }
                 }
-                if (filePath.EndsWith("dae"))
+                catch (Exception ex)
                 {
-                    ColladaModelBlueprint t = new ColladaModelBlueprint(nm);
-                    ret.AddModel(t);
-                    t.Id = int.Parse(item.Attribute("id").Value);
-                    t.FilePath = (item.Attribute("path").Value);
-                    var path2 = Path.Combine(datap.GetDirectoryName(fileName), t.FilePath);
-                    t.FilePath = path2;
-                    t.Model = ColladaImporter.Load(path2, datap);
+
                 }
             }
 
@@ -263,7 +285,7 @@ namespace FxEngine
                     t.Id = int.Parse(item.Attribute("id").Value);
 
                     t.Path = Path.Combine(datap.GetDirectoryName(fileName), (item.Attribute("path").Value));
-                    
+
                     t.Name = (item.Attribute("name").Value);
                     if (item.Attribute("w") != null)
                     {
@@ -296,148 +318,122 @@ namespace FxEngine
             {
                 foreach (var item in gobjs.Descendants("gameObject"))
                 {
-                    var gid = int.Parse(item.Attribute("id").Value);
-                    var nm = item.Attribute("name").Value;
-                    var mdl = int.Parse(item.Attribute("model").Value);
-                    ret.GameObjects.Add(new FxEngine.GameObject() { Id = gid, Name = nm, Model = ret.models.First(z => z.Id == mdl) });
+                    try
+                    {
+                        var gid = int.Parse(item.Attribute("id").Value);
+                        var nm = item.Attribute("name").Value;
+                        var mdl = int.Parse(item.Attribute("model").Value);
+                        ret.GameObjects.Add(new FxEngine.GameObject() { Id = gid, Name = nm, Model = ret.models.First(z => z.Id == mdl) });
+                    }
+                    catch (Exception ex)
+                    {
+
+                    }
                 }
             }
             foreach (var item in root.Descendants("level"))
             {
-                GameLevel t = new GameLevel();
-                ret.AddLevel(t);
-                t.Id = int.Parse(item.Attribute("id").Value);
-                t.Name = (item.Attribute("name").Value);
-                var modelTiles = item.Element("tiles");
-                var levelGameObjects = item.Element("gameObjects");
-                var modelModels = item.Element("models");
-                var camerasModels = item.Element("cameras");
-                if (levelGameObjects != null)
+                try
                 {
-                    foreach (var titem in levelGameObjects.Elements("gameObject"))
+                    GameLevel t = new GameLevel();
+                    ret.AddLevel(t);
+                    t.Id = int.Parse(item.Attribute("id").Value);
+                    t.Name = (item.Attribute("name").Value);
+                    var modelTiles = item.Element("tiles");
+                    var levelGameObjects = item.Element("gameObjects");
+                    var modelModels = item.Element("models");
+                    var camerasModels = item.Element("cameras");
+                    if (levelGameObjects != null)
                     {
-                        var id = int.Parse(titem.Attribute("id").Value);
-                        var gid = int.Parse(titem.Attribute("gid").Value);
-                        string nm = "";
-                        if (titem.Attribute("name") != null)
+                        foreach (var titem in levelGameObjects.Elements("gameObject"))
                         {
-                            nm = (titem.Attribute("name").Value);
-                        }
-                        t.GameObjectInstances.Add(new GameObjectInstance() { Id = id, GameObject = ret.GameObjects.First(z => z.Id == gid), Name = nm });
-                        if (titem.Element("position") != null)
-                        {
-                            if (titem.Element("position").Elements().First().Name == "vector2d")
+                            var id = int.Parse(titem.Attribute("id").Value);
+                            var gid = int.Parse(titem.Attribute("gid").Value);
+                            string nm = "";
+                            if (titem.Attribute("name") != null)
                             {
-                                var fr1 = titem.Element("position").Elements().First();
-                                var pos1 = ParseFloats(fr1.Attribute("pos").Value);
-                                var v1 = new Vector2(pos1[0], pos1[1]);
-                                t.GameObjectInstances.Last().Position = new Vector3(v1.X, v1.Y, 0);
+                                nm = (titem.Attribute("name").Value);
                             }
-                        }
-                        if (titem.Element("transforms") != null)
-                        {
-                            var trans = LoadTransforms(titem);
-                            t.GameObjectInstances.Last().Matrix = trans;
-                        }
-                    }
-                }
-                if (modelTiles != null)
-                {
-                    foreach (var titem in modelTiles.Elements("tileGrid"))
-                    {
-                        var tid = float.Parse(titem.Attribute("tileId").Value);
-                        var w = int.Parse(titem.Attribute("w").Value);
-                        var h = int.Parse(titem.Attribute("h").Value);
-                        var cw = float.Parse(titem.Attribute("cellw").Value);
-                        var ch = float.Parse(titem.Attribute("cellh").Value);
-                        var shx = int.Parse(titem.Attribute("shx").Value);
-                        var shy = int.Parse(titem.Attribute("shy").Value);
-                        float zoffset = 0;
-                        if (titem.Attribute("zoffset") != null)
-                        {
-                            zoffset = float.Parse(titem.Attribute("zoffset").Value);
-                        }
-                        var gap = float.Parse(titem.Attribute("gap").Value);
-                        var scale = float.Parse(titem.Attribute("scale").Value);
-                        var tile = ret.tiles.First(z => z.Id == tid);
-
-                        for (int i = 0; i < w; i++)
-                        {
-                            for (int j = 0; j < h; j++)
+                            t.GameObjectInstances.Add(new GameObjectInstance() { Id = id, GameObject = ret.GameObjects.First(z => z.Id == gid), Name = nm });
+                            if (titem.Element("position") != null)
                             {
-                                t.Tiles.Add(new TileDrawItem()
+                                if (titem.Element("position").Elements().First().Name == "vector2d")
                                 {
-                                    Tile = tile,
-                                    Position3 = new Vector3((i + shx) * cw - gap, (j + shy) * ch - gap, zoffset),
-                                    Scale = scale
-                                });
+                                    var fr1 = titem.Element("position").Elements().First();
+                                    var pos1 = ParseFloats(fr1.Attribute("pos").Value);
+                                    var v1 = new Vector2(pos1[0], pos1[1]);
+                                    t.GameObjectInstances.Last().Position = new Vector3(v1.X, v1.Y, 0);
+                                }
+                            }
+                            if (titem.Element("transforms") != null)
+                            {
+                                var trans = LoadTransforms(titem);
+                                t.GameObjectInstances.Last().Matrix = trans;
                             }
                         }
                     }
-
-                    foreach (var titem in modelTiles.Elements("tile"))
+                    if (modelTiles != null)
                     {
-                        var tid = float.Parse(titem.Attribute("tileId").Value);
-                        var xx = float.Parse(titem.Attribute("x").Value);
-                        var yy = float.Parse(titem.Attribute("y").Value);
-                        t.Tiles.Add(new FxEngine.Tiles.TileDrawItem() { Tile = ret.tiles.First(z => z.Id == tid), Position = new PointF(xx, yy) });
+                        foreach (var titem in modelTiles.Elements("tileGrid"))
+                        {
+                            var tid = float.Parse(titem.Attribute("tileId").Value);
+                            var w = int.Parse(titem.Attribute("w").Value);
+                            var h = int.Parse(titem.Attribute("h").Value);
+                            var cw = float.Parse(titem.Attribute("cellw").Value);
+                            var ch = float.Parse(titem.Attribute("cellh").Value);
+                            var shx = int.Parse(titem.Attribute("shx").Value);
+                            var shy = int.Parse(titem.Attribute("shy").Value);
+                            float zoffset = 0;
+                            if (titem.Attribute("zoffset") != null)
+                            {
+                                zoffset = float.Parse(titem.Attribute("zoffset").Value);
+                            }
+                            var gap = float.Parse(titem.Attribute("gap").Value);
+                            var scale = float.Parse(titem.Attribute("scale").Value);
+                            var tile = ret.tiles.First(z => z.Id == tid);
+
+                            for (int i = 0; i < w; i++)
+                            {
+                                for (int j = 0; j < h; j++)
+                                {
+                                    t.Tiles.Add(new TileDrawItem()
+                                    {
+                                        Tile = tile,
+                                        Position3 = new Vector3((i + shx) * cw - gap, (j + shy) * ch - gap, zoffset),
+                                        Scale = scale
+                                    });
+                                }
+                            }
+                        }
+
+                        foreach (var titem in modelTiles.Elements("tile"))
+                        {
+                            var tid = float.Parse(titem.Attribute("tileId").Value);
+                            var xx = float.Parse(titem.Attribute("x").Value);
+                            var yy = float.Parse(titem.Attribute("y").Value);
+                            t.Tiles.Add(new FxEngine.Tiles.TileDrawItem() { Tile = ret.tiles.First(z => z.Id == tid), Position = new PointF(xx, yy) });
+                        }
                     }
-                }
-                if (modelModels != null)
-                {
-                    foreach (var titem in modelModels.Elements("model"))
+                    if (modelModels != null)
                     {
-                        var mid = float.Parse(titem.Attribute("modelId").Value);
-                        var id = int.Parse(titem.Attribute("id").Value);
-                        var nm = (titem.Attribute("name").Value);
-
-                        Matrix4 mtr = Matrix4.Identity;
-                        if (titem.Attribute("matrix") != null)
+                        foreach (var titem in modelModels.Elements("model"))
                         {
-                            mtr = ColladaStuff.MatrixFromArray((titem.Attribute("matrix").Value).Split(new char[] { ' ', '\n', '\r', ';' }, StringSplitOptions.RemoveEmptyEntries).Select(x => float.Parse(x.Replace(",", "."), CultureInfo.InvariantCulture)).ToArray(), true);
-                        }
+                            var mid = float.Parse(titem.Attribute("modelId").Value);
+                            var id = int.Parse(titem.Attribute("id").Value);
+                            var nm = (titem.Attribute("name").Value);
 
-                        var fr = titem.Descendants().FirstOrDefault(z => z.Name == "transforms");
-                        if (fr != null)
-                        {
-                            mtr = Matrix4.Identity;//should it accum?
-                            mtr = mtr * LoadTransforms(fr);
-                        }
-                        t.Models.Add(new ModelInstance()
-                        {
-                            Id = id,
-                            Name = nm,
-                            Blueprint = ret.Models.First(z => z.Id == mid),
-                            Matrix = mtr
-                        });
-                    }
+                            Matrix4 mtr = Matrix4.Identity;
+                            if (titem.Attribute("matrix") != null)
+                            {
+                                mtr = ColladaStuff.MatrixFromArray((titem.Attribute("matrix").Value).Split(new char[] { ' ', '\n', '\r', ';' }, StringSplitOptions.RemoveEmptyEntries).Select(x => float.Parse(x.Replace(",", "."), CultureInfo.InvariantCulture)).ToArray(), true);
+                            }
 
-                    foreach (var titem in modelModels.Elements("modelGrid"))
-                    {
-                        var mid = float.Parse(titem.Attribute("modelId").Value);
-                        var id = int.Parse(titem.Attribute("id").Value);
-                        var nm = (titem.Attribute("name").Value);
-                        var inc = (titem.Attribute("increment").Value).Split(new char[] { ' ' }).Select(z => float.Parse(z, CultureInfo.InvariantCulture)).ToArray();
-                        var cnt = int.Parse(titem.Attribute("count").Value);
-
-
-                        Matrix4 mtr = Matrix4.Identity;
-                        if (tiles.Attribute("matrix") != null)
-                        {
-                            mtr = ColladaStuff.MatrixFromArray((titem.Attribute("matrix").Value).Split(new char[] { ' ', '\n', '\r', ';' }, StringSplitOptions.RemoveEmptyEntries).Select(x => float.Parse(x.Replace(",", "."), CultureInfo.InvariantCulture)).ToArray(), true);
-                        }
-
-                        var fr = titem.Descendants().FirstOrDefault(z => z.Name == "transforms");
-                        if (fr != null)
-                        {
-                            mtr = mtr * LoadTransforms(fr);
-                        }
-
-                        var incv3 = Matrix4.CreateTranslation(inc[0], inc[1], inc[2]);
-                        for (int i = 0; i < cnt; i++)
-                        {
-                            mtr *= incv3;
-
+                            var fr = titem.Descendants().FirstOrDefault(z => z.Name == "transforms");
+                            if (fr != null)
+                            {
+                                mtr = Matrix4.Identity;//should it accum?
+                                mtr = mtr * LoadTransforms(fr);
+                            }
                             t.Models.Add(new ModelInstance()
                             {
                                 Id = id,
@@ -447,30 +443,70 @@ namespace FxEngine
                             });
                         }
 
+                        foreach (var titem in modelModels.Elements("modelGrid"))
+                        {
+                            var mid = float.Parse(titem.Attribute("modelId").Value);
+                            var id = int.Parse(titem.Attribute("id").Value);
+                            var nm = (titem.Attribute("name").Value);
+                            var inc = (titem.Attribute("increment").Value).Split(new char[] { ' ' }).Select(z => float.Parse(z, CultureInfo.InvariantCulture)).ToArray();
+                            var cnt = int.Parse(titem.Attribute("count").Value);
+
+
+                            Matrix4 mtr = Matrix4.Identity;
+                            if (tiles.Attribute("matrix") != null)
+                            {
+                                mtr = ColladaStuff.MatrixFromArray((titem.Attribute("matrix").Value).Split(new char[] { ' ', '\n', '\r', ';' }, StringSplitOptions.RemoveEmptyEntries).Select(x => float.Parse(x.Replace(",", "."), CultureInfo.InvariantCulture)).ToArray(), true);
+                            }
+
+                            var fr = titem.Descendants().FirstOrDefault(z => z.Name == "transforms");
+                            if (fr != null)
+                            {
+                                mtr = mtr * LoadTransforms(fr);
+                            }
+
+                            var incv3 = Matrix4.CreateTranslation(inc[0], inc[1], inc[2]);
+                            for (int i = 0; i < cnt; i++)
+                            {
+                                mtr *= incv3;
+
+                                t.Models.Add(new ModelInstance()
+                                {
+                                    Id = id,
+                                    Name = nm,
+                                    Blueprint = ret.Models.First(z => z.Id == mid),
+                                    Matrix = mtr
+                                });
+                            }
+
+                        }
+                    }
+                    if (camerasModels != null)
+                    {
+                        foreach (var titem in camerasModels.Elements("camera"))
+                        {
+
+                            var id = int.Parse(titem.Attribute("id").Value);
+                            var nm = (titem.Attribute("name").Value);
+                            var from = (titem.Attribute("camFrom").Value).Split(new char[] { ' ', '\n', '\r', ';' }, StringSplitOptions.RemoveEmptyEntries).Select(x => float.Parse(x.Replace(",", "."), CultureInfo.InvariantCulture)).ToArray();
+                            var to = (titem.Attribute("camTo").Value).Split(new char[] { ' ', '\n', '\r', ';' }, StringSplitOptions.RemoveEmptyEntries).Select(x => float.Parse(x.Replace(",", "."), CultureInfo.InvariantCulture)).ToArray();
+                            var up = (titem.Attribute("camUp").Value).Split(new char[] { ' ', '\n', '\r', ';' }, StringSplitOptions.RemoveEmptyEntries).Select(x => float.Parse(x.Replace(",", "."), CultureInfo.InvariantCulture)).ToArray();
+                            var fovy = float.Parse(titem.Attribute("fovy").Value, CultureInfo.InvariantCulture);
+
+                            t.Cameras.Add(new Camera()
+                            {
+                                Id = id,
+                                Name = nm,
+                                CamFrom = new Vector3(from[0], from[1], from[2]),
+                                CamTo = new Vector3(to[0], to[1], to[2]),
+                                CamUp = new Vector3(up[0], up[1], up[2]),
+                                Fovy = fovy
+                            });
+                        }
                     }
                 }
-                if (camerasModels != null)
+                catch (Exception ex)
                 {
-                    foreach (var titem in camerasModels.Elements("camera"))
-                    {
 
-                        var id = int.Parse(titem.Attribute("id").Value);
-                        var nm = (titem.Attribute("name").Value);
-                        var from = (titem.Attribute("camFrom").Value).Split(new char[] { ' ', '\n', '\r', ';' }, StringSplitOptions.RemoveEmptyEntries).Select(x => float.Parse(x.Replace(",", "."), CultureInfo.InvariantCulture)).ToArray();
-                        var to = (titem.Attribute("camTo").Value).Split(new char[] { ' ', '\n', '\r', ';' }, StringSplitOptions.RemoveEmptyEntries).Select(x => float.Parse(x.Replace(",", "."), CultureInfo.InvariantCulture)).ToArray();
-                        var up = (titem.Attribute("camUp").Value).Split(new char[] { ' ', '\n', '\r', ';' }, StringSplitOptions.RemoveEmptyEntries).Select(x => float.Parse(x.Replace(",", "."), CultureInfo.InvariantCulture)).ToArray();
-                        var fovy = float.Parse(titem.Attribute("fovy").Value, CultureInfo.InvariantCulture);
-
-                        t.Cameras.Add(new Camera()
-                        {
-                            Id = id,
-                            Name = nm,
-                            CamFrom = new Vector3(from[0], from[1], from[2]),
-                            CamTo = new Vector3(to[0], to[1], to[2]),
-                            CamUp = new Vector3(up[0], up[1], up[2]),
-                            Fovy = fovy
-                        });
-                    }
                 }
             }
             ret.Dirty = false;
@@ -526,16 +562,31 @@ namespace FxEngine
             File.WriteAllText(path, sb.ToString());
         }
 
-        public void Init()
+        public void Init(IDataProvider dataProvider = null)
         {
             Inited = true;
             foreach (var item in tiles)
             {
-                item.Init(item.Path);
+
+                try
+                {
+                    item.Init(item.Path, dataProvider);
+                }
+                catch (Exception ex)
+                {
+
+                }
             }
             foreach (var m in models)
             {
-                m.Init();                
+                try
+                {
+                    m.Init(dataProvider);
+                }
+                catch (Exception ex)
+                {
+
+                }
             }
         }
 

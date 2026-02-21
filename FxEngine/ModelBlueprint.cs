@@ -1,4 +1,5 @@
 ﻿using FxEngine.Cameras;
+using FxEngine.Interfaces;
 using FxEngine.Loaders.OBJ;
 using FxEngine.Shaders;
 using OpenTK;
@@ -117,7 +118,7 @@ namespace FxEngine
 
         }
 
-        public virtual void Init()
+        public virtual void Init(IDataProvider dp=null)
         {
 
         }

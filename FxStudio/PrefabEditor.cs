@@ -118,7 +118,7 @@ namespace FxEngineEditor
             {
                 if (!Static.Library.Inited)
                 {
-                    Static.Library.Init();
+                    Static.Library.Init(StaticData.DataProvider);
                 }
             }
             gl.MakeCurrent();
@@ -564,7 +564,7 @@ namespace FxEngineEditor
             if (ofd.ShowDialog() != DialogResult.OK) return;
 
             var fi = new FileInfo(ofd.FileName);
-            var clm = ColladaImporter.Load(ofd.FileName, new PhysicalFilesystemDataProvider());
+            var clm = ColladaImporter.Load(ofd.FileName, StaticData.DataProvider);
             clm.InitLibraries();
 
             var mb = new ColladaModelBlueprint("collada export: " + fi.Name, fi.FullName) { Id = Static.Library.ModelNewId };

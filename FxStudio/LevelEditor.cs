@@ -13,6 +13,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Globalization;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using Keys = OpenTK.Windowing.GraphicsLibraryFramework.Keys;
 
@@ -21,7 +22,7 @@ namespace FxEngineEditor
     public partial class LevelEditor : Form
     {
         OpenTK.GLControl.GLControl gl;
-     
+
         public LevelEditor()
         {
 
@@ -95,7 +96,7 @@ namespace FxEngineEditor
         }
         protected override bool ProcessCmdKey(ref Message msg, System.Windows.Forms.Keys keyData)
         {
-          
+
             int code = (int)keyData;
             if (code >= 0 && code <= 255)
             {
@@ -193,7 +194,7 @@ namespace FxEngineEditor
             {
                 return GetPositionGridSnap();
             }
-        
+
             var v = System.Windows.Forms.Cursor.Position;
             var cp = gl.PointToClient(v);
 
@@ -272,7 +273,7 @@ namespace FxEngineEditor
         Camera camera = new Camera();
         void Form1_MouseWheel(object sender, System.Windows.Forms.MouseEventArgs e)
         {
-            
+
             float zoomK = 100;
             if (
      gl.ClientRectangle.IntersectsWith(new Rectangle(gl.PointToClient(System.Windows.Forms.Cursor.Position),
@@ -314,10 +315,12 @@ namespace FxEngineEditor
 
         private float rotation = 0;
 
-
         bool[] keys = new bool[256];
-        public bool IsKeyPressed(Keys k)
+
+        public bool IsKeyPressed(System.Windows.Forms.Keys k)
         {
+            if (keys.Length < (int)k)
+                return false;
             return keys[(int)k];
         }
 
@@ -372,24 +375,24 @@ namespace FxEngineEditor
                 }
             }
 
-            if (IsKeyPressed(Keys.PageDown))
+            if (IsKeyPressed(System.Windows.Forms.Keys.PageDown))
             {
                 camera.CamFrom += camera.CamUp * 10;
 
             }
-            if (IsKeyPressed(Keys.PageUp))
+            if (IsKeyPressed(System.Windows.Forms.Keys.PageUp))
             {
                 camera.CamFrom -= camera.CamUp * 10;
 
             }
-            if (IsKeyPressed(Keys.Home))
+            if (IsKeyPressed(System.Windows.Forms.Keys.Home))
             {
                 var dir2 = camera.CamFrom - camera.CamTo;
                 dir2 = dir2 * Matrix3.CreateRotationZ(0.03f);
                 camera.CamFrom = camera.CamTo + dir2;
             }
 
-            if (IsKeyPressed(Keys.End))
+            if (IsKeyPressed(System.Windows.Forms.Keys.End))
             {
                 var dir2 = camera.CamFrom - camera.CamTo;
                 dir2 = dir2 * Matrix3.CreateRotationZ(-0.03f);
@@ -410,7 +413,7 @@ namespace FxEngineEditor
                 firstInited = false;
                 ModelShader.Init();
             }
-            
+
             /*var state = GamePad.GetState(0);
             listBox1.Items.Clear();
             listBox1.Items.Add(state.Buttons.A);

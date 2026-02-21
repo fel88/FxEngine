@@ -1,7 +1,7 @@
 ﻿using System.Drawing;
 using System.Xml.Linq;
 
-namespace FxEngine
+namespace FxEngine.Interfaces
 {
     public interface IDataProvider
     {

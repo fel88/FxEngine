@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using FxEngine.Interfaces;
+using System.Linq;
 using System.Xml.Linq;
 
 namespace FxEngine.Loaders.Collada

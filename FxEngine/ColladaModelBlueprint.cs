@@ -1,4 +1,5 @@
 ﻿using FxEngine.Cameras;
+using FxEngine.Interfaces;
 using FxEngine.Loaders.Collada;
 
 namespace FxEngine
@@ -18,7 +19,7 @@ namespace FxEngine
 
         public ColladaModel Model;
 
-        public override void Init()
+        public override void Init(IDataProvider dp = null)
         {
             if (Model != null)
             {

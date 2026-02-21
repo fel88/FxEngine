@@ -110,15 +110,7 @@ namespace FxEngineEditor
         public async Task LoadLibraryAsync(string path)
         {
             await Task.Run(() => { LoadLibrary(path); });
-        }
-        public void LoadLibrary(string path)
-        {
-            if (path.EndsWith(".fxl"))
-                Static.Library = GameResourcesLibrary.LoadFromZipAsset(path);
-            else
-                Static.Library = GameResourcesLibrary.LoadFromXml(path);
-
-            Text = "FxStudio Assets Editor: " + path + " ;  " + Static.Library.Name;
+            Text = $"FxStudio Assets Editor: {path} ;  {Static.Library.Name}";
             toolStripButton2.Enabled = true;
             toolStripButton1.Enabled = true;
             toolStripButton3.Enabled = true;
@@ -131,11 +123,21 @@ namespace FxEngineEditor
             UpdateRecentsList();
         }
 
+        public void LoadLibrary(string path)
+        {
+            if (path.EndsWith(".fxl"))
+                Static.Library = GameResourcesLibrary.LoadFromZipAsset(path, StaticData.DataProvider);
+            else
+                Static.Library = GameResourcesLibrary.LoadFromXml(path, StaticData.DataProvider);
+        }
+
         private async void loadToolStripMenuItem_Click(object sender, EventArgs e)
         {
             OpenFileDialog ofd = new OpenFileDialog();
             ofd.Filter = "All FxEngine Libraries formats (*.xml, *.fxl)|*.xml;*.fxl|Compressed FxEngine Library (*.fxl)|*.fxl";
-            if (ofd.ShowDialog() != DialogResult.OK) return;
+
+            if (ofd.ShowDialog() != DialogResult.OK)
+                return;
 
             var w = OpenChild<PrefabEditor>();
             await LoadLibraryAsync(ofd.FileName);

@@ -39,16 +39,18 @@
             archivedAssetToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             toolStripDropDownButton2 = new System.Windows.Forms.ToolStripDropDownButton();
             xmlfxlToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            toolStripButton3 = new System.Windows.Forms.ToolStripButton();
             panel1 = new System.Windows.Forms.Panel();
             listView1 = new System.Windows.Forms.ListView();
             columnHeader1 = new System.Windows.Forms.ColumnHeader();
+            columnHeader3 = new System.Windows.Forms.ColumnHeader();
             columnHeader2 = new System.Windows.Forms.ColumnHeader();
             contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(components);
             copyToClipboardToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             saveToFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             panel2 = new System.Windows.Forms.Panel();
             textBox1 = new System.Windows.Forms.TextBox();
-            columnHeader3 = new System.Windows.Forms.ColumnHeader();
+            loadLibraryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             tableLayoutPanel1.SuspendLayout();
             toolStrip1.SuspendLayout();
             contextMenuStrip1.SuspendLayout();
@@ -78,7 +80,7 @@
             // toolStrip1
             // 
             tableLayoutPanel1.SetColumnSpan(toolStrip1, 2);
-            toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { toolStripButton1, toolStripButton2, toolStripDropDownButton1, toolStripDropDownButton2 });
+            toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { toolStripButton1, toolStripButton2, toolStripDropDownButton1, toolStripDropDownButton2, toolStripButton3 });
             toolStrip1.Location = new System.Drawing.Point(0, 0);
             toolStrip1.Name = "toolStrip1";
             toolStrip1.Size = new System.Drawing.Size(911, 25);
@@ -145,6 +147,15 @@
             xmlfxlToolStripMenuItem.Text = "xml->fxl";
             xmlfxlToolStripMenuItem.Click += xmlfxlToolStripMenuItem_Click;
             // 
+            // toolStripButton3
+            // 
+            toolStripButton3.Image = (System.Drawing.Image)resources.GetObject("toolStripButton3.Image");
+            toolStripButton3.ImageTransparentColor = System.Drawing.Color.Magenta;
+            toolStripButton3.Name = "toolStripButton3";
+            toolStripButton3.Size = new System.Drawing.Size(124, 22);
+            toolStripButton3.Text = "use as global asset";
+            toolStripButton3.Click += toolStripButton3_Click_1;
+            // 
             // panel1
             // 
             panel1.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -175,6 +186,11 @@
             columnHeader1.Text = "Name";
             columnHeader1.Width = 150;
             // 
+            // columnHeader3
+            // 
+            columnHeader3.Text = "Path";
+            columnHeader3.Width = 150;
+            // 
             // columnHeader2
             // 
             columnHeader2.Text = "Size";
@@ -182,21 +198,21 @@
             // 
             // contextMenuStrip1
             // 
-            contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { copyToClipboardToolStripMenuItem, saveToFileToolStripMenuItem });
+            contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { copyToClipboardToolStripMenuItem, saveToFileToolStripMenuItem, loadLibraryToolStripMenuItem });
             contextMenuStrip1.Name = "contextMenuStrip1";
-            contextMenuStrip1.Size = new System.Drawing.Size(168, 48);
+            contextMenuStrip1.Size = new System.Drawing.Size(181, 92);
             // 
             // copyToClipboardToolStripMenuItem
             // 
             copyToClipboardToolStripMenuItem.Name = "copyToClipboardToolStripMenuItem";
-            copyToClipboardToolStripMenuItem.Size = new System.Drawing.Size(167, 22);
+            copyToClipboardToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             copyToClipboardToolStripMenuItem.Text = "copy to clipboard";
             copyToClipboardToolStripMenuItem.Click += copyToClipboardToolStripMenuItem_Click;
             // 
             // saveToFileToolStripMenuItem
             // 
             saveToFileToolStripMenuItem.Name = "saveToFileToolStripMenuItem";
-            saveToFileToolStripMenuItem.Size = new System.Drawing.Size(167, 22);
+            saveToFileToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             saveToFileToolStripMenuItem.Text = "save to file";
             saveToFileToolStripMenuItem.Click += saveToFileToolStripMenuItem_Click;
             // 
@@ -220,10 +236,12 @@
             textBox1.TabIndex = 0;
             textBox1.TextChanged += textBox1_TextChanged;
             // 
-            // columnHeader3
+            // loadLibraryToolStripMenuItem
             // 
-            columnHeader3.Text = "Path";
-            columnHeader3.Width = 150;
+            loadLibraryToolStripMenuItem.Name = "loadLibraryToolStripMenuItem";
+            loadLibraryToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            loadLibraryToolStripMenuItem.Text = "load library";
+            loadLibraryToolStripMenuItem.Click += loadLibraryToolStripMenuItem_Click;
             // 
             // AssetNavigator
             // 
@@ -266,5 +284,7 @@
         private System.Windows.Forms.ToolStripMenuItem xmlfxlToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem saveToFileToolStripMenuItem;
         private System.Windows.Forms.ColumnHeader columnHeader3;
+        private System.Windows.Forms.ToolStripButton toolStripButton3;
+        private System.Windows.Forms.ToolStripMenuItem loadLibraryToolStripMenuItem;
     }
 }

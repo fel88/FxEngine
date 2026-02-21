@@ -5,7 +5,7 @@ using System.IO;
 using System.Linq;
 using OpenTK;
 using OpenTK.Mathematics;
-using FxEngine;
+using FxEngine.Interfaces;
 
 namespace FxEngine.Loaders.OBJ
 {    

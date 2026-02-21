@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FxEngine.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
@@ -138,12 +139,12 @@ namespace FxEngine.Assets
 
         public string GetDirectoryName(string path)
         {
-            throw new NotImplementedException();
+            return Path.GetDirectoryName(path);            
         }
 
         public bool IsFileExists(string amb1)
         {
-            throw new NotImplementedException();
+            return Files.Any(z => z.Path == amb1);
         }
     }
 }
