@@ -4,7 +4,7 @@ layout (location = 1) in vec2 texSDFCoords;
 
 uniform mat4 projection; 
 uniform mat4 transformation; 
-varying vec2 v_texSDFCoords;
+out vec2 v_texSDFCoords;
 
 out vec3 ourColor;
 

@@ -1,7 +1,7 @@
 ﻿#version 330 core
 uniform sampler2D texSDF;
 out vec4 FragColor;
-varying vec2 v_texSDFCoords;
+in vec2 v_texSDFCoords;
 uniform float gammaSDF;
 uniform vec3 color;
 

@@ -63,25 +63,14 @@ namespace FxEngine
 
             return doc;
         }
-        public void LoadGameConfig()
+        public virtual void LoadGameConfig()
         {
-            var doc = GetConfigDoc();
-            foreach (var item in doc.Descendants("setting"))
-            {
-                var vl = item.Attribute("value").Value;
-                var nm = item.Attribute("name").Value;
-                switch (nm)
-                {
-                    case "levelsOpened":
-                        LevelOpened = GameResourcesLibrary.ParseInts(vl).Select(z => (int)z).ToArray();
-                        break;
-                }
-            }
+            
         }
 
         public string Name { get; set; }
         public GameResourcesLibrary Manager = new GameResourcesLibrary();
         public SceneManager SceneManager = new SceneManager();
-        public static int[] LevelOpened;
+        
     }
 }

@@ -101,12 +101,16 @@ namespace FxEngine.Fonts.SDF
 
             if (link_ok == 0)
             {
+                string infoLog = GL.GetShaderInfoLog(fShader);
+                Console.WriteLine(infoLog);
                 throw new Exception("fshader compile error");
                 return;
             }
             GL.GetShader(vShader, ShaderParameter.CompileStatus, out link_ok);
             if (link_ok == 0)
             {
+                string infoLog = GL.GetShaderInfoLog(vShader);
+                Console.WriteLine(infoLog);
                 throw new Exception("vshader compile error");
                 return;
             }

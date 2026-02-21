@@ -11,7 +11,9 @@ namespace FxEngine.Gui
     {
         public override void Draw(BaseGlDrawingContext dc)
         {
-            if (!Visible) return;
+            if (!Visible) 
+                return;
+
             DrawingContext = dc;            
 
             Rect.Parent = Drawer.CurrentBound;
