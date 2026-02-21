@@ -55,8 +55,10 @@ namespace FxEngineEditor
             }*/
             foreach (var item in Archive.Files)
             {
-                if (!item.Path.ToLower().Contains(textBox1.Text.ToLower())) continue;
-                listView1.Items.Add(new ListViewItem(new string[] { item.Path, item.Data.Length / 1024 + "Kb" }) { Tag = item });
+                if (!item.Path.ToLower().Contains(textBox1.Text.ToLower()))
+                    continue;
+
+                listView1.Items.Add(new ListViewItem(new string[] { item.Name, item.Path, $"{item.Data.Length / 1024}Kb" }) { Tag = item });
             }
         }
 
@@ -97,7 +99,7 @@ namespace FxEngineEditor
 
         private void toolStripButton3_Click(object sender, EventArgs e)
         {
-            
+
         }
 
         private void copyToClipboardToolStripMenuItem_Click(object sender, EventArgs e)
@@ -175,11 +177,11 @@ namespace FxEngineEditor
                                 using (var entryStream = demoFile.Open())
                                 {
                                     mss.CopyTo(entryStream);
-                                }                                                    
+                                }
                             }
-                        }                       
+                        }
                     }
-                }                           
+                }
             }
         }
 
@@ -266,6 +268,21 @@ namespace FxEngineEditor
 
 
             }
+        }
+
+        private void saveToFileToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (listView1.SelectedItems.Count <= 0)
+                return;
+
+            var file = listView1.SelectedItems[0].Tag as AssetFile;
+            SaveFileDialog sfd = new SaveFileDialog();
+            sfd.FileName = file.Name;
+            if (sfd.ShowDialog() != DialogResult.OK)
+                return;
+
+            File.WriteAllBytes(sfd.FileName, file.Data);
+            GuiHelpers.ShowInfo($"File saved to : {sfd.FileName}", Text);
         }
     }
 }

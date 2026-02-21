@@ -11,6 +11,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml.Linq;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace FxEngineEditor
 {
@@ -185,10 +186,7 @@ namespace FxEngineEditor
         }
 
 
-        public DialogResult ShowQuestion(string text)
-        {
-            return MessageBox.Show(text, Text, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
-        }
+
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
@@ -199,7 +197,7 @@ namespace FxEngineEditor
 
             if (Static.Library != null && Static.Library.Dirty)
             {
-                switch (ShowQuestion($"Save library changes: {Static.Library.Name}?"))
+                switch (GuiHelpers.ShowQuestion($"Save library changes: {Static.Library.Name}?", Text))
                 {
                     case DialogResult.Yes:
                         Static.Library.Save(Static.Library.LibraryPath);
@@ -292,7 +290,7 @@ namespace FxEngineEditor
             foreach (var item in lib.Models)
             {
                 //if (item.FilePath.EndsWith("obj"))
-                if(item is ObjModelBlueprint omb)
+                if (item is ObjModelBlueprint omb)
                 {
                     AppendObj(asset, omb);
                     continue;
