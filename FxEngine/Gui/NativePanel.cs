@@ -101,7 +101,9 @@ namespace FxEngine.Gui
         public List<GlGuiElement> Childs = new List<GlGuiElement>();
         public override void Draw(BaseGlDrawingContext dc)
         {
-            if (!Visible) return;
+            if (!Visible) 
+                return;
+
             DrawingContext = dc;
             var b = Drawer.CurrentBound;
             Rect.Parent = b;

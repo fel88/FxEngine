@@ -28,7 +28,9 @@ namespace FxEngine.Gui
 
         public void Update()
         {
-            if (Parent == null) return;
+            if (Parent == null) 
+                return;
+
             if ((GuiAnchor.Right & (Anchor)) > 0)
             {
                 Left = Parent.Right - XOffset;
@@ -61,8 +63,8 @@ namespace FxEngine.Gui
         public float Width;
         public float Height;
 
-        public float Right { get { return Left + Width; } }
-        public float Bottom { get { return Top + Height; } }
+        public float Right => Left + Width;
+        public float Bottom => Top + Height;
 
         public bool IntersectsWith(float x, float y)
         {

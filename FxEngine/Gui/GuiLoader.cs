@@ -59,7 +59,57 @@ namespace FxEngine.Gui
                 }
                 ret.Add(but);
             }
-            if (item.Name == "button")
+            else if (item.Name == "checkBox")
+            {
+                var eid = item.Attribute("id").Value;
+                var but = new NativeCheckBox() { Parent = parent };
+                but.Id = eid;
+                but.Caption = item.Attribute("caption").Value;
+                var aa = item.Attribute("rect").Value.Split(';').Select(int.Parse).ToArray();
+                var bb = item.Attribute("anchors").Value.Split(';').ToArray();
+                but.Rect = new GuiBounds(aa[0], aa[1], aa[2], aa[3]);
+                foreach (var bitem in bb)
+                {
+
+                    switch (bitem)
+                    {
+                        case "bottom":
+                            but.Rect.Anchor |= GuiAnchor.Bottom;
+                            break;
+                        case "right":
+                            but.Rect.Anchor |= GuiAnchor.Right;
+                            break;
+                        case "left":
+                            but.Rect.Anchor |= GuiAnchor.Left;
+                            break;
+                    }
+                }
+                var w1 = handler.GetType().GetMethods().Where(z =>
+                {
+                    var rr = z.GetCustomAttributes(typeof(ClickProcessorAttribute), true);
+                    return rr.Any();
+                    //z.GetCustomAttribute(typeof(ClickProcessorAttribute)) != null
+
+                }).ToArray();
+                foreach (var witem in w1)
+                {
+                    var rr = witem.GetCustomAttributes(typeof(ClickProcessorAttribute), true);
+
+                    //var id = (witem.GetCustomAttribute(typeof(ClickProcessorAttribute)) as ClickProcessorAttribute).Id;
+                    var id = (rr[0] as ClickProcessorAttribute).Id;
+                    if (id.StartsWith("#"))
+                    {
+                        id = id.Substring(1);
+                    }
+                    if (id == eid)
+                    {
+                        but.CheckedChanged = (x) => { witem.Invoke(handler, new object[] { x }); };
+                        break;
+                    }
+                }
+                ret.Add(but);
+            }
+            else if (item.Name == "button")
             {
                 var eid = item.Attribute("id").Value;
                 var but = new NativeButton() { Parent = parent };
@@ -109,7 +159,7 @@ namespace FxEngine.Gui
                 }
                 ret.Add(but);
             }
-            if (item.Name == "stackPanel")
+            else if (item.Name == "stackPanel")
             {
                 var eid = item.Attribute("id").Value;
                 var but = new NativeStackPanel() { Parent = parent };
@@ -142,7 +192,7 @@ namespace FxEngine.Gui
                     but.Childs.AddRange(ParseElement(xitem, handler, but));
                 }
             }
-            if (item.Name == "panel")
+            else if (item.Name == "panel")
             {
                 var eid = item.Attribute("id").Value;
                 var but = new NativePanel() { Parent = parent };
