@@ -13,9 +13,9 @@ namespace FxEngine
     {
         public struct VertexVbo
         {
-            public float X, Y, Z;
-            public float nx, ny, nz;
-            public VertexVbo(float x, float y, float z, float _nx, float _ny, float _nz)
+            public double X, Y, Z;
+            public double nx, ny, nz;
+            public VertexVbo(double x, double y, double z, double _nx, double _ny, double _nz)
             {
                 X = x; Y = y; Z = z;
                 nx = _nx;
@@ -46,7 +46,7 @@ namespace FxEngine
         {
             List<VertexVbo> v = new List<VertexVbo>();
 
-            Vector3 center = Vector3.Zero;
+            Vector3d center = Vector3d.Zero;
             foreach (var vector3 in vol.vertices)
             {
                 center += vector3;

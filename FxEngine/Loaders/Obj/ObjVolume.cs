@@ -32,14 +32,14 @@ namespace FxEngine.Loaders.OBJ
         public ModelPathItem Parent;
 
         public string Name;
-        public Vector3[] vertices;
-        public Vector3[] normals;
+        public Vector3d[] vertices;
+        public Vector3d[] normals;
         public int[] indicies;
         public int[] origIndicies;
-        public Vector3[] origVerts;
-        public Vector3[] origNorms;
+        public Vector3d[] origVerts;
+        public Vector3d[] origNorms;
         Vector3[] colors;
-        public Vector2[] texturecoords;
+        public Vector2d[] texturecoords;
 
         public static bool ReverseVertexOrder { get; set; }
         public List<FaceItem2> faces = new List<FaceItem2>();
@@ -50,9 +50,9 @@ namespace FxEngine.Loaders.OBJ
         public float? Volume { get; set; }
 
 
-        public override Vector3[] GetVerts()
+        public override Vector3d[] GetVerts()
         {
-            List<Vector3> verts = new List<Vector3>();
+            List<Vector3d> verts = new List<Vector3d>();
 
             foreach (var face in faces)
             {
@@ -86,9 +86,9 @@ namespace FxEngine.Loaders.OBJ
         }
 
 
-        public override Vector2[] GetTextureCoords()
+        public override Vector2d[] GetTextureCoords()
         {
-            List<Vector2> coords = new List<Vector2>();
+            List<Vector2d> coords = new List<Vector2d>();
 
             foreach (var face in faces)
             {
@@ -103,11 +103,15 @@ namespace FxEngine.Loaders.OBJ
 
         public override void CalculateModelMatrix()
         {
-            ModelMatrix = Matrix4.CreateScale(Scale) * Matrix4.CreateRotationX(Rotation.X) * Matrix4.CreateRotationY(Rotation.Y) * Matrix4.CreateRotationZ(Rotation.Z) * Matrix4.CreateTranslation(Position);
+            ModelMatrix = Matrix4d.CreateScale(Scale) *
+                Matrix4d.CreateRotationX(Rotation.X) *
+                Matrix4d.CreateRotationY(Rotation.Y) *
+                Matrix4d.CreateRotationZ(Rotation.Z) *
+                Matrix4d.CreateTranslation(Position);
         }
 
 
-        public static ObjVolume[] LoadFromFile(string filename, Matrix4 loadTransform, IDataProvider dp = null)
+        public static ObjVolume[] LoadFromFile(string filename, Matrix4d loadTransform, IDataProvider dp = null)
         {
             if (dp == null)
             {
@@ -122,13 +126,13 @@ namespace FxEngine.Loaders.OBJ
         }
 
 
-        public static ObjVolume[] LoadFromString(string obj, string path, Matrix4 loadTransform, IDataProvider dp)
+        public static ObjVolume[] LoadFromString(string obj, string path, Matrix4d loadTransform, IDataProvider dp)
         {
             List<string> lines = new List<string>(obj.Split('\n'));
 
-            List<Vector3> verts = new List<Vector3>();
-            List<Vector3> vertn = new List<Vector3>();
-            List<Vector2> texs = new List<Vector2>();
+            List<Vector3d> verts = new List<Vector3d>();
+            List<Vector3d> vertn = new List<Vector3d>();
+            List<Vector2d> texs = new List<Vector2d>();
             List<FaceItem> faces = new List<FaceItem>();
 
             // Base values            
@@ -150,8 +154,8 @@ namespace FxEngine.Loaders.OBJ
                     if (vol != null)
                     {
                         List<int> ind = new List<int>();
-                        List<Vector3> vvrts = new List<Vector3>();
-                        List<Vector3> vnrts = new List<Vector3>();
+                        List<Vector3d> vvrts = new List<Vector3d>();
+                        List<Vector3d> vnrts = new List<Vector3d>();
 
                         foreach (var faceItem in faces)
                         {
@@ -188,7 +192,7 @@ namespace FxEngine.Loaders.OBJ
                             List<FaceVertex> fv = new List<FaceVertex>();
                             foreach (var item in face.V)
                             {
-                                var t1 = new Vector2();
+                                var t1 = new Vector2d();
                                 if (item.Texcoord >= 0 && texs.Any())
                                 {
                                     t1 = texs[item.Texcoord];
@@ -275,7 +279,7 @@ namespace FxEngine.Loaders.OBJ
                         Console.WriteLine("Error parsing vertex: {0}", line);
                     }
 
-                    verts.Add((new Vector4(vec, 1) * loadTransform).Xyz);
+                    verts.Add((new Vector4d(vec, 1) * loadTransform).Xyz);
                 }
                 else if (line.StartsWith("vn ")) // Vertex normal
                 {
@@ -434,7 +438,7 @@ namespace FxEngine.Loaders.OBJ
         }
 
 
-        public static void LoadVol(ObjVolume vol, List<FaceItem> faces, List<Vector3> verts, List<Vector3> vertn, List<Vector2> texs, MaterialStuff mat, int vstart)
+        public static void LoadVol(ObjVolume vol, List<FaceItem> faces, List<Vector3d> verts, List<Vector3d> vertn, List<Vector2d> texs, MaterialStuff mat, int vstart)
         {
             foreach (var face in faces)
             {
@@ -458,7 +462,7 @@ namespace FxEngine.Loaders.OBJ
 
                 List<FaceVertex> fv = new List<FaceVertex>();
 
-                Vector3 norm1 = new Vector3();
+                Vector3d norm1 = new Vector3d();
                 foreach (var item in face.V)
                 {
                     if (vertn.Count != 0)
@@ -481,8 +485,8 @@ namespace FxEngine.Loaders.OBJ
             if (vol != null)
             {
                 List<int> ind = new List<int>();
-                List<Vector3> vvrts = new List<Vector3>();
-                List<Vector3> vnrts = new List<Vector3>();
+                List<Vector3d> vvrts = new List<Vector3d>();
+                List<Vector3d> vnrts = new List<Vector3d>();
 
                 foreach (var faceItem in faces)
                 {
@@ -506,17 +510,17 @@ namespace FxEngine.Loaders.OBJ
             }
         }
 
-        public BoundingBox GetBoundingBox(Matrix3 preTransform)
+        public BoundingBox GetBoundingBox(Matrix4d preTransform)
         {
-            Vector3 maxes = new Vector3(float.MinValue, float.MinValue, float.MinValue);
-            Vector3 mins = new Vector3(float.MaxValue, float.MaxValue, float.MaxValue);
+            Vector3d maxes = new Vector3d(float.MinValue, float.MinValue, float.MinValue);
+            Vector3d mins = new Vector3d(float.MaxValue, float.MaxValue, float.MaxValue);
 
             BoundingBox ret = new BoundingBox();
             foreach (var item in faces)
             {
                 foreach (var zitem in item.Vertexes)
                 {
-                    var pos = zitem.Position * preTransform;
+                    var pos = new Vector4d(zitem.Position, 1) * preTransform;
 
                     for (int i = 0; i < 3; i++)
                     {

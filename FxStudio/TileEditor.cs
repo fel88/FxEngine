@@ -128,7 +128,7 @@ namespace FxEngineEditor
                         {
                             for (int j = -10; j < 10; j++)
                             {
-                                SelectedTile.Position = new PointF(i * SelectedTile.bmpt.Width, j * SelectedTile.bmpt.Height);
+                                SelectedTile.Position = new Vector2d(i * SelectedTile.bmpt.Width, j * SelectedTile.bmpt.Height);
                                 SelectedTile.Scale = 1;
                                 SelectedTile.Draw();
                             }
@@ -136,7 +136,7 @@ namespace FxEngineEditor
                     }
                     else
                     {
-                        SelectedTile.Position = new PointF();
+                        SelectedTile.Position = new Vector2d();
                         SelectedTile.Scale = 1;
                         SelectedTile.Draw();
                     }

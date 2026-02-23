@@ -171,7 +171,7 @@ namespace FxEngine.Gui
             dc.TextRoutine.Shader.Color = new Vector3(1, 1, 1);
 
             var rgs = dc.TextRoutine.kr.GetStringRegions(Text);
-            dc.TextRoutine.DrawText(Text, new PointF(0, 0));
+            dc.TextRoutine.DrawText(Text, new Vector2d(0, 0));
             dc.TextRoutine.Shader.PopState();
             GL.PopMatrix();
 

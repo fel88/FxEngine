@@ -1,5 +1,6 @@
 ﻿using System.Drawing;
 using OpenTK.Graphics.OpenGL;
+using OpenTK.Mathematics;
 
 namespace FxEngine.Fonts.SDF
 {
@@ -10,7 +11,7 @@ namespace FxEngine.Fonts.SDF
             shader = new SdfShader();
         }
         
-        public override void RenderChar(char c, PointF pos)
+        public override void RenderChar(char c, Vector2d pos)
         {
             if (!infos.ContainsKey(c)) return;
             var fr = infos[c];

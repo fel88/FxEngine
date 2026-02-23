@@ -21,7 +21,7 @@ namespace FxEngine
         public bool UseMatrixDriver { get; set; }
         public string Name;
         public ModelBlueprint Blueprint;
-        public Matrix4 Matrix;
+        public Matrix4d Matrix;
         public MatrixGenerator MatrixDriver = new MatrixGenerator();
 
         public void Draw(Camera camera, bool oldStyle = false, int shdp = -1)
@@ -32,7 +32,7 @@ namespace FxEngine
             {
                 var bm = camera.GetBillboardMatrix(Matrix.ExtractTranslation());
                 var scale = Matrix.ExtractScale();
-                bm = Matrix4.CreateScale(scale) * bm;
+                bm = Matrix4d.CreateScale(scale) * bm;
                 GL.MultMatrix(ref bm);
 
 

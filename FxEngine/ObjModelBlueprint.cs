@@ -17,7 +17,7 @@ namespace FxEngine
             Objs.AddRange(vols);
             VaoModel = new VaoModel();
             VaoModel.ModelInit(Objs.ToArray());
-            Vector3 res = new Vector3();
+            Vector3d res = new Vector3();
             int cnt = 0;
             foreach (var item in vols)
             {
@@ -49,7 +49,7 @@ namespace FxEngine
         public void ImportObj()
         {
             Objs = new List<ObjVolume>();
-            Objs.AddRange(ObjVolume.LoadFromFile(FilePath, Matrix4.Identity));
+            Objs.AddRange(ObjVolume.LoadFromFile(FilePath, Matrix4d.Identity));
         }
         public bool IsLoaded
         {
@@ -58,11 +58,11 @@ namespace FxEngine
                 return Objs != null;
             }
         }
-        public override Vector3 GetBbox(Matrix4? mtr = null)
+        public override Vector3d GetBbox(Matrix4d? mtr = null)
         {
             if (mtr == null)
             {
-                mtr = Matrix4.Identity;
+                mtr = Matrix4d.Identity;
             }
             bool inited = false;
 
@@ -73,8 +73,8 @@ namespace FxEngine
             if (BBoxDirty)
             {
                 oldbbox = mtr.Value;
-                MinsBbox = new float[3];
-                MaxsBbox = new float[3];
+                MinsBbox = new double[3];
+                MaxsBbox = new double[3];
                 foreach (var mitem in Objs)
                 {
                     foreach (var item in mitem.faces)
@@ -83,7 +83,7 @@ namespace FxEngine
                         List<DrawVertex> dv = new List<DrawVertex>();
                         foreach (var vitem in item.Vertexes)
                         {
-                            var pos = new Vector4(vitem.Position, 1) * mtr.Value;
+                            var pos = new Vector4d(vitem.Position, 1) * mtr.Value;
                             for (int i = 0; i < 3; i++)
                             {
                                 if (!inited)
@@ -101,7 +101,7 @@ namespace FxEngine
                 BBoxDirty = false;
 
             }
-            return new Vector3(MaxsBbox[0] - MinsBbox[0], MaxsBbox[1] - MinsBbox[1], MaxsBbox[2] - MinsBbox[2]);
+            return new Vector3d(MaxsBbox[0] - MinsBbox[0], MaxsBbox[1] - MinsBbox[1], MaxsBbox[2] - MinsBbox[2]);
         }
     }
 }

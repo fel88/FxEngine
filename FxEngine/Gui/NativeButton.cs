@@ -52,7 +52,7 @@ namespace FxEngine.Gui
 
             dc.TextRoutine.Shader.PushState();
             dc.TextRoutine.Shader.Color = new Vector3(1, 1, 1);
-            dc.TextRoutine.DrawText(Caption, new PointF(0, 0));
+            dc.TextRoutine.DrawText(Caption, new Vector2d(0, 0));
             dc.TextRoutine.Shader.PopState();
             GL.PopMatrix();
             GL.PopMatrix();

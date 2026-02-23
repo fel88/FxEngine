@@ -1,16 +1,19 @@
-﻿using System.Collections.Generic;
-using System.Drawing;
-using FxEngine.Shaders;
+﻿using FxEngine.Shaders;
 using OpenTK.Graphics.OpenGL;
+using OpenTK.Mathematics;
+using System.Collections.Generic;
+using System.Drawing;
 
 namespace FxEngine.Fonts
 {
     public class TextRenderer
     {
-        public virtual void DrawText(string text, PointF pos)
+        public virtual void DrawText(string text, Vector2d pos)
         {
             //InitCharTextures();
-            if (string.IsNullOrEmpty(text)) return;
+            if (string.IsNullOrEmpty(text)) 
+                return;
+
             var rgs = kr.GetStringRegions(text);
             if (shader != null)
             {
@@ -29,7 +32,7 @@ namespace FxEngine.Fonts
             for (int i = 0; i < text.Length; i++)
             {
                 var rg = rgs[i];
-                RenderChar(text[i], new PointF(rg.DrawPoint.X + pos.X, rg.DrawPoint.Y + pos.Y));
+                RenderChar(text[i], new Vector2d(rg.DrawPoint.X + pos.X, rg.DrawPoint.Y + pos.Y));
             }
 
             GL.UseProgram(0);
@@ -42,7 +45,7 @@ namespace FxEngine.Fonts
                 GL.Disable(EnableCap.Blend);
             }
         }
-        public virtual void RenderChar(char c, PointF pos)
+        public virtual void RenderChar(char c, Vector2d pos)
         {
 
         }

@@ -41,6 +41,8 @@
             binaryAssetToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             archivedAssetToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             toolStrip1 = new System.Windows.Forms.ToolStrip();
+            toolStripDropDownButton1 = new System.Windows.Forms.ToolStripDropDownButton();
+            loadToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             toolStripButton1 = new System.Windows.Forms.ToolStripButton();
             toolStripButton2 = new System.Windows.Forms.ToolStripButton();
             toolStripButton3 = new System.Windows.Forms.ToolStripButton();
@@ -49,6 +51,8 @@
             toolStripButton6 = new System.Windows.Forms.ToolStripButton();
             toolStripButton7 = new System.Windows.Forms.ToolStripButton();
             toolStripButton8 = new System.Windows.Forms.ToolStripButton();
+            exportToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            binaryAssetToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             menuStrip1.SuspendLayout();
             toolStrip1.SuspendLayout();
             SuspendLayout();
@@ -127,25 +131,41 @@
             // binaryAssetToolStripMenuItem
             // 
             binaryAssetToolStripMenuItem.Name = "binaryAssetToolStripMenuItem";
-            binaryAssetToolStripMenuItem.Size = new System.Drawing.Size(148, 22);
+            binaryAssetToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             binaryAssetToolStripMenuItem.Text = "binary asset";
             binaryAssetToolStripMenuItem.Click += binaryAssetToolStripMenuItem_Click;
             // 
             // archivedAssetToolStripMenuItem
             // 
             archivedAssetToolStripMenuItem.Name = "archivedAssetToolStripMenuItem";
-            archivedAssetToolStripMenuItem.Size = new System.Drawing.Size(148, 22);
+            archivedAssetToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             archivedAssetToolStripMenuItem.Text = "archived asset";
             archivedAssetToolStripMenuItem.Click += archivedAssetToolStripMenuItem_Click;
             // 
             // toolStrip1
             // 
-            toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { toolStripButton1, toolStripButton2, toolStripButton3, toolStripButton5, toolStripButton4, toolStripButton6, toolStripButton7, toolStripButton8 });
+            toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { toolStripDropDownButton1, toolStripButton1, toolStripButton2, toolStripButton3, toolStripButton5, toolStripButton4, toolStripButton6, toolStripButton7, toolStripButton8 });
             toolStrip1.Location = new System.Drawing.Point(0, 24);
             toolStrip1.Name = "toolStrip1";
             toolStrip1.Size = new System.Drawing.Size(1381, 25);
             toolStrip1.TabIndex = 2;
             toolStrip1.Text = "toolStrip1";
+            // 
+            // toolStripDropDownButton1
+            // 
+            toolStripDropDownButton1.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { loadToolStripMenuItem1, exportToolStripMenuItem1 });
+            toolStripDropDownButton1.Image = (System.Drawing.Image)resources.GetObject("toolStripDropDownButton1.Image");
+            toolStripDropDownButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
+            toolStripDropDownButton1.Name = "toolStripDropDownButton1";
+            toolStripDropDownButton1.Size = new System.Drawing.Size(72, 22);
+            toolStripDropDownButton1.Text = "Library";
+            // 
+            // loadToolStripMenuItem1
+            // 
+            loadToolStripMenuItem1.Name = "loadToolStripMenuItem1";
+            loadToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
+            loadToolStripMenuItem1.Text = "Load";
+            loadToolStripMenuItem1.Click += loadToolStripMenuItem1_Click;
             // 
             // toolStripButton1
             // 
@@ -232,6 +252,19 @@
             toolStripButton8.Text = "Asset navigator";
             toolStripButton8.Click += toolStripButton8_Click;
             // 
+            // exportToolStripMenuItem1
+            // 
+            exportToolStripMenuItem1.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { binaryAssetToolStripMenuItem1 });
+            exportToolStripMenuItem1.Name = "exportToolStripMenuItem1";
+            exportToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
+            exportToolStripMenuItem1.Text = "Export";
+            // 
+            // binaryAssetToolStripMenuItem1
+            // 
+            binaryAssetToolStripMenuItem1.Name = "binaryAssetToolStripMenuItem1";
+            binaryAssetToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
+            binaryAssetToolStripMenuItem1.Text = "binary asset";
+            // 
             // Form1
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -279,6 +312,10 @@
         private System.Windows.Forms.ToolStripMenuItem archivedAssetToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem saveAsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem zipAssetToolStripMenuItem;
+        private System.Windows.Forms.ToolStripDropDownButton toolStripDropDownButton1;
+        private System.Windows.Forms.ToolStripMenuItem loadToolStripMenuItem1;
+        private System.Windows.Forms.ToolStripMenuItem exportToolStripMenuItem1;
+        private System.Windows.Forms.ToolStripMenuItem binaryAssetToolStripMenuItem1;
     }
 }
 

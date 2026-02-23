@@ -20,7 +20,7 @@ namespace FxEngineEditor
             sb.AppendLine("</technique_common>");
         }
 
-        public static void AppendFloatArray(StringBuilder sb, string id, Vector3[] points)
+        public static void AppendFloatArray(StringBuilder sb, string id, Vector3d[] points)
         {
             NumberFormatInfo nfi = new NumberFormatInfo();
             nfi.NumberDecimalSeparator = ".";
@@ -34,7 +34,7 @@ namespace FxEngineEditor
 
             sb.AppendLine("</float_array>");
         }
-        public static void AppendSource(StringBuilder sb, string id, Vector3[] points)
+        public static void AppendSource(StringBuilder sb, string id, Vector3d[] points)
         {
             sb.AppendLine($"<source id=\"{id}\">");
             AppendFloatArray(sb, id + "-array", points);

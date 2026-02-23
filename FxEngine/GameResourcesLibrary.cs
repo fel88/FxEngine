@@ -115,23 +115,23 @@ namespace FxEngine
             tiles.Remove(tl);
         }
 
-        public static Matrix4 LoadTransforms(XElement elem)
+        public static Matrix4d LoadTransforms(XElement elem)
         {
-            Matrix4 mtr4 = Matrix4.Identity;
+            Matrix4d mtr4 = Matrix4d.Identity;
             foreach (var titem in elem.Descendants())
             {
                 switch (titem.Name.LocalName)
                 {
                     case "scale":
                         {
-                            mtr4 = mtr4 * Matrix4.CreateScale(float.Parse(titem.Attribute("ratio").Value));
+                            mtr4 = mtr4 * Matrix4d.CreateScale(float.Parse(titem.Attribute("ratio").Value));
                         }
                         break;
                     case "translation":
                         {
                             var ar1 = titem.Attribute("v").Value.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries).ToArray();
                             var ar2 = ar1.Select(z => float.Parse(z)).ToArray();
-                            mtr4 = mtr4 * Matrix4.CreateTranslation(ar2[0], ar2[1], ar2[2]);
+                            mtr4 = mtr4 * Matrix4d.CreateTranslation(ar2[0], ar2[1], ar2[2]);
                         }
                         break;
                     case "rotation":
@@ -141,7 +141,7 @@ namespace FxEngine
                             var ang = float.Parse(titem.Attribute("v").Value);
                             var ar3 = titem.Attribute("axis").Value.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries).ToArray();
                             var ar4 = ar3.Select(z => float.Parse(z)).ToArray();
-                            mtr4 = mtr4 * Matrix4.CreateFromAxisAngle(new Vector3(ar4[0], ar4[1], ar4[2]), (float)(ang * Math.PI / 180.0f));
+                            mtr4 = mtr4 * Matrix4d.CreateFromAxisAngle(new Vector3(ar4[0], ar4[1], ar4[2]), (float)(ang * Math.PI / 180.0f));
                         }
                         break;
                 }
@@ -236,7 +236,7 @@ namespace FxEngine
 
                     if (filePath.EndsWith("obj"))
                     {
-                        Matrix4 mtr4 = Matrix4.Identity;
+                        Matrix4d mtr4 = Matrix4d.Identity;
                         var fr = item.Descendants().FirstOrDefault(z => z.Name == "transforms");
                         if (fr != null)
                         {
@@ -421,7 +421,7 @@ namespace FxEngine
                             var tid = float.Parse(titem.Attribute("tileId").Value);
                             var xx = float.Parse(titem.Attribute("x").Value);
                             var yy = float.Parse(titem.Attribute("y").Value);
-                            t.Tiles.Add(new FxEngine.Tiles.TileDrawItem() { Tile = ret.tiles.First(z => z.Id == tid), Position = new PointF(xx, yy) });
+                            t.Tiles.Add(new FxEngine.Tiles.TileDrawItem() { Tile = ret.tiles.First(z => z.Id == tid), Position = new Vector2d(xx, yy) });
                         }
                     }
                     if (modelModels != null)
@@ -434,7 +434,7 @@ namespace FxEngine
                                 var id = int.Parse(titem.Attribute("id").Value);
                                 var nm = (titem.Attribute("name").Value);
 
-                                Matrix4 mtr = Matrix4.Identity;
+                                Matrix4d mtr = Matrix4d.Identity;
                                 if (titem.Attribute("matrix") != null)
                                 {
                                     mtr = ColladaStuff.MatrixFromArray((titem.Attribute("matrix").Value).Split(new char[] { ' ', '\n', '\r', ';' }, StringSplitOptions.RemoveEmptyEntries).Select(x => float.Parse(x.Replace(",", "."), CultureInfo.InvariantCulture)).ToArray(), true);
@@ -445,7 +445,7 @@ namespace FxEngine
                                 {
                                     if (fr != null)
                                     {
-                                        mtr = Matrix4.Identity;//should it accum?
+                                        mtr = Matrix4d.Identity;//should it accum?
                                         mtr = mtr * LoadTransforms(fr);
                                     }
                                 }catch(Exception ex)
@@ -474,7 +474,7 @@ namespace FxEngine
                             var cnt = int.Parse(titem.Attribute("count").Value);
 
 
-                            Matrix4 mtr = Matrix4.Identity;
+                            Matrix4d mtr = Matrix4d.Identity;
                             if (tiles.Attribute("matrix") != null)
                             {
                                 mtr = ColladaStuff.MatrixFromArray((titem.Attribute("matrix").Value).Split(new char[] { ' ', '\n', '\r', ';' }, StringSplitOptions.RemoveEmptyEntries).Select(x => float.Parse(x.Replace(",", "."), CultureInfo.InvariantCulture)).ToArray(), true);
@@ -486,7 +486,7 @@ namespace FxEngine
                                 mtr = mtr * LoadTransforms(fr);
                             }
 
-                            var incv3 = Matrix4.CreateTranslation(inc[0], inc[1], inc[2]);
+                            var incv3 = Matrix4d.CreateTranslation(inc[0], inc[1], inc[2]);
                             for (int i = 0; i < cnt; i++)
                             {
                                 mtr *= incv3;

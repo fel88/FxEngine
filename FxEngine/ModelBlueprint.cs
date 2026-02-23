@@ -7,7 +7,7 @@ using OpenTK.Mathematics;
 using System.Collections.Generic;
 
 namespace FxEngine
-{    
+{
     public class ModelBlueprint
     {
         public ModelBlueprint()
@@ -15,27 +15,27 @@ namespace FxEngine
 
         }
 
-        public DrawPolygon[] GetBoundingBoxModel(Matrix4 matrix)
+        public DrawPolygon[] GetBoundingBoxModel(Matrix4d matrix)
         {
 
             List<DrawPolygon> dp = new List<DrawPolygon>();
             GetBbox();
-            float[] mins = new float[3];
-            float[] maxs = new float[3];
+            double[] mins = new double[3];
+            double[] maxs = new double[3];
             List<FaceItem2> faces = new List<FaceItem2>();
 
             maxs = MaxsBbox;
             mins = MinsBbox;
             List<FaceVertex> vrt = new List<FaceVertex>();
-            var v1 = new FaceVertex() { Position = new Vector3(mins[0], mins[1], mins[2]) };
-            var v2 = new FaceVertex() { Position = new Vector3(maxs[0], mins[1], mins[2]) };
-            var v3 = new FaceVertex() { Position = new Vector3(maxs[0], maxs[1], mins[2]) };
-            var v4 = new FaceVertex() { Position = new Vector3(mins[0], maxs[1], mins[2]) };
+            var v1 = new FaceVertex() { Position = new Vector3d(mins[0], mins[1], mins[2]) };
+            var v2 = new FaceVertex() { Position = new Vector3d(maxs[0], mins[1], mins[2]) };
+            var v3 = new FaceVertex() { Position = new Vector3d(maxs[0], maxs[1], mins[2]) };
+            var v4 = new FaceVertex() { Position = new Vector3d(mins[0], maxs[1], mins[2]) };
 
-            var v5 = new FaceVertex() { Position = new Vector3(mins[0], mins[1], maxs[2]) };
-            var v6 = new FaceVertex() { Position = new Vector3(maxs[0], mins[1], maxs[2]) };
-            var v7 = new FaceVertex() { Position = new Vector3(maxs[0], maxs[1], maxs[2]) };
-            var v8 = new FaceVertex() { Position = new Vector3(mins[0], maxs[1], maxs[2]) };
+            var v5 = new FaceVertex() { Position = new Vector3d(mins[0], mins[1], maxs[2]) };
+            var v6 = new FaceVertex() { Position = new Vector3d(maxs[0], mins[1], maxs[2]) };
+            var v7 = new FaceVertex() { Position = new Vector3d(maxs[0], maxs[1], maxs[2]) };
+            var v8 = new FaceVertex() { Position = new Vector3d(mins[0], maxs[1], maxs[2]) };
 
             //bottom
             faces.Add(new FaceItem2() { Vertexes = new FaceVertex[] { v1, v2, v3 } });
@@ -65,7 +65,7 @@ namespace FxEngine
                 {
 
                     var trans1 = matrix.ExtractTranslation();
-                    var v22 = Vector3.TransformVector(vitem.Position, matrix);
+                    var v22 = Vector3d.TransformVector(vitem.Position, matrix);
                     v22 += trans1;
 
 
@@ -96,7 +96,7 @@ namespace FxEngine
 
             Name = name;
         }
-        public Matrix4 Matrix;
+        public Matrix4d Matrix = Matrix4d.Identity;
 
 
 
@@ -107,10 +107,10 @@ namespace FxEngine
 
 
         public bool BBoxDirty = true;
-        public float[] MinsBbox;
-        public float[] MaxsBbox;
+        public double[] MinsBbox;
+        public double[] MaxsBbox;
 
-        protected Matrix4 oldbbox = Matrix4.Identity;
+        protected Matrix4d oldbbox = Matrix4d.Identity;
 
 
         public virtual void Draw(bool oldStyle, Camera camera, int shaderProgram)
@@ -118,13 +118,13 @@ namespace FxEngine
 
         }
 
-        public virtual void Init(IDataProvider dp=null)
+        public virtual void Init(IDataProvider dp = null)
         {
 
         }
-        public virtual Vector3 GetBbox(Matrix4? mtr = null)
+        public virtual Vector3d GetBbox(Matrix4d? mtr = null)
         {
-            return new Vector3();
+            return new Vector3d();
         }
     }
 }

@@ -5,9 +5,9 @@ namespace FxEngine
 {
     public class Plane
     {
-        private Vector3 _normal;
+        private Vector3d _normal;
 
-        public Vector3 Normal
+        public Vector3d Normal
         {
             get { return _normal; }
         }
@@ -22,16 +22,15 @@ namespace FxEngine
         
         private static double Epsilon = 1e-5;
 
-        public Plane(Vector3 normal, double w)
+        public Plane(Vector3d normal, double w)
         {
             _normal = normal;
             _w = w;
         }
-        public static Plane FromPoints(Vector3 a, Vector3 b, Vector3 c)
+        public static Plane FromPoints(Vector3d a, Vector3d b, Vector3d c)
         {
-            var n = Vector3.Cross(b - a, c - a).Normalized();
-
-            return new Plane(n, Vector3.Dot(n, a));
+            var n = Vector3d.Cross(b - a, c - a).Normalized();
+            return new Plane(n, Vector3d.Dot(n, a));
         }
 
 

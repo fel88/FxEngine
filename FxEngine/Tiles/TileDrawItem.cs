@@ -9,12 +9,12 @@ namespace FxEngine.Tiles
         public float Scale = 1;
         public Tile Tile;
         public PointF IsometricPosition;
-        public Vector3 Position3;
-        public PointF Position
+        public Vector3d Position3;
+        public Vector2d Position
         {
             get
             {
-                return new PointF(Position3.X, Position3.Y);
+                return new Vector2d(Position3.X, Position3.Y);
             }
             set
             {

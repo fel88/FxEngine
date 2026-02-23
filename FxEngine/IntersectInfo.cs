@@ -4,10 +4,10 @@ namespace FxEngine
 {
     public class IntersectInfo
     {
-        public float Distanse;
+        public double Distanse;
         public DrawPolygon Target;
 
-        public Vector3 Point { get; set; }
+        public Vector3d Point { get; set; }
         public object Parent;
     }
 

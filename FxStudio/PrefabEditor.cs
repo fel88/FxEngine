@@ -71,28 +71,87 @@ namespace FxEngineEditor
 
         float zoomK = 10;
 
-        void Form1_MouseWheel(object sender, MouseEventArgs e)
-        {
-            if (
-     gl.ClientRectangle.IntersectsWith(new Rectangle(gl.PointToClient(Cursor.Position),
-                                                              new Size(1, 1))))
-            {
-                if (e.Delta > 0)
-                {
-                    var dir = camera.CamTo - camera.CamFrom;
-                    dir.Normalize();
-                    camera.CamFrom += dir * zoomK;
-                }
-                else
-                {
-                    var dir = camera.CamTo - camera.CamFrom;
-                    dir.Normalize();
-                    camera.CamFrom -= dir * zoomK;
+        //   void Form1_MouseWheel(object sender, MouseEventArgs e)
+        //   {
+        //       float zoomK = 20;
+        //       var cur = gl.PointToClient(Cursor.Position);
+        //       gl.MakeCurrent();
+        //       //MouseRay.UpdateMatrices();
+        //       MouseRay mr = new MouseRay(cur.X, cur.Y, camera);
+        //       //MouseRay mr0 = new MouseRay(Control.Width / 2, Control.Height / 2, Camera);
 
-                }
-                gl.Invalidate();
-            }
-        }
+
+        //       if (camera.IsOrtho)
+        //       {
+        //           var shift = mr.Start - camera.CamFrom;
+        //           shift.Normalize();
+        //           var old = camera.OrthoWidth / gl.Width;
+        //           if (e.Delta > 0)
+        //           {
+        //               camera.OrthoWidth /= 1.2f;
+        //               //var pxn = new Vector2(cur.X,cur.Y)-(new Vector2(Control.Width/2,Control.Height/2));
+        //               Camera cam2 = new Camera();
+        //               cam2.CamFrom = camera.CamFrom;
+        //               cam2.CamTo = camera.CamTo;
+        //               cam2.CamUp = camera.CamUp;
+        //               cam2.OrthoWidth = camera.OrthoWidth;
+        //               cam2.IsOrtho = camera.IsOrtho;
+
+        //               cam2.UpdateMatricies(gl);
+        //               MouseRay mr2 = new MouseRay(cur.X, cur.Y, cam2);
+
+        //               //var a1 = pxn * camera.OrthoWidth / Control.Width;
+        //               var diff = mr.Start - mr2.Start;
+
+
+        //               shift *= diff.Length;
+        //               camera.CamFrom += shift;
+        //               camera.CamTo += shift;
+        //           }
+        //           else
+        //           {
+        //               camera.OrthoWidth *= 1.2f;
+        //               /*var pxn = new Vector2(cur.X, cur.Y) - (new Vector2(Control.Width / 2, Control.Height / 2));
+
+        //               var a1 = pxn * camera.OrthoWidth / Control.Width;*/
+        //               Camera cam2 = new Camera();
+        //               cam2.CamFrom = camera.CamFrom;
+        //               cam2.CamTo = camera.CamTo;
+        //               cam2.CamUp = camera.CamUp;
+        //               cam2.OrthoWidth = camera.OrthoWidth;
+        //               cam2.IsOrtho = camera.IsOrtho;
+
+        //               cam2.UpdateMatricies(gl);
+        //               MouseRay mr2 = new MouseRay(cur.X, cur.Y, cam2);
+
+        //               var diff = mr.Start - mr2.Start;
+        //               shift *= diff.Length;
+        //               camera.CamFrom -= shift;
+        //               camera.CamTo -= shift;
+        //           }
+
+        //           return;
+        //       }
+        //       if (
+        //gl.ClientRectangle.IntersectsWith(new Rectangle(gl.PointToClient(Cursor.Position),
+        //                                                         new Size(1, 1))))
+        //       {
+        //           if (e.Delta > 0)
+        //           {
+        //               var dir = camera.CamTo - camera.CamFrom;
+        //               dir.Normalize();
+        //               camera.CamFrom += dir * zoomK;
+        //           }
+        //           else
+        //           {
+        //               var dir = camera.CamTo - camera.CamFrom;
+        //               dir.Normalize();
+        //               camera.CamFrom -= dir * zoomK;
+
+        //           }
+        //           gl.Invalidate();
+        //       }
+        //   }
 
         Timer timer1 = new Timer();
 
@@ -107,7 +166,7 @@ namespace FxEngineEditor
             timer1.Enabled = true;
         }
 
-        Camera camera = new Camera();
+        Camera camera = new Camera() { IsOrtho = true };
         public ModelBlueprint CurrentBlueprint = null;
         private float rotation = 0;
         void Render()
@@ -138,10 +197,10 @@ namespace FxEngineEditor
                 GL.Color3(Color.Blue);
             }
 
-            if (orthoView)
+            /*if (orthoView)
             {
                 GL.Scale(zoomK, zoomK, zoomK);
-            }
+            }*/
 
             GL.Enable(EnableCap.Lighting);
             GL.Enable(EnableCap.Light0);
@@ -185,17 +244,17 @@ namespace FxEngineEditor
 
                     clm.DrawOldStyle();
                 }
-                else if(CurrentBlueprint is ObjModelBlueprint omb)
+                else if (CurrentBlueprint is ObjModelBlueprint omb)
                 {
                     var bboxes = omb.Objs.Select(z => z.GetBoundingBox(Transform)).ToArray();
-                    Vector3 mins = new Vector3(bboxes.Min(z => z.Position.X), bboxes.Min(z => z.Position.Y), bboxes.Min(z => z.Position.Z));
-                    Vector3 maxs = new Vector3(bboxes.Max(z => z.Position.X + z.Size.X), bboxes.Max(z => z.Position.Y + z.Size.Y), bboxes.Max(z => z.Position.Z + z.Size.Z));
+                    var mins = new Vector3d(bboxes.Min(z => z.Position.X), bboxes.Min(z => z.Position.Y), bboxes.Min(z => z.Position.Z));
+                    var maxs = new Vector3d(bboxes.Max(z => z.Position.X + z.Size.X), bboxes.Max(z => z.Position.Y + z.Size.Y), bboxes.Max(z => z.Position.Z + z.Size.Z));
                     BoundingBox bbox = new BoundingBox() { Position = mins, Size = maxs - mins };
                     label2.Text = $"x:{bbox.Size.X} y:{bbox.Size.Y} z:{bbox.Size.Z}";
                     foreach (var v in omb.Objs)
                     {
                         var model = v;
-                        if (model.GetVerts().Length == 0) 
+                        if (model.GetVerts().Length == 0)
                             continue;
 
                         var maxx = model.GetVerts().Max(x => x.X);
@@ -240,15 +299,15 @@ namespace FxEngineEditor
                                 GL.Begin(PrimitiveType.Triangles);
                                 GL.TexCoord2(tuple.Item1.TextureCoord);
                                 GL.Normal3(tuple.Item1.Normal);
-                                GL.Vertex3(tuple.Item1.Position * Transform);
+                                GL.Vertex3((new Vector4d(tuple.Item1.Position, 1) * Transform).Xyz);
 
                                 GL.TexCoord2(tuple.Item2.TextureCoord);
                                 GL.Normal3(tuple.Item2.Normal);
-                                GL.Vertex3(tuple.Item2.Position * Transform);
 
+                                GL.Vertex3((new Vector4d(tuple.Item2.Position, 1) * Transform).Xyz);
                                 GL.TexCoord2(tuple.Item3.TextureCoord);
                                 GL.Normal3(tuple.Item3.Normal);
-                                GL.Vertex3(tuple.Item3.Position * Transform);
+                                GL.Vertex3((new Vector4d(tuple.Item3.Position, 1) * Transform).Xyz);
                                 GL.End();
                             }
                             if (tuple.Vertexes.Count() == 4)
@@ -256,20 +315,24 @@ namespace FxEngineEditor
                                 GL.Begin(PrimitiveType.Quads);
                                 GL.TexCoord2(tuple.Item1.TextureCoord);
                                 GL.Normal3(tuple.Item1.Normal);
-                                GL.Vertex3(tuple.Item1.Position * Transform);
+                                GL.Vertex3((new Vector4d(tuple.Item1.Position, 1) * Transform).Xyz);
 
                                 GL.TexCoord2(tuple.Item2.TextureCoord);
                                 GL.Normal3(tuple.Item2.Normal);
-                                GL.Vertex3(tuple.Item2.Position * Transform);
+
+                                GL.Vertex3((new Vector4d(tuple.Item2.Position, 1) * Transform).Xyz);
 
                                 GL.TexCoord2(tuple.Item3.TextureCoord);
                                 GL.Normal3(tuple.Item3.Normal);
-                                GL.Vertex3(tuple.Item3.Position * Transform);
+
+                                GL.Vertex3((new Vector4d(tuple.Item3.Position, 1) * Transform).Xyz);
 
 
                                 GL.TexCoord2(tuple.Item4.TextureCoord);
                                 GL.Normal3(tuple.Item4.Normal);
-                                GL.Vertex3(tuple.Item4.Position * Transform);
+
+                                GL.Vertex3((new Vector4d(tuple.Item4.Position, 1) * Transform).Xyz);
+
                                 GL.End();
                             }
 
@@ -313,7 +376,7 @@ namespace FxEngineEditor
             GL.MatrixMode(MatrixMode.Modelview);
             GL.LoadMatrix(ref modelview);
             //DrawQuad(new PointF(), 1, 100, 100);
-            glabel1.Position = new PointF(0
+            glabel1.Position = new Vector2d(0
                 , 0);
             //glabel1.Update();
             glabel1.Font = new Font("Arial", 18);
@@ -331,7 +394,7 @@ namespace FxEngineEditor
                 nm = CurrentBlueprint.Name;
             }
 
-            tr.DrawText("name: " + nm, new PointF(0, 0));
+            tr.DrawText("name: " + nm, new Vector2d(0, 0));
             if (CurrentBlueprint != null)
             {
                 if ((CurrentBlueprint is ObjModelBlueprint omb))
@@ -339,10 +402,10 @@ namespace FxEngineEditor
                     GL.Translate(0, -60, 0);
 
                     var bboxes = omb.Objs.Select(z => z.GetBoundingBox(Transform)).ToArray();
-                    Vector3 mins = new Vector3(bboxes.Min(z => z.Position.X), bboxes.Min(z => z.Position.Y), bboxes.Min(z => z.Position.Z));
-                    Vector3 maxs = new Vector3(bboxes.Max(z => z.Position.X + z.Size.X), bboxes.Max(z => z.Position.Y + z.Size.Y), bboxes.Max(z => z.Position.Z + z.Size.Z));
+                    var mins = new Vector3d(bboxes.Min(z => z.Position.X), bboxes.Min(z => z.Position.Y), bboxes.Min(z => z.Position.Z));
+                    var maxs = new Vector3d(bboxes.Max(z => z.Position.X + z.Size.X), bboxes.Max(z => z.Position.Y + z.Size.Y), bboxes.Max(z => z.Position.Z + z.Size.Z));
                     BoundingBox bbox = new BoundingBox() { Position = mins, Size = maxs - mins };
-                    tr.DrawText($"x:{bbox.Size.X} y:{bbox.Size.Y} z:{bbox.Size.Z}", new PointF(0, 0));
+                    tr.DrawText($"x:{bbox.Size.X} y:{bbox.Size.Y} z:{bbox.Size.Z}", new Vector2d(0, 0));
                 }
             }
             gl.SwapBuffers();
@@ -380,7 +443,7 @@ namespace FxEngineEditor
         {
             Render();
         }
-        bool orthoView = false;
+        bool orthoView = true;
 
 
 
@@ -400,22 +463,33 @@ namespace FxEngineEditor
             }
         }
 
-        
+
         private void listView1_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (listView1.FirstSelected() != null)
+            if (listView1.FirstSelected() == null)
+                return;
+
+            CurrentBlueprint = listView1.FirstSelected().Tag as ModelBlueprint;
+            if (autoFitAll)
             {
-                CurrentBlueprint = listView1.FirstSelected().Tag as ModelBlueprint;
-                propertyGrid1.SelectedObject = CurrentBlueprint;
-                UpdateObjsList();
+                try
+                {
+                    fitAll();
+                }
+                catch (Exception ex)
+                {
+
+                }
             }
+            propertyGrid1.SelectedObject = CurrentBlueprint;
+            UpdateObjsList();
         }
 
         public void UpdateObjsList()
         {
             listView2.Items.Clear();
             if (CurrentBlueprint is ColladaModelBlueprint) { }
-            else if(CurrentBlueprint is ObjModelBlueprint omb)
+            else if (CurrentBlueprint is ObjModelBlueprint omb)
             {
                 foreach (var item in omb.Objs)
                 {
@@ -437,7 +511,8 @@ namespace FxEngineEditor
 
         private void checkBox1_CheckedChanged(object sender, EventArgs e)
         {
-            orthoView = checkBox1.Checked;
+            camera.IsOrtho = checkBox1.Checked;
+
         }
 
         private void openToolStripMenuItem_Click(object sender, EventArgs e)
@@ -446,7 +521,7 @@ namespace FxEngineEditor
         }
 
 
-        Matrix3 Transform = Matrix3.Identity;
+        Matrix4d Transform = Matrix4d.Identity;
         private void textBox2_TextChanged(object sender, EventArgs e)
         {
 
@@ -456,8 +531,9 @@ namespace FxEngineEditor
         {
             try
             {
+
                 var sc = float.Parse(textBox2.Text, CultureInfo.InvariantCulture);
-                Transform *= Matrix3.CreateScale(sc, sc, sc);
+                Transform *= Matrix4d.CreateScale(sc, sc, sc);
             }
             catch (Exception ex)
             {
@@ -478,17 +554,46 @@ namespace FxEngineEditor
         void fitAll()
         {
             var vv = getAllPoints();
-            if (vv.Length == 0) return;
+            if (vv.Length == 0)
+                return;
+
             FitToPoints(vv, camera);
         }
 
         Vector3d[] getAllPoints()
         {
-            var bbox = CurrentBlueprint.GetBoundingBoxModel(Matrix4.Identity);
             List<Vector3d> ret = new List<Vector3d>();
-            foreach (var item in bbox)
+            if (CurrentBlueprint is ObjModelBlueprint ob)
             {
-                ret.AddRange(item.Vertices.Select(z => z.Position.ToVector3d()));
+                var mtr = ob.Matrix * Transform;
+
+                foreach (var mitem in ob.Objs)
+                {
+                    foreach (var item in mitem.faces)
+                    {
+                        var d = new DrawPolygon();
+                        List<DrawVertex> dv = new List<DrawVertex>();
+                        foreach (var vitem in item.Vertexes)
+                        {
+                            var pos = new Vector4d(vitem.Position, 1) * mtr;
+
+                            ret.Add(pos.Xyz);
+
+
+
+                        }
+                    }
+                }
+
+            }
+            else
+            {
+                var bbox = CurrentBlueprint.GetBoundingBoxModel(Matrix4d.Identity);
+
+                foreach (var item in bbox)
+                {
+                    ret.AddRange(item.Vertices.Select(z => z.Position));
+                }
             }
             return ret.ToArray();
         }
@@ -498,7 +603,7 @@ namespace FxEngineEditor
             List<Vector2d> vv = new List<Vector2d>();
             foreach (var vertex in pnts)
             {
-                var p = MouseRay.Project(vertex.ToVector3(), cam.ProjectionMatrix, cam.ViewMatrix, new Size(cam.viewport[2], cam.viewport[3]));
+                var p = MouseRay.Project(vertex.ToVector3(), cam.ProjectionMatrix, cam.ViewMatrix, cam.WorldMatrix, cam.viewport[2], cam.viewport[3]);
                 vv.Add(p.Xy.ToVector2d());
             }
 
@@ -531,10 +636,10 @@ namespace FxEngineEditor
 
             cam.OrthoWidth = (float)Math.Max(dx, dy);
         }
-        
+
         private void toolStripButton6_Click(object sender, EventArgs e)
         {
-            
+
         }
 
         private void objToolStripMenuItem_Click(object sender, EventArgs e)
@@ -550,7 +655,7 @@ namespace FxEngineEditor
             if (ofd.ShowDialog() != DialogResult.OK)
                 return;
 
-            var ll = (ObjVolume.LoadFromFile(ofd.FileName, Matrix4.Identity));
+            var ll = (ObjVolume.LoadFromFile(ofd.FileName, Matrix4d.Identity));
             var ff = new FileInfo(ofd.FileName);
             Static.Library.AddModel(new ObjModelBlueprint("obj export: " + ff.Name, ll) { Id = Static.Library.ModelNewId });
 
@@ -583,7 +688,7 @@ namespace FxEngineEditor
 
         private void exportToColladaToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (CurrentBlueprint == null || !(CurrentBlueprint is ObjModelBlueprint omb)) 
+            if (CurrentBlueprint == null || !(CurrentBlueprint is ObjModelBlueprint omb))
                 return;
 
             SaveFileDialog sfd = new SaveFileDialog();
@@ -600,6 +705,21 @@ namespace FxEngineEditor
         {
             camera.CamFrom = new Vector3(-50, -50, 50);
             camera.CamTo = new Vector3(0, 0, 0);
+        }
+
+        private void orthoToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            camera.IsOrtho = true;
+        }
+
+        private void perspectiveToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            camera.IsOrtho = false;
+        }
+        bool autoFitAll = true;
+        private void checkBox3_CheckedChanged(object sender, EventArgs e)
+        {
+            autoFitAll = checkBox3.Checked;
         }
     }
 }

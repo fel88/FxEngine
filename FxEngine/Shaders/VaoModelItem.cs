@@ -21,7 +21,7 @@ namespace FxEngine.Shaders
 
             //tcount = md.getVertices().Count() / 3;
 
-            List<float> vres = new List<float>();
+            List<double> vres = new List<double>();
             tcount = 0;
 
             foreach (var objVolumeFace in faceItem2)

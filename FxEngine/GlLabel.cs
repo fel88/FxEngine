@@ -2,6 +2,7 @@
 using System.Drawing;
 using FxEngine.Fonts.SDF;
 using OpenTK.Graphics.OpenGL;
+using OpenTK.Mathematics;
 
 namespace FxEngine
 {
@@ -82,7 +83,7 @@ namespace FxEngine
         public float MultiLineYOffset = 25;
         public Font Font = new Font("Arial", 12, FontStyle.Regular);
         public Brush Brush = Brushes.Black;
-        public PointF Position;
+        public Vector2d Position;
         public int Opacity { get; set; } = 128;
         public float Z = 1;
 
@@ -124,7 +125,7 @@ namespace FxEngine
                 for (int i = 0; i < MultiLines.Count; i++)
                 {
                     var str = MultiLines[i];
-                    sdf.DrawText(str, new PointF(Position.X, Position.Y - (MultiLineYOffset * (i + 1))));
+                    sdf.DrawText(str, new Vector2d(Position.X, Position.Y - (MultiLineYOffset * (i + 1))));
                 }
             }
             GL.PopMatrix();

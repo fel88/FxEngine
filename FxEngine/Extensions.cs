@@ -28,7 +28,7 @@ namespace FxEngine
         {
             return box.Size.Y;
         }
-        public static string ToXml(this Matrix4 mat)
+        public static string ToXml(this Matrix4d mat)
         {
             StringBuilder sb = new StringBuilder();
             for (int i = 0; i < 4; i++)

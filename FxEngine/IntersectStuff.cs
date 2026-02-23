@@ -34,7 +34,7 @@ namespace FxEngine
             return null;
         }
 
-        public static Vector3? CheckIntersect(MouseRay ray, Vector3[] triangle)
+        public static Vector3d? CheckIntersect(MouseRay ray, Vector3d[] triangle)
         {            
             var dir = ray.End - ray.Start;
             dir.Normalize();
@@ -42,9 +42,9 @@ namespace FxEngine
             var a = triangle[0];
             var b = triangle[1];
             var c = triangle[2];
-            var plane = Plane.FromPoints(new Vector3(a.X, a.Y, a.Z),
-                new Vector3(b.X, b.Y, b.Z),
-                new Vector3(c.X, c.Y, c.Z));
+            var plane = Plane.FromPoints(new Vector3d(a.X, a.Y, a.Z),
+                new Vector3d(b.X, b.Y, b.Z),
+                new Vector3d(c.X, c.Y, c.Z));
 
             plane.W = -plane.W;
             var s = InstersectPlaneWithRay(plane, ray);
@@ -55,14 +55,14 @@ namespace FxEngine
                 var v1 = triangle[1] - triangle[0];
                 var v2 = triangle[2] - triangle[1];
                 var v3 = triangle[0] - triangle[2];
-                var crs1 = Vector3.Cross(ss - triangle[0], v1);
-                var crs2 = Vector3.Cross(ss - triangle[1], v2);
-                var crs3 = Vector3.Cross(ss - triangle[2], v3);
-                var up = Vector3.Cross(v1, triangle[2] - triangle[0]);
+                var crs1 = Vector3d.Cross(ss - triangle[0], v1);
+                var crs2 = Vector3d.Cross(ss - triangle[1], v2);
+                var crs3 = Vector3d.Cross(ss - triangle[2], v3);
+                var up = Vector3d.Cross(v1, triangle[2] - triangle[0]);
                 //find dot
-                var dot1 = Vector3.Dot(crs1, up);
-                var dot2 = Vector3.Dot(crs2, up);
-                var dot3 = Vector3.Dot(crs3, up);
+                var dot1 = Vector3d.Dot(crs1, up);
+                var dot2 = Vector3d.Dot(crs2, up);
+                var dot3 = Vector3d.Dot(crs3, up);
                 
                 if (Math.Sign(dot1) == Math.Sign(dot2) && Math.Sign(dot2) == Math.Sign(dot3) /*&& Math.Sign(dot1) == 1*/)
                 {                    
@@ -72,9 +72,9 @@ namespace FxEngine
             return null;
         }
 
-        public static Vector3? InstersectPlaneWithRay(Plane plane, MouseRay ray, bool checkT = true)
+        public static Vector3d? InstersectPlaneWithRay(Plane plane, MouseRay ray, bool checkT = true)
         {
-            Vector3 l = ray.End - ray.Start;
+            Vector3d l = ray.End - ray.Start;
             l.Normalize();
 
             //check point exists 

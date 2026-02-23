@@ -5,11 +5,11 @@ namespace FxEngine.Loaders.Collada
 {
     public class ColladaStuff
     {
-        public static Matrix4 MatrixFromArray(float[] arr, bool rowForawrd = false)
+        public static Matrix4d MatrixFromArray(float[] arr, bool rowForawrd = false)
         {
             if (rowForawrd)
             {
-                return new Matrix4(
+                return new Matrix4d(
                                     new Vector4(arr[0], arr[4], arr[8], arr[12]),
                                     new Vector4(arr[1], arr[5], arr[9], arr[13]),
                                     new Vector4(arr[2], arr[6], arr[10], arr[14]),
@@ -18,7 +18,7 @@ namespace FxEngine.Loaders.Collada
             }
             else
             {
-                return new Matrix4(
+                return new Matrix4d(
                                     new Vector4(arr[0], arr[1], arr[2], arr[3]),
                                     new Vector4(arr[4], arr[5], arr[6], arr[7]),
                                     new Vector4(arr[8], arr[9], arr[10], arr[11]),

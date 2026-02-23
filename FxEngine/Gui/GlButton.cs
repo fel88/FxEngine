@@ -1,4 +1,5 @@
 ﻿using FxEngine.Tiles;
+using OpenTK.Mathematics;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -14,7 +15,7 @@ namespace FxEngine.Gui
 
         public Size Size;
         public Tile Tile;
-        public PointF Position;
+        public Vector2d Position;
         public override void Draw(BaseGlDrawingContext dc)
         {
             Tile.Position = Position;

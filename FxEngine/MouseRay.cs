@@ -47,7 +47,7 @@ namespace FxEngine
 
         public static Vector3 Project(Vector3 point, Matrix4 projection, Matrix4 view, Size viewport)
         {
-            return Project(point, projection, view, Matrix4.Identity, viewport.Width, viewport.Height);            
+            return Project(point, projection, view, Matrix4.Identity, viewport.Width, viewport.Height);
         }
 
         public static bool WithinEpsilon(float a, float b)
@@ -56,8 +56,10 @@ namespace FxEngine
 
             return (-1.401293E-45f <= num) && (num <= float.Epsilon);
         }
-        public static Vector3 Project(Vector3 source, Matrix4 projection, Matrix4 view, Matrix4 world, int wid, int heig)
+        public static Vector3 Project(Vector3 _source, Matrix4 projection, Matrix4 view, Matrix4 world, int wid, int heig)
         {
+            Vector4 source = new Vector4(_source, 1);
+
             Vector3 ret = new Vector3();
             float MaxDepth = 10;
             float MinDepth = 1;
@@ -65,7 +67,7 @@ namespace FxEngine
             float thisY = 0;
             Matrix4 matrix = Matrix4.Mult(Matrix4.Mult(world, view), projection);
             //Vector3 vector = Vector3.Transform(source, matrix);
-            Vector4 vector = (new Vector4(source, 1) * matrix);
+            Vector4 vector = source * matrix;
             float a = (((source.X * matrix.M14) + (source.Y * matrix.M24) + (source.Z * matrix.M34))) + matrix.M44;
             if (!WithinEpsilon(a, 1f))
             {

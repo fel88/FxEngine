@@ -11,6 +11,10 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
   <ItemGroup>
+    <None Remove="data\Antonio-Bold.ttf" />
+    <None Remove="data\Antonio-Light.ttf" />
+    <None Remove="data\Antonio-Regular.ttf" />
+    <None Remove="data\OCRAEXT.TTF" />
     <None Remove="Graphics\Shaders\font2d.fs" />
     <None Remove="Graphics\Shaders\font2d.vs" />
     <None Remove="Graphics\Shaders\fragmentShader1.glsl" />
@@ -50,6 +54,13 @@
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
     <PackageReference Include="OpenTK.Audio.OpenAL" Version="4.9.4" />
     <PackageReference Include="OpenTK.GLControl" Version="4.0.2" />
+    <PackageReference Include="SpaceWizards.SharpFont" Version="1.0.2" />
     <PackageReference Include="System.Drawing.Common" Version="8.0.24" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="data\Antonio-Bold.ttf" />
+    <Resource Include="data\Antonio-Light.ttf" />
+    <Resource Include="data\Antonio-Regular.ttf" />
+    <Resource Include="data\OCRAEXT.TTF" />
   </ItemGroup>
 </Project>

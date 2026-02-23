@@ -188,7 +188,7 @@ namespace FxEngineEditor
 
         public Tile BrushTile = null;
         public ModelInstance BrushModel = null;
-        public PointF GetPosition(bool gridSnap = false)
+        public Vector2d GetPosition(bool gridSnap = false)
         {
             if (gridSnap)
             {
@@ -199,13 +199,13 @@ namespace FxEngineEditor
             var cp = gl.PointToClient(v);
 
             var f = GetFloorPosition();
-            return new PointF(f.X, f.Y);
+            return new Vector2d(f.X, f.Y);
         }
 
-        public PointF GetPositionGridSnap()
+        public Vector2d GetPositionGridSnap()
         {
             var pos = GetRawPositionGridSnap();
-            return new PointF(pos.X * BrushTile.bmpt.Width, pos.Y * BrushTile.bmpt.Height);
+            return new Vector2d(pos.X * BrushTile.bmpt.Width, pos.Y * BrushTile.bmpt.Height);
         }
 
         public Point GetRawPositionGridSnap()
@@ -227,7 +227,7 @@ namespace FxEngineEditor
         {
             PlaceTile(GetPosition(checkBox1.Checked));
         }
-        public void PlaceTile(PointF pos)
+        public void PlaceTile(Vector2d pos)
         {
             if (BrushTile != null && Level != null)
             {
@@ -260,7 +260,7 @@ namespace FxEngineEditor
             {
                 if (BrushModel != null && Level != null)
                 {
-                    Level.Models.Add(new ModelInstance() { Blueprint = BrushModel.Blueprint, Matrix = Matrix4.Identity, Name = BrushModel.Name + " inst", Id = Level.ModelNewId });
+                    Level.Models.Add(new ModelInstance() { Blueprint = BrushModel.Blueprint, Matrix = Matrix4d.Identity, Name = BrushModel.Name + " inst", Id = Level.ModelNewId });
                     Level.Models.Last().UseMatrixDriver = true;
                     Level.Models.Last().MatrixDriver.position = BrushModel.MatrixDriver.position;
                     Level.Models.Last().MatrixDriver.Scale = BrushModel.MatrixDriver.Scale;
@@ -450,7 +450,7 @@ namespace FxEngineEditor
                 {
                     for (int j = -bsize / 2; j < (bsize / 2) + 1; j++)
                     {
-                        PlaceTile(new PointF(pp.X + i * BrushTile.bmpt.Width, pp.Y + j * BrushTile.bmpt.Height));
+                        PlaceTile(new Vector2d(pp.X + i * BrushTile.bmpt.Width, pp.Y + j * BrushTile.bmpt.Height));
                     }
                 }
             }
@@ -494,7 +494,7 @@ namespace FxEngineEditor
                     {
                         //get coords here
                         BrushTile.Wireframe = true;
-                        BrushTile.Position = new PointF(pp.X + i * BrushTile.bmpt.Width, pp.Y + j * BrushTile.bmpt.Height);
+                        BrushTile.Position = new Vector2d(pp.X + i * BrushTile.bmpt.Width, pp.Y + j * BrushTile.bmpt.Height);
                         BrushTile.Draw();
                         BrushTile.Wireframe = false;
                     }
@@ -509,7 +509,7 @@ namespace FxEngineEditor
                 //get coords here
                 GL.PushMatrix();
 
-                BrushModel.MatrixDriver.position = new Vector3(pp.X, pp.Y, 0);
+                BrushModel.MatrixDriver.position = new Vector3d(pp.X, pp.Y, 0);
                 BrushModel.MatrixDriver.OnChanged();
 
                 GL.MultMatrix(ref BrushModel.Matrix);
@@ -577,14 +577,14 @@ namespace FxEngineEditor
             if (Level != null)
             {
 
-                tr.DrawText($"floor count: {Level.Tiles.Count};  models: {Level.Models.Count}", new PointF(0, 0));
+                tr.DrawText($"floor count: {Level.Tiles.Count};  models: {Level.Models.Count}", new Vector2d(0, 0));
             }
 
             if (checkBox1.Checked && BrushTile != null)
             {
-                tr.DrawText("snap position: " + GetRawPositionGridSnap(), new PointF(0, -40));
+                tr.DrawText("snap position: " + GetRawPositionGridSnap(), new Vector2d(0, -40));
             }
-            tr.DrawText("ds: " + (dt), new PointF(0, -80));
+            tr.DrawText("ds: " + (dt), new Vector2d(0, -80));
 
             GL.Disable(EnableCap.Blend);
         }
@@ -668,7 +668,7 @@ namespace FxEngineEditor
             {
                 for (int j = -20; j < 20; j++)
                 {
-                    Level.Tiles.Add(new TileDrawItem() { Tile = BrushTile, Position = new PointF(i * BrushTile.bmpt.Width, j * BrushTile.bmpt.Height) });
+                    Level.Tiles.Add(new TileDrawItem() { Tile = BrushTile, Position = new Vector2d(i * BrushTile.bmpt.Width, j * BrushTile.bmpt.Height) });
                 }
             }
         }
@@ -701,7 +701,7 @@ namespace FxEngineEditor
                 BrushModel = new ModelInstance() { Blueprint = tt };
                 BrushModel.UseMatrixDriver = true;
                 //BrushModel.Matrix = Matrix4.CreateScale(10);
-                BrushModel.Matrix = Matrix4.Identity;
+                BrushModel.Matrix = Matrix4d.Identity;
 
                 BrushTile = null;
             }
@@ -735,7 +735,7 @@ namespace FxEngineEditor
             {
                 var m = listView4.SelectedItems[0].Tag as ModelInstance;
                 var fl = float.Parse(textBox2.Text, CultureInfo.InvariantCulture);
-                m.Matrix = Matrix4.CreateScale(fl) * m.Matrix;
+                m.Matrix = Matrix4d.CreateScale(fl) * m.Matrix;
             }
         }
 

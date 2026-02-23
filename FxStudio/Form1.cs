@@ -1,6 +1,9 @@
 ﻿using FxEngine;
 using FxEngine.Assets;
+using FxEngine.Interfaces;
 using FxEngine.Loaders.Collada;
+using FxEngine.Loaders.OBJ;
+using OpenTK.Mathematics;
 using System;
 using System.IO;
 using System.IO.Compression;
@@ -12,6 +15,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml.Linq;
 using static System.Net.Mime.MediaTypeNames;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace FxEngineEditor
 {
@@ -109,7 +113,7 @@ namespace FxEngineEditor
 
         public async Task LoadLibraryAsync(string path)
         {
-            await Task.Run(() => { LoadLibrary(path); });
+            await LoadLibrary(path);
             Text = $"FxStudio Assets Editor: {path} ;  {Static.Library.Name}";
             toolStripButton2.Enabled = true;
             toolStripButton1.Enabled = true;
@@ -123,25 +127,38 @@ namespace FxEngineEditor
             UpdateRecentsList();
         }
 
-        public void LoadLibrary(string path)
+        public async Task LoadLibrary(string path)
         {
             if (path.EndsWith(".fxl"))
-                Static.Library = GameResourcesLibrary.LoadFromZipAsset(path, StaticData.DataProvider);
-            else
-                Static.Library = GameResourcesLibrary.LoadFromXml(path, StaticData.DataProvider);
+            {
+                await Task.Run(() =>
+                {
+                    Static.Library = GameResourcesLibrary.LoadFromZipAsset(path, StaticData.DataProvider);
+                });
+            }
+            else if (path.EndsWith(".xml"))
+                await Task.Run(() =>
+                {
+                    Static.Library = GameResourcesLibrary.LoadFromXml(path, StaticData.DataProvider);
+                });
+            else if (path.EndsWith(".fxpkg"))
+            {
+                AssetNavigator navigator = new AssetNavigator();
+                navigator.Load(path);
+                navigator.MdiParent = this;
+                navigator.Show();
+                var lib = navigator.Archive.Files.FirstOrDefault(z => z.Path.EndsWith(".xml"));
+                Static.Library = new GameResourcesLibrary();
+                
+                StaticData.DataProvider = navigator.Archive;
+                Static.Library = GameResourcesLibrary.LoadFromXml(lib.Path, navigator.Archive);
+
+            }
         }
 
         private async void loadToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            OpenFileDialog ofd = new OpenFileDialog();
-            ofd.Filter = "All FxEngine Libraries formats (*.xml, *.fxl)|*.xml;*.fxl|Compressed FxEngine Library (*.fxl)|*.fxl";
 
-            if (ofd.ShowDialog() != DialogResult.OK)
-                return;
-
-            var w = OpenChild<PrefabEditor>();
-            await LoadLibraryAsync(ofd.FileName);
-            w.UpdatePrefabsList();
         }
 
         private void toolStripButton2_MouseHover(object sender, EventArgs e)
@@ -554,6 +571,19 @@ namespace FxEngineEditor
         private void saveAsToolStripMenuItem_Click(object sender, EventArgs e)
         {
 
+        }
+
+        private async void loadToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog ofd = new OpenFileDialog();
+            ofd.Filter = "All FxEngine Libraries formats (*.xml, *.fxl, *.fxpkg)|*.xml;*.fxl;*.fxpkg|Compressed FxEngine Library (*.fxl)|*.fxl";
+
+            if (ofd.ShowDialog() != DialogResult.OK)
+                return;
+
+            var w = OpenChild<PrefabEditor>();
+            await LoadLibraryAsync(ofd.FileName);
+            w.UpdatePrefabsList();
         }
     }
 }

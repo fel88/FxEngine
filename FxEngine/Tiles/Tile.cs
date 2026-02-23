@@ -17,7 +17,7 @@ namespace FxEngine.Tiles
         {
             get
             {
-                return new RectangleF(Position.X, Position.Y, bmpt.Width, bmpt.Height);
+                return new RectangleF((float)Position.X, (float)Position.Y, bmpt.Width, bmpt.Height);
             }
         }
 
@@ -87,7 +87,7 @@ namespace FxEngine.Tiles
         public float MultiLineYOffset = 25;
         public Font Font = new Font("Arial", 12, FontStyle.Regular);
         public Brush Brush = Brushes.Black;
-        public PointF Position;
+        public Vector2d Position;
         public int Opacity { get; set; } = 255;
         public float Scale { get; set; } = 1;
 

@@ -5,11 +5,11 @@ namespace FxEngine
 {
     public class MatrixGenerator
     {
-        public Vector3 position;
+        public Vector3d position;
         float scale;
         float rotZ;
 
-        public float PositionX
+        public double PositionX
         {
             get
             {
@@ -22,7 +22,7 @@ namespace FxEngine
 
             }
         }
-        public float PositionY
+        public double PositionY
         {
             get
             {
@@ -35,7 +35,7 @@ namespace FxEngine
 
             }
         }
-        public float PositionZ
+        public double PositionZ
         {
             get
             {
@@ -84,12 +84,12 @@ namespace FxEngine
             }
         }
 
-        public Matrix4 GetMatrix()
+        public Matrix4d GetMatrix()
         {
-            var m = Matrix4.Identity;
-            m *= Matrix4.CreateScale(Scale);
-            m *= Matrix4.CreateRotationZ(RotationZ * (float)Math.PI / 180.0f);
-            m *= Matrix4.CreateTranslation(position);
+            var m = Matrix4d.Identity;
+            m *= Matrix4d.CreateScale(Scale);
+            m *= Matrix4d.CreateRotationZ(RotationZ * (float)Math.PI / 180.0f);
+            m *= Matrix4d.CreateTranslation(position);
             return m;
         }
     }

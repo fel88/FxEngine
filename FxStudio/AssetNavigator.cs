@@ -8,6 +8,7 @@ using System.Drawing;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Windows.Forms;
 using System.Xml.Linq;
@@ -20,7 +21,7 @@ namespace FxEngineEditor
         {
             InitializeComponent();
         }
-        AssetArchive Archive;
+        public AssetArchive Archive { get; private set; }
 
         private void toolStripButton1_Click(object sender, EventArgs e)
         {
@@ -298,16 +299,20 @@ namespace FxEngineEditor
 
         }
 
+        public void Load(string path)
+        {
+            Archive = new AssetArchive();
+            Archive.LoadFromBinaryFile(path);
+            UpdateFilesList();
+        }
         private void loadToolStripMenuItem_Click(object sender, EventArgs e)
         {
             OpenFileDialog ofd = new OpenFileDialog();
             //ofd.Filter="FxEngine library (*.)"
             if (ofd.ShowDialog() == DialogResult.OK)
             {
+                Load(ofd.FileName);
 
-                Archive = new AssetArchive();
-                Archive.LoadFromBinaryFile(ofd.FileName);
-                UpdateFilesList();
             }
         }
 

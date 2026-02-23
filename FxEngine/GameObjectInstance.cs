@@ -8,8 +8,8 @@ namespace FxEngine
         public int Id;
         public string Name;
 
-        public Matrix4 Matrix { get; set; }
-        public Vector3 Position { get; set; }
+        public Matrix4d Matrix { get; set; }
+        public Vector3d Position { get; set; }
     }
 }
 

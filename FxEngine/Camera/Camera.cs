@@ -95,6 +95,7 @@ namespace FxEngine.Cameras
                 return CamFrom - CamTo;
             }
         }
+        public Matrix4 WorldMatrix = Matrix4.Identity;
 
         public Matrix4 ProjectionMatrix { get; set; }
         public Matrix4 ViewMatrix { get; set; }
@@ -174,11 +175,12 @@ namespace FxEngine.Cameras
             GL.LoadMatrix(ref modelview);
 
             ViewMatrix = modelview;
+            GL.MultMatrix(ref WorldMatrix);
+
         }
 
         public void Setup(GLControl gl)
         {
-
             GL.Viewport(0, 0, gl.Width, gl.Height);
             viewport[0] = 0;
             viewport[1] = 0;
@@ -193,7 +195,7 @@ namespace FxEngine.Cameras
             GL.MatrixMode(MatrixMode.Projection);
             if (IsOrtho)
             {
-                o = Matrix4.CreateOrthographic(gl.Width * OrthoZoom, gl.Height * OrthoZoom, -1000, 100000);
+                //o = Matrix4.CreateOrthographic(gl.Width * OrthoZoom, gl.Height * OrthoZoom, -1000, 100000);
                 ProjectionMatrix = o;
                 GL.LoadMatrix(ref o);
             }
@@ -206,7 +208,9 @@ namespace FxEngine.Cameras
             Matrix4 modelview = Matrix4.LookAt(CamFrom, CamTo, CamUp);
             GL.MatrixMode(MatrixMode.Modelview);
             GL.LoadMatrix(ref modelview);
-            ViewMatrix = modelview;            
+            ViewMatrix = modelview;  
+            GL.MultMatrix(ref WorldMatrix);
+
         }
         public float OrthoZoom = 1;
 
@@ -218,6 +222,8 @@ namespace FxEngine.Cameras
             Matrix4 modelview = Matrix4.LookAt(CamFrom, CamTo, CamUp);
             GL.MatrixMode(MatrixMode.Modelview);
             GL.LoadMatrix(ref modelview);
+            GL.MultMatrix(ref WorldMatrix);
+
         }
 
         public void CopyFrom(Camera cam)
@@ -228,10 +234,10 @@ namespace FxEngine.Cameras
             IsOrtho = cam.IsOrtho;
         }
 
-        public Matrix4 GetBillboardMatrix(Vector3 pos)
+        public Matrix4d GetBillboardMatrix(Vector3d pos)
         {
             var pm = ViewMatrix;
-            var m = new Matrix4(
+            var m = new Matrix4d(
                 /*pm.Row0[0], pm.Row0[1], pm.Row0[2], pos.X,
                 pm.Row1[0], pm.Row1[1], pm.Row1[2], pos.Y,
                 pm.Row2[0], pm.Row2[1], pm.Row2[2], pos.Z,
