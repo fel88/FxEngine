@@ -21,7 +21,7 @@ namespace FxEngine.Shaders
 
             //tcount = md.getVertices().Count() / 3;
 
-            List<double> vres = new List<double>();
+            List<float> vres = new List<float>();
             tcount = 0;
 
             foreach (var objVolumeFace in faceItem2)
@@ -29,12 +29,12 @@ namespace FxEngine.Shaders
 
                 for (int i = 0; i < 3; i++)
                 {
-                    var pos = objVolumeFace.Vertexes[i].Position;
+                    var pos = objVolumeFace.Vertexes[i].Position.ToVector3();
                     var txt = objVolumeFace.Vertexes[i].TextureCoord;
-                    var nrm = objVolumeFace.Vertexes[i].Normal;
+                    var nrm = objVolumeFace.Vertexes[i].Normal.ToVector3();
                     var clr = objVolumeFace.Material.DiffuseColor;
                     vres.Add(pos.X); vres.Add(pos.Y); vres.Add(pos.Z);
-                    vres.Add(txt.X); vres.Add(txt.Y);
+                    vres.Add((float)txt.X); vres.Add((float)txt.Y);
                     vres.Add(nrm.X); vres.Add(nrm.Y); vres.Add(nrm.Z);
                     vres.Add(clr.X); vres.Add(clr.Y); vres.Add(clr.Z);
                     tcount++;
