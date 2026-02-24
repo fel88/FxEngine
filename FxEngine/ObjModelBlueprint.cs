@@ -1,9 +1,12 @@
 ﻿using FxEngine.Loaders.OBJ;
 using FxEngine.Shaders;
+using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
+using System.Runtime.ConstrainedExecution;
 
 namespace FxEngine
 {
@@ -50,6 +53,118 @@ namespace FxEngine
         {
             Objs = new List<ObjVolume>();
             Objs.AddRange(ObjVolume.LoadFromFile(FilePath, Matrix4d.Identity));
+        }
+
+        public override void DrawNative(Color? clr = null)
+        {
+
+            foreach (var model in Objs)
+            {
+                var v = model;
+                /*
+                                var maxx = model.GetVerts().Max(x => x.X);
+                                var minx = model.GetVerts().Min(x => x.X);
+                                var maxy = model.GetVerts().Max(x => x.Y);
+                                var miny = model.GetVerts().Min(x => x.Y);*/
+
+                // GL.Enable(EnableCap.CullFace);
+                //GL.CullFace(CullFaceMode.FrontAndBack);
+                if (Name.Contains("window"))
+                {
+                    GL.Color4(Color.FromArgb(128, Color.White));
+                }
+                else
+                {
+                    GL.Color4(clr.Value);
+                }
+
+                int indiceat = 0;
+
+
+                var t = v.faces;
+
+                //     GL.Translate(mi.Position);
+                // GL.Scale(mi.Scale);
+
+                foreach (var tuple in t)
+                {
+
+
+                    var mater = tuple.Material;
+                    if (mater != null)
+                    {
+                        if (Name.Contains("window"))
+                        {
+                            GL.Color4(mater.DiffuseColor.X, mater.DiffuseColor.Y, mater.DiffuseColor.Z, 0.5f);
+                        }
+                        else
+                        {
+                            GL.Color3(mater.DiffuseColor);
+                        }
+                        if (v.mat.textures.ContainsKey(mater.AmbientMap))
+                        {
+
+
+                            GL.Enable(EnableCap.Texture2D);
+                            GL.BindTexture(TextureTarget.Texture2D, v.mat.textures[mater.AmbientMap]);
+
+                        }
+                        if (v.mat.textures.ContainsKey(mater.DiffuseMap))
+                        {
+
+
+                            GL.Enable(EnableCap.Texture2D);
+
+                            GL.BindTexture(TextureTarget.Texture2D, v.mat.textures[mater.DiffuseMap]);
+
+                        }
+                    }
+
+
+                    if (tuple.Vertexes.Count() == 3)
+                    {
+                        GL.Begin(PrimitiveType.Triangles);
+                        GL.TexCoord2(tuple.Item1.TextureCoord);
+                        GL.Normal3(tuple.Item1.Normal);
+                        GL.Vertex3(tuple.Item1.Position);
+
+                        GL.TexCoord2(tuple.Item2.TextureCoord);
+                        GL.Normal3(tuple.Item2.Normal);
+                        GL.Vertex3(tuple.Item2.Position);
+
+                        GL.TexCoord2(tuple.Item3.TextureCoord);
+                        GL.Normal3(tuple.Item3.Normal);
+                        GL.Vertex3(tuple.Item3.Position);
+                        GL.End();
+                    }
+                    if (tuple.Vertexes.Count() == 4)
+                    {
+                        GL.Begin(PrimitiveType.Quads);
+                        GL.TexCoord2(tuple.Item1.TextureCoord);
+                        GL.Normal3(tuple.Item1.Normal);
+                        GL.Vertex3(tuple.Item1.Position);
+
+                        GL.TexCoord2(tuple.Item2.TextureCoord);
+                        GL.Normal3(tuple.Item2.Normal);
+                        GL.Vertex3(tuple.Item2.Position);
+
+                        GL.TexCoord2(tuple.Item3.TextureCoord);
+                        GL.Normal3(tuple.Item3.Normal);
+                        GL.Vertex3(tuple.Item3.Position);
+
+
+                        GL.TexCoord2(tuple.Item4.TextureCoord);
+                        GL.Normal3(tuple.Item4.Normal);
+                        GL.Vertex3(tuple.Item4.Position);
+                        GL.End();
+                    }
+
+
+
+                    GL.Disable(EnableCap.Texture2D);
+
+                }
+            }
         }
         public bool IsLoaded
         {

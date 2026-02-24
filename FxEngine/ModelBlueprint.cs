@@ -3,8 +3,12 @@ using FxEngine.Interfaces;
 using FxEngine.Loaders.OBJ;
 using FxEngine.Shaders;
 using OpenTK;
+using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
 using System.Collections.Generic;
+using System.Drawing;
+using System.Linq;
+using System.Runtime.ConstrainedExecution;
 
 namespace FxEngine
 {
@@ -91,27 +95,71 @@ namespace FxEngine
             FilePath = path;
             Name = name;
         }
+
         public ModelBlueprint(string name)
         {
-
             Name = name;
         }
+
         public Matrix4d Matrix = Matrix4d.Identity;
 
-
-
         public VaoModel VaoModel;
-
-
-
-
 
         public bool BBoxDirty = true;
         public double[] MinsBbox;
         public double[] MaxsBbox;
 
         protected Matrix4d oldbbox = Matrix4d.Identity;
+        public static ModelDrawShader DefaultShader = null;
+        
+        public void Draw(ModelDrawShader MShader=null, Color? clr = null, bool isHovered = false, bool oldStyleDraw = false, float? clrmltplr = null)
+        {
+            if (MShader == null)
+                MShader = DefaultShader;
 
+            if (!oldStyleDraw)
+            {
+                if (MShader != null)
+                {
+                    if (isHovered)
+                    {
+                        MShader.ColorMultipler = 2;
+                    }
+                    else
+                    {
+                        MShader.ColorMultipler = 1;
+                    }
+                    if (clrmltplr != null)
+                    {
+                        MShader.ColorMultipler = clrmltplr.Value;
+                    }
+                }
+
+                VaoModel?.DrawVao(MShader);
+
+                return;
+            }
+
+            GL.ShadeModel(ShadingModel.Smooth);
+            GL.Enable(EnableCap.RescaleNormal);
+            GL.Enable(EnableCap.AutoNormal);
+            GL.Enable(EnableCap.PolygonSmooth);
+            if (clr == null)
+            {
+                clr = Color.White;
+            }
+            if (Name.Contains("window"))
+            {
+                GL.Enable(EnableCap.Blend);
+                GL.BlendFunc(BlendingFactor.One, BlendingFactor.OneMinusSrcAlpha);
+            }
+            DrawNative(clr);
+        }
+
+        public virtual void DrawNative(Color? clr = null)
+        {
+
+        }
 
         public virtual void Draw(bool oldStyle, Camera camera, int shaderProgram)
         {
@@ -122,6 +170,7 @@ namespace FxEngine
         {
 
         }
+
         public virtual Vector3d GetBbox(Matrix4d? mtr = null)
         {
             return new Vector3d();

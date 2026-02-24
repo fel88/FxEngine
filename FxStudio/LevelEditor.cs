@@ -22,6 +22,8 @@ namespace FxEngineEditor
     public partial class LevelEditor : Form
     {
         OpenTK.GLControl.GLControl gl;
+        CameraViewManagerExt cvm = new CameraViewManagerExt();
+        MessageFilter mf = null;
 
         public LevelEditor()
         {
@@ -50,16 +52,21 @@ namespace FxEngineEditor
             Controls.Add(gl);
             gl.Dock = DockStyle.Fill;
             tableLayoutPanel1.Controls.Add(gl, 0, 1);
-            this.MouseWheel += Form1_MouseWheel;
+            //this.MouseWheel += Form1_MouseWheel;
             gl.MouseUp += Gl_MouseUp;
             gl.Resize += gl_Resize;
             gl.Paint += gl_Paint;
             gl.Load += gl_Load;
-            gl.MouseDown += Gl_MouseDown;
-            gl.MouseEnter += Gl_MouseEnter;
+            //gl.MouseDown += Gl_MouseDown;
+            //gl.MouseEnter += Gl_MouseEnter;
             gl.KeyUp += Gl_KeyUp;
+            cvm.Attach(gl, camera);
+            gl.MouseDown += cvm.Control_MouseDown1;
+
             gl.MouseDoubleClick += Gl_MouseDoubleClick;
             Application.Idle += Application_Idle1;
+            mf = new MessageFilter();
+            Application.AddMessageFilter(mf);
 
         }
 
@@ -260,46 +267,19 @@ namespace FxEngineEditor
             {
                 if (BrushModel != null && Level != null)
                 {
-                    Level.Models.Add(new ModelInstance() { Blueprint = BrushModel.Blueprint, Matrix = Matrix4d.Identity, Name = BrushModel.Name + " inst", Id = Level.ModelNewId });
-                    Level.Models.Last().UseMatrixDriver = true;
-                    Level.Models.Last().MatrixDriver.position = BrushModel.MatrixDriver.position;
-                    Level.Models.Last().MatrixDriver.Scale = BrushModel.MatrixDriver.Scale;
+                    var toAdd = new ModelInstance() { Blueprint = BrushModel.Blueprint, Matrix = Matrix4d.Identity, Name = BrushModel.Name + " inst", Id = Level.ModelNewId };
+                    Level.Models.Add(toAdd);
+                    toAdd.UseMatrixDriver = true;
+                    toAdd.MatrixDriver.position = BrushModel.MatrixDriver.position;
+                    toAdd.MatrixDriver.Scale = BrushModel.MatrixDriver.Scale;
                     Static.Library.Dirty = true;
                     UpdateModelsList();
                 }
             }
         }
 
-        Camera camera = new Camera();
-        void Form1_MouseWheel(object sender, System.Windows.Forms.MouseEventArgs e)
-        {
-
-            float zoomK = 100;
-            if (
-     gl.ClientRectangle.IntersectsWith(new Rectangle(gl.PointToClient(System.Windows.Forms.Cursor.Position),
-                                                              new Size(1, 1))))
-            {
-                if (e.Delta > 0)
-                {
-
-                    var dir = camera.CamTo - camera.CamFrom;
-                    dir.Normalize();
-                    camera.CamFrom += dir * zoomK;
-
-
-                }
-                else
-                {
-                    var dir = camera.CamTo - camera.CamFrom;
-                    dir.Normalize();
-                    camera.CamFrom -= dir * zoomK;
-
-                }
-
-                gl.Invalidate();
-            }
-
-        }
+        Camera camera = new Camera() { IsOrtho = true };
+     
         Timer timer1 = new Timer();
         void gl_Load(object sender, EventArgs e)
         {
@@ -456,6 +436,8 @@ namespace FxEngineEditor
             }
 
             gl.MakeCurrent();
+            cvm.Update();
+
             if (!Static.Library.Inited)
             {
                 Static.Library.Init();
@@ -522,7 +504,21 @@ namespace FxEngineEditor
 
             if (Level != null)
             {
-                Level.Draw(camera, oldStyleDraw);
+                GL.PushMatrix();
+
+                GL.Color3(Color.White);
+
+                foreach (var item in Level.Models)
+                {
+                    GL.Color3(Color.White);
+                    //get coords here
+
+                    item.Draw(camera, ModelShader as ModelDrawShader);
+                }
+
+                GL.PopMatrix();
+
+                //Level.Draw(camera, oldStyleDraw);
                 Level.DrawTiles(camera);
             }
             GL.PopMatrix();
@@ -638,9 +634,12 @@ namespace FxEngineEditor
             if (listView3.SelectedItems.Count > 0)
             {
                 var tt = listView3.SelectedItems[0].Tag as Tile;
-                pictureBox1.Image = tt.bmpt;
-                BrushTile = tt;
-                BrushModel = null;
+                if (tt.bmpt != null)
+                {
+                    pictureBox1.Image = tt.bmpt;
+                    BrushTile = tt;
+                    BrushModel = null;
+                }
             }
         }
 
@@ -687,6 +686,7 @@ namespace FxEngineEditor
             {
                 var l = listView2.SelectedItems[0].Tag as GameLevel;
                 Level = l;
+                
                 propertyGrid1.SelectedObject = l;
                 UpdateCamerasList();
                 UpdateModelsList();
