@@ -1,6 +1,11 @@
 # FxEngine
 
-3D game engine + assets editor (FxStudio)
+3D game engine
+
+nuget: https://www.nuget.org/packages/FxEngine/
+ 
+
+Assets editor here (FxStudio -  https://github.com/fel88/FxStudio)
 <img width="800" height="757" alt="image" src="https://github.com/user-attachments/assets/482b7567-e989-43a0-8fb9-4cb35f0a5a30" />
 
 
