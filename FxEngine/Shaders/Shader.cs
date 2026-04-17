@@ -10,17 +10,8 @@ namespace FxEngine.Shaders
 {
     public class Shader : IShader
     {
-        public static string ReadResourceTxt(string resourceName)
-        {
-            var assembly = Assembly.GetExecutingAssembly();
-            var fr1 = assembly.GetManifestResourceNames().First(z => z.Contains(resourceName));
 
-            using (Stream stream = assembly.GetManifestResourceStream(fr1))
-            using (StreamReader reader = new StreamReader(stream))
-            {
-                return reader.ReadToEnd();
-            }
-        }
+
         public Shader InitFromShaderCodes(string vShaderCode, string fShaderCode)
         {
             // 2. compile shaders
@@ -48,10 +39,40 @@ namespace FxEngine.Shaders
             GL.DeleteShader(fragment);
             return this;
         }
-        int ID;
+        protected int ID;
         public void use()
         {
             GL.UseProgram(ID);
+        }
+
+        public void setInt(string v1, int v2)
+        {
+            GL.Uniform1(GL.GetUniformLocation(ID, v1), v2);
+        }
+        public void setFloat(string v1, float v2)
+        {
+            GL.Uniform1(GL.GetUniformLocation(ID, v1), v2);
+        }
+
+
+        public void setMat4(string v, Matrix4d projection)
+        {
+            GL.UniformMatrix4(GL.GetUniformLocation(ID, v), false, ref projection);
+        }
+
+        public void setVec4(string v, Vector4 newPos)
+        {
+            GL.Uniform4(GL.GetUniformLocation(ID, v), ref newPos);
+        }
+        public void setVec3(string v, Vector3d newPos)
+        {
+            setVec3(v, newPos.ToVector3());
+        }
+
+
+        public void setVec3(string v1, float v2, float v3, float v4)
+        {
+            setVec3(v1, new Vector3(v2, v3, v4));
         }
         public void setMat4(string v, Matrix4 projection)
         {
@@ -85,18 +106,21 @@ namespace FxEngine.Shaders
                 }
             }
         }
+
         public Shader InitFromResources(string vShaderResourceName, string fShaderResourceName)
         {
-            var vShader = ReadResourceTxt(vShaderResourceName);
-            var fShader = ReadResourceTxt(fShaderResourceName);
+            var vShader = ResourceHelper.ReadResourceTxt(vShaderResourceName);
+            var fShader = ResourceHelper.ReadResourceTxt(fShaderResourceName);
             InitFromShaderCodes(vShader, fShader);
             return this;
         }
+
         public void SetVec3(string nm, Vector3 v)
         {
             var loc = GL.GetUniformLocation(shaderProgram, nm);
             GL.Uniform3(loc, v);
         }
+
         public void SetVec4(string nm, Vector4 v)
         {
             var loc = GL.GetUniformLocation(shaderProgram, nm);
@@ -105,7 +129,7 @@ namespace FxEngine.Shaders
 
         public void SetMatrix4(string nm, Matrix4 v)
         {
-            var loc = GL.GetUniformLocation(shaderProgram, nm);            
+            var loc = GL.GetUniformLocation(shaderProgram, nm);
             GL.UniformMatrix4(loc, false, ref v);
         }
 
@@ -121,14 +145,14 @@ namespace FxEngine.Shaders
         }
 
         public void Init(string nm1 = "vertexshader1", string nm2 = "fragmentshader1")
-        {            
+        {
             var asm = Assembly.GetAssembly(typeof(ModelDrawShader));
             int vertexShader = GL.CreateShader(ShaderType.VertexShader);
             var vertexShaderSource = ResourceFile.GetFileText(nm1, asm);
             var fragmentShaderSource = ResourceFile.GetFileText(nm2, asm);
             GL.ShaderSource(vertexShader, vertexShaderSource);
             GL.CompileShader(vertexShader);
-            
+
             int success;
             string infoLog;
 
@@ -137,31 +161,31 @@ namespace FxEngine.Shaders
             {
                 GL.GetShaderInfoLog(vertexShader, out infoLog);
                 throw new Exception(infoLog);
-                
+
             }
-            
+
             int fragmentShader = GL.CreateShader(ShaderType.FragmentShader);
             GL.ShaderSource(fragmentShader, fragmentShaderSource);
             GL.CompileShader(fragmentShader);
-            
+
             GL.GetShader(fragmentShader, ShaderParameter.CompileStatus, out success);
             if (success == 0)
             {
                 GL.GetShaderInfoLog(fragmentShader, out infoLog);
-                throw new Exception(infoLog);                
+                throw new Exception(infoLog);
             }
-            
+
             shaderProgram = GL.CreateProgram();
             GL.AttachShader(shaderProgram, vertexShader);
             GL.AttachShader(shaderProgram, fragmentShader);
             GL.LinkProgram(shaderProgram);
-            
+
             GL.GetProgram(shaderProgram, GetProgramParameterName.LinkStatus, out success);
-            
+
             if (success == 0)
             {
                 GL.GetProgramInfoLog(shaderProgram, out infoLog);
-                throw new Exception(infoLog);                
+                throw new Exception(infoLog);
             }
 
             GL.DeleteShader(vertexShader);

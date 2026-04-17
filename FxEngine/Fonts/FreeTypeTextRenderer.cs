@@ -6,10 +6,11 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using SharpFont;
+using FxEngine.Interfaces;
 
 namespace FxEngine.Fonts
 {
-    public class FreeTypeTextRenderer
+    public class FreeTypeTextRenderer : ITextRenderer
     {
         Shader shader;
         public void Init(int width, int height)
@@ -44,6 +45,7 @@ namespace FxEngine.Fonts
             GL.BindVertexArray(0);
             GL.UseProgram(0);
         }
+
         public static byte[] ReadResourceRaw(string resourceName)
         {
             var assembly = Assembly.GetExecutingAssembly();
@@ -154,10 +156,20 @@ namespace FxEngine.Fonts
         Dictionary<char, Character> Characters = new Dictionary<char, Character>();
         int VAO, VBO;
 
+        public Vector3 DefaultColor = new Vector3(0.3f, 0.7f, 0.9f);
+
+        public void RenderText(string text, float x, float y)
+        {
+            RenderText(text, x, y, DefaultColor);
+        }
+
         // render line of text
         // -------------------
-        public void RenderText(string text, float x, float y, float scale, Vector3 color)
+        public void RenderText(string text, float x, float y, Vector3 color, float scale = 1f)
         {
+            if (string.IsNullOrEmpty(text))
+                return;
+
             // activate corresponding render state	
             shader.use();
             //glUniform3f(glGetUniformLocation(shader.ID, "textColor"), color.x, color.y, color.z);
@@ -202,6 +214,11 @@ namespace FxEngine.Fonts
             GL.BindVertexArray(0);
             GL.BindTexture(TextureTarget.Texture2D, 0);
             GL.UseProgram(0);
+        }
+
+        public void RenderText(string text, Vector2d pos)
+        {
+            RenderText(text, (float)pos.X, (float)pos.Y);
         }
     }
 }

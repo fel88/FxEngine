@@ -67,6 +67,4 @@ namespace FxEngine.Shaders
 
     }
 
- 
-    
 }

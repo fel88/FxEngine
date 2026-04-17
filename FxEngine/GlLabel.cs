@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
 using FxEngine.Fonts.SDF;
+using FxEngine.Interfaces;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
 
@@ -114,18 +115,19 @@ namespace FxEngine
 
         public bool Visible = true;
 
-        public void Draw(SdfTextRoutine sdf)
+        public void Draw(ITextRenderer sdf)
         {
-            if (!Visible) return;
+            if (!Visible) 
+                return;
 
             GL.PushMatrix();
             if (!string.IsNullOrEmpty(Text))
             {
-                sdf.DrawText(Text, Position);
+                sdf.RenderText(Text, Position);
                 for (int i = 0; i < MultiLines.Count; i++)
                 {
                     var str = MultiLines[i];
-                    sdf.DrawText(str, new Vector2d(Position.X, Position.Y - (MultiLineYOffset * (i + 1))));
+                    sdf.RenderText(str, new Vector2d(Position.X, Position.Y - (MultiLineYOffset * (i + 1))));
                 }
             }
             GL.PopMatrix();
@@ -133,7 +135,8 @@ namespace FxEngine
 
         public void Draw()
         {
-            if (!Visible) return;
+            if (!Visible) 
+                return;
 
             GL.Color4(Color.FromArgb(Opacity, Color.White));
             GL.Enable(EnableCap.Blend);

@@ -33,6 +33,8 @@
     <None Remove="Graphics\Shaders\vertexShader1.glsl" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Graphics\Shaders\cam_space_shader.fs" />
+    <EmbeddedResource Include="Graphics\Shaders\cam_space_shader.vs" />
     <EmbeddedResource Include="Graphics\Shaders\font2d.fs" />
     <EmbeddedResource Include="Graphics\Shaders\font2d.vs" />
     <EmbeddedResource Include="Graphics\Shaders\fragmentShader1.glsl" />
@@ -49,6 +51,8 @@
     <EmbeddedResource Include="Graphics\Shaders\sdf.fs" />
     <EmbeddedResource Include="Graphics\Shaders\sdf.vs" />
     <EmbeddedResource Include="Graphics\Shaders\vertexShader1.glsl" />
+    <EmbeddedResource Include="Fonts\Shaders\text.fs" />
+    <EmbeddedResource Include="Fonts\Shaders\text.vs" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
@@ -58,9 +62,9 @@
     <PackageReference Include="System.Drawing.Common" Version="8.0.24" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="data\Antonio-Bold.ttf" />
-    <Resource Include="data\Antonio-Light.ttf" />
-    <Resource Include="data\Antonio-Regular.ttf" />
-    <Resource Include="data\OCRAEXT.TTF" />
+    <EmbeddedResource Include="data\Antonio-Bold.ttf" />
+    <EmbeddedResource Include="data\Antonio-Light.ttf" />
+    <EmbeddedResource Include="data\Antonio-Regular.ttf" />
+    <EmbeddedResource Include="data\OCRAEXT.TTF" />
   </ItemGroup>
 </Project>

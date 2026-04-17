@@ -6,7 +6,7 @@ namespace FxEngine.Gui
 {
     public abstract class BaseGlDrawingContext : DrawingContext
     {
-        public SdfTextRoutine TextRoutine;
+        public SdfTextRenderer TextRoutine;
 
         public Camera Camera;
         public GameScreen Screen;

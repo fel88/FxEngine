@@ -1,17 +1,23 @@
-﻿using FxEngine.Shaders;
+﻿using FxEngine.Interfaces;
+using FxEngine.Shaders;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
 using System.Collections.Generic;
 using System.Drawing;
 
-namespace FxEngine.Fonts
+namespace FxEngine.Fonts.SDF
 {
-    public class TextRenderer
+    public class SdfTextRenderer : ITextRenderer
     {
-        public virtual void DrawText(string text, Vector2d pos)
+        public SdfTextRenderer()
+        {
+            shader = new SdfShader();
+        }
+
+        public void RenderText(string text, Vector2d pos)
         {
             //InitCharTextures();
-            if (string.IsNullOrEmpty(text)) 
+            if (string.IsNullOrEmpty(text))
                 return;
 
             var rgs = kr.GetStringRegions(text);
@@ -45,9 +51,24 @@ namespace FxEngine.Fonts
                 GL.Disable(EnableCap.Blend);
             }
         }
-        public virtual void RenderChar(char c, Vector2d pos)
+        public void RenderChar(char c, Vector2d pos)
         {
+            if (!infos.ContainsKey(c)) return;
+            var fr = infos[c];
 
+            GL.PushMatrix();
+            GL.Disable(EnableCap.DepthTest);
+
+            var offset = fr.Char.Offset;
+
+            GL.Translate(0, -fr.Size.Height, 0);
+            GL.Translate(pos.X, pos.Y, 0);
+            GL.Translate(offset.X, -offset.Y, 0);
+
+            (shader as SdfShader).SetUniformsData();
+            GL.BindVertexArray(fr.VertexBuffer);
+            GL.DrawArrays(PrimitiveType.Quads, 0, 4);
+            GL.PopMatrix();
         }
         public KerningRoutine kr;
 
@@ -55,6 +76,18 @@ namespace FxEngine.Fonts
         public Atlas atlas = new Atlas();
         public Dictionary<char, CharTextureInfo> infos = new Dictionary<char, CharTextureInfo>();
         bool charTexturesInited = false;
+        public void SetGamma(float v)
+        {
+            Shader._gamma = v;
+        }
+        public SdfShader Shader
+        {
+            get
+            {
+                return shader as SdfShader;
+            }
+        }
+
 
         public int AtlasTexture
         {
@@ -85,11 +118,11 @@ namespace FxEngine.Fonts
 
             //var vb = InitCharQuad(bmpt.Width * zoom, bmpt.Height * zoom);
 
-            var data0 = bmpt0.LockBits(new System.Drawing.Rectangle(0, 0, bmpt0.Width, bmpt0.Height), System.Drawing.Imaging.ImageLockMode.ReadOnly,
+            var data0 = bmpt0.LockBits(new Rectangle(0, 0, bmpt0.Width, bmpt0.Height), System.Drawing.Imaging.ImageLockMode.ReadOnly,
                 bmpt0.PixelFormat);
 
             GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, bmpt0.Width, bmpt0.Height, 0,
-            OpenTK.Graphics.OpenGL.PixelFormat.Bgra
+            PixelFormat.Bgra
             , PixelType.UnsignedByte, data0.Scan0);
             //GL.GenerateTextureMipmap(AtlasTexture);
             bmpt0.UnlockBits(data0);
@@ -187,10 +220,19 @@ namespace FxEngine.Fonts
         }
 
         public Font Font;
-        public virtual void Init(Graphics gr)
+
+        public void Init(Graphics gr)
         {
+            atlas.Load("atlas.png", "atlas.xml");
+            Font = atlas.Font;
+            kr = new KerningRoutine(gr, Font);
+            shader.Init();
+            InitCharTextures();
+        }
 
-
+        public void RenderText(string text, float x, float y)
+        {
+            RenderText(text, new Vector2d(x, y));
         }
     }
 }
