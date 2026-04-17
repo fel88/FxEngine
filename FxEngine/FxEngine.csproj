@@ -9,6 +9,8 @@
     <RepositoryUrl>https://github.com/fel88/FxEngine</RepositoryUrl>
     <Description>3D game engine</Description>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Version>1.0.3</Version>
+    <Title>FxEngine</Title>
   </PropertyGroup>
   <ItemGroup>
     <None Remove="data\Antonio-Bold.ttf" />
@@ -56,6 +58,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
+    <PackageReference Include="OpenTK" Version="4.9.4" />
     <PackageReference Include="OpenTK.Audio.OpenAL" Version="4.9.4" />
     <PackageReference Include="OpenTK.GLControl" Version="4.0.2" />
     <PackageReference Include="SpaceWizards.SharpFont" Version="1.0.2" />
