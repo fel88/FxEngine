@@ -17,9 +17,6 @@ namespace FxEngine.Fonts
         {
             shader = new DefaultTextShader();
 
-            GL.Enable(EnableCap.CullFace);
-            GL.Enable(EnableCap.Blend);
-            GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
 
             GL.Viewport(0, 0, width, height);
 
@@ -46,18 +43,7 @@ namespace FxEngine.Fonts
             GL.UseProgram(0);
         }
 
-        public static byte[] ReadResourceRaw(string resourceName)
-        {
-            var assembly = Assembly.GetExecutingAssembly();
-            var fr1 = assembly.GetManifestResourceNames().First(z => z.Contains(resourceName));
 
-            using (Stream stream = assembly.GetManifestResourceStream(fr1))
-            using (MemoryStream ms = new MemoryStream())
-            {
-                stream.CopyTo(ms);
-                return ms.ToArray();
-            }
-        }
         private void InitFonts()
         {
             // FreeType
@@ -72,7 +58,7 @@ namespace FxEngine.Fonts
             }
 
             // find path to font
-            var fontBytes = ReadResourceRaw("OCRAEXT.TTF");
+            var fontBytes = ResourceHelper.ReadResourceRaw("OCRAEXT.TTF");
 
             // load font as face
             Face face = new Face(ft, fontBytes, 0);
@@ -157,6 +143,14 @@ namespace FxEngine.Fonts
         int VAO, VBO;
 
         public Vector3 DefaultColor = new Vector3(0.3f, 0.7f, 0.9f);
+        public bool AutoSetGLStatesOnRenderText = true;
+        public void SetGLStates()
+        {
+            GL.Enable(EnableCap.CullFace);
+            GL.Enable(EnableCap.Blend);
+            GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
+            GL.Disable(EnableCap.DepthTest);
+        }
 
         public void RenderText(string text, float x, float y)
         {
@@ -169,6 +163,9 @@ namespace FxEngine.Fonts
         {
             if (string.IsNullOrEmpty(text))
                 return;
+
+            if (AutoSetGLStatesOnRenderText)
+                SetGLStates();
 
             // activate corresponding render state	
             shader.use();
