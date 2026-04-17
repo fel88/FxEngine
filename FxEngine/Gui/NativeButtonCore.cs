@@ -39,8 +39,8 @@ namespace FxEngine.Gui
                 }
             }
 
-            var proj = dc.Camera.ProjectionMatrix;
-            var view = dc.Camera.ViewMatrix;
+            var proj = dc.Camera.ProjectionMatrix.ToMatrix4();
+            var view = dc.Camera.ViewMatrix.ToMatrix4();
             var model = Matrix4.CreateScale(Rect.Width, Rect.Height, 1);
 
             var ww1 = dc.Camera.viewport[2];
@@ -86,7 +86,7 @@ namespace FxEngine.Gui
             var sdf = (ctx.TextRoutine.shader as SdfShader);
 
             var proj = ctx.Camera.ProjectionMatrix;
-            sdf.SetMatrix4("projection", proj);
+            sdf.SetMatrix4("projection", proj.ToMatrix4());
             var view2 = Matrix4.LookAt(new Vector3(0, 0, 1f), Vector3.Zero, Vector3.UnitY);
             sdf.Color = new Vector3(1, 1, 1);
 

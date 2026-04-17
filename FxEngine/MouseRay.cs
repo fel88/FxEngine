@@ -13,23 +13,23 @@ namespace FxEngine
 {
     public class MouseRay
     {
-        public Vector3 _start;
-        public Vector3 _end;
+        public Vector3d _start;
+        public Vector3d _end;
 
-        public Vector3 Start { get { return _start; } }
+        public Vector3d Start => _start;
 
-        public Vector3 End { get { return _end; } }
-        public MouseRay(float x, float y, Camera view)
+        public Vector3d End => _end;
+        public MouseRay(double x, double y, Camera view)
         {
             int[] viewport = new int[4];
-            Matrix4 modelMatrix, projMatrix;
+            Matrix4d modelMatrix, projMatrix;
             viewport = view.viewport;
             modelMatrix = view.ViewMatrix;
             projMatrix = view.ProjectionMatrix;
 
 
-            _start = UnProject(new Vector3(x, y, 0.0f), projMatrix, modelMatrix, new Size(viewport[2], viewport[3]));
-            _end = UnProject(new Vector3(x, y, 1.0f), projMatrix, modelMatrix, new Size(viewport[2], viewport[3]));
+            _start = UnProject(new Vector3d(x, y, 0.0f), projMatrix, modelMatrix, new Size(viewport[2], viewport[3]));
+            _end = UnProject(new Vector3d(x, y, 1.0f), projMatrix, modelMatrix, new Size(viewport[2], viewport[3]));
         }
         public MouseRay(Point mouse)
             : this(mouse.X, mouse.Y)
@@ -42,20 +42,62 @@ namespace FxEngine
             _end = end;
 
         }
+        public MouseRay(int x, int y, Camera view)
+        {
+            int[] viewport = new int[4];
+            Matrix4d modelMatrix, projMatrix;
+            viewport = view.viewport;
+            modelMatrix = view.ViewMatrix;
+            projMatrix = view.ProjectionMatrix;
+
+
+            _start = UnProject(new Vector3(x, y, 0.0f), projMatrix, modelMatrix, new Size(viewport[2], viewport[3]));
+            _end = UnProject(new Vector3(x, y, 1.0f), projMatrix, modelMatrix, new Size(viewport[2], viewport[3]));
+        }
+
+        public MouseRay(int x, int y)
+        {
+            _start = UnProject(new Vector3d(x, y, 0.0f), projMatrix, modelMatrix, new Size(viewport[2], viewport[3]));
+            _end = UnProject(new Vector3d(x, y, 1.0f), projMatrix, modelMatrix, new Size(viewport[2], viewport[3]));
+        }
+
         public static int[] viewport = new int[4];
-        public static Matrix4 modelMatrix, projMatrix;
+        
+
+        public static Matrix4d modelMatrix;
+        public static Matrix4d projMatrix;
 
         public static Vector3 Project(Vector3 point, Matrix4 projection, Matrix4 view, Size viewport)
         {
             return Project(point, projection, view, Matrix4.Identity, viewport.Width, viewport.Height);
         }
 
-        public static bool WithinEpsilon(float a, float b)
+        public static bool WithinEpsilon(double a, double b)
         {
-            float num = a - b;
-
-            return (-1.401293E-45f <= num) && (num <= float.Epsilon);
+            double num = a - b;
+            return (-1.401293E-45f <= num) && (num <= double.Epsilon);
         }
+
+        public static Vector3d Project(Vector3d _source, Matrix4d projection, Matrix4d view, Matrix4d world, int[] viewport)
+        {
+            var w = viewport[2];
+            var h = viewport[3];
+            int x = 0;
+            int y = 0;
+
+            Matrix4d matrix = Matrix4d.Mult(Matrix4d.Mult(world, view), projection);
+            Vector3d vector = Vector3d.TransformVector(_source, matrix);
+            var a = (((_source.X * matrix.M14) + (_source.Y * matrix.M24)) + (_source.Z * matrix.M34)) + matrix.M44;
+            if (!WithinEpsilon(a, 1f))
+            {
+                vector = (vector / a);
+            }
+            vector.X = (((vector.X + 1f) * 0.5f) * w) + x;
+            vector.Y = (((-vector.Y + 1f) * 0.5f) * h) + y;
+            //vector.Z = (vector.Z * (this.MaxDepth - this.MinDepth)) + this.MinDepth;
+            return vector;
+        }
+
         public static Vector3 Project(Vector3 _source, Matrix4 projection, Matrix4 view, Matrix4 world, int wid, int heig)
         {
             Vector4 source = new Vector4(_source, 1);
@@ -81,8 +123,8 @@ namespace FxEngine
         }
         public static void UpdateMatrices()
         {
-            GL.GetFloat(GetPName.ModelviewMatrix, out modelMatrix);
-            GL.GetFloat(GetPName.ProjectionMatrix, out projMatrix);
+            GL.GetDouble(GetPName.ModelviewMatrix, out modelMatrix);
+            GL.GetDouble(GetPName.ProjectionMatrix, out projMatrix);
             GL.GetInteger(GetPName.Viewport, viewport);
         }
         public static void UpdateMatrices(Camera cam)
@@ -91,47 +133,69 @@ namespace FxEngine
             projMatrix = cam.ProjectionMatrix;
             viewport = cam.viewport;
         }
-        public Vector3 Dir
+        public Vector3d Dir
         {
             get { return (End - Start).Normalized(); }
         }
 
-        public MouseRay(int x, int y, Camera view)
+        public static OpenTK.Mathematics.Vector3? Project(OpenTK.Mathematics.Vector3 v)
         {
+            float objx = v.X;
+            float objy = v.Y;
+            float objz = v.Z;
+
+            float[] modelview = new float[16];
+            float[] projection = new float[16];
             int[] viewport = new int[4];
-            Matrix4 modelMatrix, projMatrix;
-            viewport = view.viewport;
-            modelMatrix = view.ViewMatrix;
-            projMatrix = view.ProjectionMatrix;
-
-
-            _start = UnProject(new Vector3(x, y, 0.0f), projMatrix, modelMatrix, new Size(viewport[2], viewport[3]));
-            _end = UnProject(new Vector3(x, y, 1.0f), projMatrix, modelMatrix, new Size(viewport[2], viewport[3]));
+            GL.GetFloat(GetPName.ModelviewMatrix, modelview);
+            GL.GetFloat(GetPName.ProjectionMatrix, projection);
+            GL.GetInteger(GetPName.Viewport, viewport);
+            // Transformation vectors
+            float[] fTempo = new float[8];
+            // Modelview transform
+            fTempo[0] = modelview[0] * objx + modelview[4] * objy + modelview[8] * objz + modelview[12]; // w is always 1
+            fTempo[1] = modelview[1] * objx + modelview[5] * objy + modelview[9] * objz + modelview[13];
+            fTempo[2] = modelview[2] * objx + modelview[6] * objy + modelview[10] * objz + modelview[14];
+            fTempo[3] = modelview[3] * objx + modelview[7] * objy + modelview[11] * objz + modelview[15];
+            // Projection transform, the final row of projection matrix is always [0 0 -1 0]
+            // so we optimize for that.
+            fTempo[4] = projection[0] * fTempo[0] + projection[4] * fTempo[1] + projection[8] * fTempo[2] + projection[12] * fTempo[3];
+            fTempo[5] = projection[1] * fTempo[0] + projection[5] * fTempo[1] + projection[9] * fTempo[2] + projection[13] * fTempo[3];
+            fTempo[6] = projection[2] * fTempo[0] + projection[6] * fTempo[1] + projection[10] * fTempo[2] + projection[14] * fTempo[3];
+            fTempo[7] = -fTempo[2];
+            // The result normalizes between -1 and 1
+            if (fTempo[7] == 0.0) // The w value
+                return null;
+            fTempo[7] = 1.0f / fTempo[7];
+            // Perspective division
+            fTempo[4] *= fTempo[7];
+            fTempo[5] *= fTempo[7];
+            fTempo[6] *= fTempo[7];
+            // Window coordinates
+            // Map x, y to range 0-1
+            OpenTK.Mathematics.Vector3 ret;
+            ret.X = (fTempo[4] * 0.5f + 0.5f) * viewport[2] + viewport[0];
+            ret.Y = (fTempo[5] * 0.5f + 0.5f) * viewport[3] + viewport[1];
+            // This is only correct when glDepthRange(0.0, 1.0)
+            ret.Z = (1.0f + fTempo[6]) * 0.5f;  // Between 0 and 1
+            return ret;
         }
 
-        public MouseRay(int x, int y)
+
+        public static Vector3d UnProject(Vector3d mouse, Matrix4d projection, Matrix4d view, Size viewport)
         {
+            Vector4d vec;
 
-            _start = UnProject(new Vector3(x, y, 0.0f), projMatrix, modelMatrix, new Size(viewport[2], viewport[3]));
-            _end = UnProject(new Vector3(x, y, 1.0f), projMatrix, modelMatrix, new Size(viewport[2], viewport[3]));
-        }
-
-        public static Vector3 UnProject(Vector3 mouse, Matrix4 projection, Matrix4 view, Size viewport)
-        {
-            Vector4 vec;
-
-            vec.X = 2.0f * mouse.X / (float)viewport.Width - 1;
-            vec.Y = -(2.0f * mouse.Y / (float)viewport.Height - 1);
+            vec.X = 2.0f * mouse.X / viewport.Width - 1;
+            vec.Y = -(2.0f * mouse.Y / viewport.Height - 1);
             vec.Z = mouse.Z;
             vec.W = 1.0f;
 
-            Matrix4 viewInv = Matrix4.Invert(view);
-            Matrix4 projInv = Matrix4.Invert(projection);
+            Matrix4d viewInv = Matrix4d.Invert(view);
+            Matrix4d projInv = Matrix4d.Invert(projection);
 
             vec *= projInv;
-            vec *= viewInv;
-            //Vector4.Transform(ref vec, ref projInv, out vec);
-            //Vector4.Transform(ref vec, ref viewInv, out vec);
+            vec *= viewInv;            
 
             if (vec.W > 0.000001f || vec.W < -0.000001f)
             {

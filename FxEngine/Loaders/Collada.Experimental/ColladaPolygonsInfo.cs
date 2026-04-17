@@ -34,13 +34,13 @@ namespace FxEngine.Loaders.Collada
                 GL.ActiveTexture(TextureUnit.Texture0);
                 GL.BindTexture(TextureTarget.Texture2D, tid);
             }
-            Matrix4 matrix;
+            Matrix4d matrix;
 
-            GL.GetFloat(GetPName.ModelviewMatrix, out matrix);
+            GL.GetDouble(GetPName.ModelviewMatrix, out matrix);
 
             int transformLoc = GL.GetUniformLocation(shaderProgram, "transform");
             int lightDir = GL.GetUniformLocation(shaderProgram, "in_textureCoords");
-            Matrix4 m = matrix * camera.ProjectionMatrix;
+            Matrix4d m = matrix * camera.ProjectionMatrix;
             GL.UniformMatrix4(transformLoc, false, ref m);
 
             var clrloc = GL.GetUniformLocation(shaderProgram, "color");

@@ -50,7 +50,7 @@ namespace FxEngine.Loaders.Collada
             Matrix4 matrix;
 
             GL.GetFloat(GetPName.ModelviewMatrix, out matrix);
-            Matrix4 m = matrix * camera.ProjectionMatrix;
+            Matrix4 m = matrix * camera.ProjectionMatrix.ToMatrix4();
 
             shader.projectionViewMatrix.loadMatrix(m);
 

@@ -14,11 +14,11 @@ namespace FxEngine.Cameras
     {
         public override void Update()
         {
-            var dir = Camera.CamFrom - Camera.CamTo;
+            var dir = Camera.Eye - Camera.Target;
             var cv = dir;
-            var a1 = Vector3.Cross(Camera.CamUp, cv.Normalized()); ;            
+            var a1 = Vector3d.Cross(Camera.Up, cv.Normalized()); ;            
             var moveVecTan = a1.Normalized();
-            var moveVec = Vector3.Cross(a1.Normalized(), cv.Normalized()).Normalized();
+            var moveVec = Vector3d.Cross(a1.Normalized(), cv.Normalized()).Normalized();
 
             var pos = CursorPosition;
 
@@ -27,24 +27,24 @@ namespace FxEngine.Cameras
                 var zoom = Width / Camera.OrthoWidth;
 
                 var dx = moveVecTan * ((startPosX - pos.X) / zoom) + moveVec * ((startPosY - pos.Y) / zoom);
-                Camera.CamFrom = cameraFromStart + dx;
-                Camera.CamTo = cameraToStart + dx;
+                Camera.Eye = cameraFromStart + dx;
+                Camera.Target = cameraToStart + dx;
             }
             if (drag)
             {
                 //rotate here
                 float kk = 3;                
-                Vector3 v1 = cameraFromStart - cameraToStart;
+                Vector3d v1 = cameraFromStart - cameraToStart;
 
-                var m1 = Matrix3.CreateFromAxisAngle(Vector3.Cross(v1, cameraUpStart), -(startPosY - pos.Y) / 180f / kk * (float)Math.PI);
-                var m2 = Matrix3.CreateFromAxisAngle(cameraUpStart, -(startPosX - pos.X) / 180f / kk * (float)Math.PI);                
+                var m1 = Matrix3d.CreateFromAxisAngle(Vector3d.Cross(v1, cameraUpStart), -(startPosY - pos.Y) / 180f / kk * (float)Math.PI);
+                var m2 = Matrix3d.CreateFromAxisAngle(cameraUpStart, -(startPosX - pos.X) / 180f / kk * (float)Math.PI);                
 
                 v1 *= m1;
                 v1 *= m2;
                 var up1 = cameraUpStart;
 
-                Camera.CamUp = up1;                
-                Camera.CamFrom = cameraToStart + v1;              
+                Camera.Up = up1;                
+                Camera.Eye = cameraToStart + v1;              
             }
         }
 
@@ -205,15 +205,15 @@ namespace FxEngine.Cameras
             var camera = Camera;
             if (camera.IsOrtho)
             {
-                var shift = mr.Start - Camera.CamFrom;
+                var shift = mr.Start - Camera.Eye;
                 shift.Normalize();                
                 if (delta > 0)
                 {
                     camera.OrthoWidth /= 1.2f;                    
                     Camera cam2 = new Camera();
-                    cam2.CamFrom = camera.CamFrom;
-                    cam2.CamTo = camera.CamTo;
-                    cam2.CamUp = camera.CamUp;
+                    cam2.Eye = camera.Eye;
+                    cam2.Target = camera.Target;
+                    cam2.Up = camera.Up;
                     cam2.OrthoWidth = camera.OrthoWidth;
                     cam2.IsOrtho = camera.IsOrtho;
 
@@ -221,17 +221,17 @@ namespace FxEngine.Cameras
                     MouseRay mr2 = new MouseRay(cur.X, cur.Y, cam2);                    
                     var diff = mr.Start - mr2.Start;
                     shift *= diff.Length;
-                    camera.CamFrom += shift;
-                    camera.CamTo += shift;
+                    camera.Eye += shift;
+                    camera.Target += shift;
                 }
                 else
                 {
                     camera.OrthoWidth *= 1.2f;
                     
                     Camera cam2 = new Camera();
-                    cam2.CamFrom = camera.CamFrom;
-                    cam2.CamTo = camera.CamTo;
-                    cam2.CamUp = camera.CamUp;
+                    cam2.Eye = camera.Eye;
+                    cam2.Target = camera.Target;
+                    cam2.Up = camera.Up;
                     cam2.OrthoWidth = camera.OrthoWidth;
                     cam2.IsOrtho = camera.IsOrtho;
 
@@ -240,8 +240,8 @@ namespace FxEngine.Cameras
 
                     var diff = mr.Start - mr2.Start;
                     shift *= diff.Length;
-                    camera.CamFrom -= shift;
-                    camera.CamTo -= shift;
+                    camera.Eye -= shift;
+                    camera.Target -= shift;
                 }
 
                 return;
@@ -254,13 +254,13 @@ namespace FxEngine.Cameras
                 dir.Normalize();
                 if (delta > 0)
                 {
-                    camera.CamFrom += dir * zoomK;
-                    camera.CamTo += dir * zoomK;
+                    camera.Eye += dir * zoomK;
+                    camera.Target += dir * zoomK;
                 }
                 else
                 {
-                    camera.CamFrom -= dir * zoomK;
-                    camera.CamTo -= dir * zoomK;
+                    camera.Eye -= dir * zoomK;
+                    camera.Target -= dir * zoomK;
                 }
             }
         }
@@ -278,16 +278,16 @@ namespace FxEngine.Cameras
             lshift = false;
         }
         
-        public static Vector3? lineIntersection(Vector3 planePoint, Vector3 planeNormal, Vector3 linePoint, Vector3 lineDirection)
+        public static Vector3d? lineIntersection(Vector3d planePoint, Vector3d planeNormal, Vector3d linePoint, Vector3d lineDirection)
         {
-            if (Math.Abs(Vector3.Dot(planeNormal, lineDirection)) < 10e-6f)
+            if (Math.Abs(Vector3d.Dot(planeNormal, lineDirection)) < 10e-6f)
             {
                 return null;
             }
 
-            var dot1 = Vector3.Dot(planeNormal, planePoint);
-            var dot2 = Vector3.Dot(planeNormal, linePoint);
-            var dot3 = Vector3.Dot(planeNormal, lineDirection);
+            var dot1 = Vector3d.Dot(planeNormal, planePoint);
+            var dot2 = Vector3d.Dot(planeNormal, linePoint);
+            var dot3 = Vector3d.Dot(planeNormal, lineDirection);
             double t = (dot1 - dot2) / dot3;
             return linePoint + lineDirection * (float)t;
         }
@@ -317,33 +317,33 @@ namespace FxEngine.Cameras
             var pos = CursorPosition;
             startPosX = pos.X;
             startPosY = pos.Y;
-            cameraFromStart = Camera.CamFrom;
-            cameraToStart = Camera.CamTo;
-            cameraUpStart = Camera.CamUp;
+            cameraFromStart = Camera.Eye;
+            cameraToStart = Camera.Target;
+            cameraUpStart = Camera.Up;
 
             if (e.IsMiddlePressed)
             {                
-                var d1 = Camera.CamFrom - Camera.CamTo;
+                var d1 = Camera.Eye - Camera.Target;
                 //var plane1 : forw
-                var crs1 = Vector3.Cross(cameraUpStart, d1);                
+                var crs1 = Vector3d.Cross(cameraUpStart, d1);                
                 if (SnapModePlane)
                 {
-                    var inter = lineIntersection(Vector3.Zero, Vector3.UnitZ, Camera.CamFrom, Camera.CamTo - Camera.CamFrom);
+                    var inter = lineIntersection(Vector3.Zero, Vector3.UnitZ, Camera.Eye, Camera.Target - Camera.Eye);
                     if (inter != null)
                     {
                         drag = true;
-                        Camera.CamTo = inter.Value;
-                        cameraToStart = Camera.CamTo;
+                        Camera.Target = inter.Value;
+                        cameraToStart = Camera.Target;
                     }
                 }
                 else if (SnapMode)
                 {
-                    var inter = lineIntersection(Camera.CamTo, crs1, Vector3.Zero, Vector3.UnitX);
+                    var inter = lineIntersection(Camera.Target, crs1, Vector3.Zero, Vector3.UnitX);
                     if (inter != null)
                     {
                         drag = true;
-                        Camera.CamTo = inter.Value;
-                        cameraToStart = Camera.CamTo;
+                        Camera.Target = inter.Value;
+                        cameraToStart = Camera.Target;
                     }
                 }
                 else
@@ -362,9 +362,9 @@ namespace FxEngine.Cameras
 
         float startPosX;
         float startPosY;
-        Vector3 cameraFromStart;
-        Vector3 cameraToStart;
-        Vector3 cameraUpStart;
+        Vector3d cameraFromStart;
+        Vector3d cameraToStart;
+        Vector3d cameraUpStart;
         public PointF CursorPosition
         {
             get

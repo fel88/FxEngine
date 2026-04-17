@@ -64,16 +64,17 @@ namespace FxEngine.Shaders
         {
             GL.Uniform4(GL.GetUniformLocation(ID, v), ref newPos);
         }
+
         public void setVec3(string v, Vector3d newPos)
         {
-            setVec3(v, newPos.ToVector3());
+            setVec3(v, StaticHelpers.ToVector3(newPos));
         }
-
 
         public void setVec3(string v1, float v2, float v3, float v4)
         {
             setVec3(v1, new Vector3(v2, v3, v4));
         }
+
         public void setMat4(string v, Matrix4 projection)
         {
             GL.UniformMatrix4(GL.GetUniformLocation(ID, v), false, ref projection);

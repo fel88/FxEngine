@@ -518,9 +518,9 @@ namespace FxEngine
                             {
                                 Id = id,
                                 Name = nm,
-                                CamFrom = new Vector3(from[0], from[1], from[2]),
-                                CamTo = new Vector3(to[0], to[1], to[2]),
-                                CamUp = new Vector3(up[0], up[1], up[2]),
+                                Eye = new Vector3(from[0], from[1], from[2]),
+                                Target = new Vector3(to[0], to[1], to[2]),
+                                Up = new Vector3(up[0], up[1], up[2]),
                                 Fovy = fovy
                             });
                         }
@@ -573,7 +573,7 @@ namespace FxEngine
                 foreach (var fitem in item.Cameras)
                 {
                     var mode = fitem.IsOrtho ? "ortho" : "perspective";
-                    sb.AppendLine($"<camera id=\"{fitem.Id}\" name=\"{fitem.Name}\" camFrom=\"{fitem.CamFrom.X};{fitem.CamFrom.Y};{fitem.CamFrom.Z}\"  camTo=\"{fitem.CamTo.X};{fitem.CamTo.Y};{fitem.CamTo.Z}\" camUp=\"{fitem.CamUp.X};{fitem.CamUp.Y};{fitem.CamUp.Z}\"  fovy=\"{fitem.Fovy}\" mode=\"{mode}\" />");
+                    sb.AppendLine($"<camera id=\"{fitem.Id}\" name=\"{fitem.Name}\" camFrom=\"{fitem.Eye.X};{fitem.Eye.Y};{fitem.Eye.Z}\"  camTo=\"{fitem.Target.X};{fitem.Target.Y};{fitem.Target.Z}\" camUp=\"{fitem.Up.X};{fitem.Up.Y};{fitem.Up.Z}\"  fovy=\"{fitem.Fovy}\" mode=\"{mode}\" />");
                 }
                 sb.AppendLine("</cameras>");
                 sb.AppendLine("</level>");

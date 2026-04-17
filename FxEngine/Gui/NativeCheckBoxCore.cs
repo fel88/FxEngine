@@ -61,7 +61,7 @@ namespace FxEngine.Gui
 
             var r = Rect.Right;
             var d = Rect.Bottom;
-         //   GL.PushMatrix();
+            //   GL.PushMatrix();
 
 
             if (IsHovered)
@@ -73,15 +73,15 @@ namespace FxEngine.Gui
                 GL.Color3(Color.FromArgb(53, 63, 69));
             }
             Drawer.FillRectangle(Rect);
-            
+
             //GL.Color3(Color.FromArgb(118, 141, 155));
             GL.LineWidth(1.3f);
 
             Drawer.RectShader.Use();
 
 
-            var proj = dc.Camera.ProjectionMatrix;
-            var view = dc.Camera.ViewMatrix;
+            var proj = dc.Camera.ProjectionMatrix.ToMatrix4();
+            var view = dc.Camera.ViewMatrix.ToMatrix4();
             var model = Matrix4.CreateScale(Rect.Width, Rect.Height, 1);
 
             var ww1 = dc.Camera.viewport[2];
@@ -95,31 +95,31 @@ namespace FxEngine.Gui
 
             Drawer.RectShader.SetColor(Color.FromArgb(118, 141, 155));
             Drawer.DrawRectangle(Rect);
-            
+
             if (IsChecked)
             {
 
-             /*   GL.Begin(PrimitiveType.Lines);
-                Drawer.Vertex(x, d);
-                Drawer.Vertex(r, top);
-                Drawer.Vertex(x, top);
-                Drawer.Vertex(r, d);
-                GL.End();*/
+                /*   GL.Begin(PrimitiveType.Lines);
+                   Drawer.Vertex(x, d);
+                   Drawer.Vertex(r, top);
+                   Drawer.Vertex(x, top);
+                   Drawer.Vertex(r, d);
+                   GL.End();*/
             }
             GL.LineWidth(1);
-           /* GL.PushMatrix();
-            float f1 = 0.3f;
+            /* GL.PushMatrix();
+             float f1 = 0.3f;
 
-            Drawer.Translate(x + 30, Rect.Top);
-            //GL.Translate(x + 30, dc.GameWindow.Height - (Rect.Top), 0);
-            GL.Scale(f1, f1, f1);
+             Drawer.Translate(x + 30, Rect.Top);
+             //GL.Translate(x + 30, dc.GameWindow.Height - (Rect.Top), 0);
+             GL.Scale(f1, f1, f1);
 
-            dc.TextRoutine.Shader.PushState();
-            dc.TextRoutine.Shader.Color = new Vector3(1, 1, 1);
-            dc.TextRoutine.DrawText(Caption, new PointF(0, 0));
-            dc.TextRoutine.Shader.PopState();
-            GL.PopMatrix();
-            GL.PopMatrix();*/
+             dc.TextRoutine.Shader.PushState();
+             dc.TextRoutine.Shader.Color = new Vector3(1, 1, 1);
+             dc.TextRoutine.DrawText(Caption, new PointF(0, 0));
+             dc.TextRoutine.Shader.PopState();
+             GL.PopMatrix();
+             GL.PopMatrix();*/
         }
 
         public override void Update(BaseGlDrawingContext dc)

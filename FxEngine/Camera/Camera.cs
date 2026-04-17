@@ -1,9 +1,13 @@
-﻿using System;
+﻿using FxEngine.Gui;
+using OpenTK.GLControl;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
-using FxEngine.Gui;
 using OpenTK.Windowing.Desktop;
-using OpenTK.GLControl;
+using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Linq;
+using System.Security.Policy;
 
 namespace FxEngine.Cameras
 {
@@ -21,6 +25,66 @@ namespace FxEngine.Cameras
                 UpdateMatricies(cс.GameWindow);
             }
         }
+
+        public Vector3d DirNormalized
+        {
+            get { return (Eye - Target).Normalized(); }
+        }
+
+        public void MoveForw(float ang)
+        {
+            var vect = Eye - Target;
+            Target += new Vector3d(ang, 0, 0);
+            Eye = vect + Target;
+        }
+
+        public void RotateFromZ(float ang)
+        {
+            var vect = Eye - Target;
+            var m = Matrix4d.CreateFromAxisAngle(Up, ang);
+            Eye = Vector3d.TransformVector(vect, m) + Target;
+            Up = Vector3d.TransformVector(Up, m);
+        }
+
+        public void RotateFromX(float ang)
+        {
+            var vect = Eye - Target;
+            var m = Matrix4d.CreateFromAxisAngle(Vector3d.UnitX, ang);
+
+            Eye = Vector3d.TransformVector(vect, m) + Target;
+            Up = Vector3d.TransformVector(Up, m);
+        }
+
+        public void RotateFromY(float ang)
+        {
+            var vect = Eye - Target;
+
+            var cross1 = Vector3d.Cross(vect, Up);
+            var m = Matrix4d.CreateFromAxisAngle(cross1, ang);
+            //var m = Matrix4.CreateRotationY(ang);
+
+            Eye = Vector3d.TransformVector(vect, m) + Target;
+            Up = Vector3d.TransformVector(Up, m);
+        }
+
+
+        public void Shift(Vector3d vector3)
+        {
+            Eye += vector3;
+            Target += vector3;
+        }
+
+        public Vector3d GetSide()
+        {
+            var dirr = Eye - Target;
+            var forw = new Vector3d(dirr.X, dirr.Y, 0);
+            forw.Normalize();
+            var crs = Vector3d.Cross(forw, Up);
+            var side = new Vector3d(crs.X, crs.Y, 0);
+            side.Normalize();
+            return side;
+        }
+
         public void UpdateMatricies(OpenTK.Windowing.Desktop.GameWindow glControl)
         {
 
@@ -29,9 +93,9 @@ namespace FxEngine.Cameras
             viewport[2] = glControl.Width();
             viewport[3] = glControl.Height();
             var aspect = glControl.Width() / (float)glControl.Height();
-            var o = Matrix4.CreateOrthographic(OrthoWidth, OrthoWidth / aspect, -25e4f, 25e4f);
+            var o = Matrix4d.CreateOrthographic(OrthoWidth, OrthoWidth / aspect, -25e4f, 25e4f);
 
-            Matrix4 mp = Matrix4.CreatePerspectiveFieldOfView((float)(Fov * Math.PI / 180) * zoom,
+            Matrix4d mp = Matrix4d.CreatePerspectiveFieldOfView((float)(Fov * Math.PI / 180) * zoom,
                 glControl.Width() / (float)glControl.Height(), 1, 25e4f);
 
 
@@ -46,11 +110,50 @@ namespace FxEngine.Cameras
 
             }
 
-            OpenTK.Mathematics.Matrix4 modelview = OpenTK.Mathematics.Matrix4.LookAt(CamFrom, CamTo, CamUp);
+            OpenTK.Mathematics.Matrix4d modelview = OpenTK.Mathematics.Matrix4d.LookAt(Eye, Target, Up);
             ViewMatrix = modelview;
         }
 
-        public void UpdateMatricies(OpenTK.GLControl.GLControl glControl)
+        public void FitToPoints(Vector3d[] pnts, int w, int h)
+        {
+            List<Vector2d> vv = new List<Vector2d>();
+            foreach (var vertex in pnts)
+            {
+                var p = MouseRay.Project(new Vector3d((float)vertex.X, (float)vertex.Y, (float)vertex.Z), ProjectionMatrix, ViewMatrix, WorldMatrix, viewport);
+                vv.Add(p.Xy);
+            }
+
+            //prjs->xy coords
+            var minx = vv.Min(z => z.X);
+            var maxx = vv.Max(z => z.X);
+            var miny = vv.Min(z => z.Y);
+            var maxy = vv.Max(z => z.Y);
+
+
+            var dx = (maxx - minx);
+            var dy = (maxy - miny);
+
+            var cx = dx / 2;
+            var cy = dy / 2;
+            var dir = Target - Eye;
+            //center back to 3d
+
+            var mr = new MouseRay(cx + minx, cy + miny, this);
+            var v0 = mr.Start;
+
+            Eye = v0;
+            Target = Eye + dir;
+
+            var aspect = w / (float)(h);
+
+            dx /= w;
+            dx *= OrthoWidth;
+            dy /= h;
+            dy *= OrthoWidth;
+
+            OrthoWidth = Math.Max(dx, dy);
+        }
+        public void UpdateMatricies(GLControl glControl)
         {
 
             viewport[0] = 0;
@@ -58,9 +161,10 @@ namespace FxEngine.Cameras
             viewport[2] = glControl.Width;
             viewport[3] = glControl.Height;
             var aspect = glControl.Width / (float)glControl.Height;
-            var o = Matrix4.CreateOrthographic(OrthoWidth, OrthoWidth / aspect, -25e4f, 25e4f);
 
-            Matrix4 mp = Matrix4.CreatePerspectiveFieldOfView((float)(Fov * Math.PI / 180) * zoom,
+            var o = Matrix4d.CreateOrthographic(OrthoWidth, OrthoWidth / aspect, ZNear, ZFar);
+
+            Matrix4d mp = Matrix4d.CreatePerspectiveFieldOfView((float)(Fov * Math.PI / 180) * zoom,
                 glControl.Width / (float)glControl.Height, 1, 25e4f);
 
 
@@ -75,30 +179,24 @@ namespace FxEngine.Cameras
 
             }
 
-            Matrix4 modelview = Matrix4.LookAt(CamFrom, CamTo, CamUp);
+            Matrix4d modelview = Matrix4d.LookAt(Eye, Target, Up);
             ViewMatrix = modelview;
         }
         public int Id { get; set; }
         public string Name { get; set; }
-        public Vector3 CamFrom { get; set; } = new Vector3(70, 70, 70);
+        public Vector3d Eye { get; set; } = new Vector3d(70, 70, 70);
 
-        public Vector3 CamTo { get; set; } = new Vector3(0, 0, 0);
-        public Vector3 CamUp { get; set; } = new Vector3(0, 0, 1);
+        public Vector3d Target { get; set; } = new Vector3d(0, 0, 0);
+        public Vector3d Up { get; set; } = new Vector3d(0, 0, 1);
 
         public bool IsOrtho { get; set; } = false;
         public float Fovy { get; set; } = 60;
         public float Aspect { get; private set; }
-        public Vector3 Direction
-        {
-            get
-            {
-                return CamFrom - CamTo;
-            }
-        }
-        public Matrix4 WorldMatrix = Matrix4.Identity;
+        public Vector3d Direction => Eye - Target;
+        public Matrix4d WorldMatrix = Matrix4d.Identity;
 
-        public Matrix4 ProjectionMatrix { get; set; }
-        public Matrix4 ViewMatrix { get; set; }
+        public Matrix4d ProjectionMatrix { get; set; }
+        public Matrix4d ViewMatrix { get; set; }
         public int[] viewport = new int[4];
 
         public void SetupCore(GameWindow glControl)
@@ -110,9 +208,9 @@ namespace FxEngine.Cameras
             viewport[2] = glControl.Width();
             viewport[3] = glControl.Height();
             var aspect = glControl.Width() / (float)glControl.Height();
-            var o = Matrix4.CreateOrthographic(OrthoWidth, OrthoWidth / aspect, -25e4f, 25e4f);
+            var o = Matrix4d.CreateOrthographic(OrthoWidth, OrthoWidth / aspect, ZNear, ZFar);
 
-            Matrix4 mp = Matrix4.CreatePerspectiveFieldOfView((float)(Fov * Math.PI / 180) * zoom,
+            Matrix4d mp = Matrix4d.CreatePerspectiveFieldOfView((float)(Fov * Math.PI / 180) * zoom,
                 glControl.Width() / (float)glControl.Height(), 1, 25e4f);
 
 
@@ -125,7 +223,7 @@ namespace FxEngine.Cameras
                 ProjectionMatrix = mp;
             }
 
-            Matrix4 modelview = Matrix4.LookAt(CamFrom, CamTo, CamUp);
+            Matrix4d modelview = Matrix4d.LookAt(Eye, Target, Up);
             ViewMatrix = modelview;
         }
 
@@ -133,64 +231,30 @@ namespace FxEngine.Cameras
         {
             if (ctx is GlControlDrawingContext c)
             {
-                Setup(c.GameWindow);
-            }
-            if (ctx is GlDrawingContext cc)
-            {
-                Setup(cc.GameWindow);
-            }
-        }
-        public void Setup(GameWindow glControl)
-        {
-
-            GL.Viewport(0, 0, glControl.Width(), glControl.Height());
-
-            viewport[0] = 0;
-            viewport[1] = 0;
-            viewport[2] = glControl.Width();
-            viewport[3] = glControl.Height();
-            var aspect = glControl.Width() / (float)glControl.Height();
-            var o = Matrix4.CreateOrthographic(OrthoWidth, OrthoWidth / aspect, -25e4f, 25e4f);
-
-            Matrix4 mp = Matrix4.CreatePerspectiveFieldOfView((float)(Fov * Math.PI / 180) * zoom,
-                glControl.Width() / (float)glControl.Height(), 1, 25e4f);
-
-            GL.MatrixMode(MatrixMode.Projection);
-
-            if (IsOrtho)
-            {
-                ProjectionMatrix = o;
-                GL.LoadMatrix(ref o);
+                Setup(c.GameWindow.Size);
             }
             else
+            if (ctx is GlDrawingContext cc)
             {
-                ProjectionMatrix = mp;
-                GL.LoadMatrix(ref mp);
+                Setup(cc.GameWindow.Size);
             }
-
-
-            Matrix4 modelview = Matrix4.LookAt(CamFrom, CamTo, CamUp);
-
-            GL.MatrixMode(MatrixMode.Modelview);
-            GL.LoadMatrix(ref modelview);
-
-            ViewMatrix = modelview;
-            GL.MultMatrix(ref WorldMatrix);
-
         }
 
-        public void Setup(GLControl gl)
+
+        public void Setup(Vector2i size) => Setup(new Size(size.X, size.Y));
+
+        public void Setup(Size size)
         {
-            GL.Viewport(0, 0, gl.Width, gl.Height);
+            GL.Viewport(0, 0, size.Width, size.Height);
             viewport[0] = 0;
             viewport[1] = 0;
-            viewport[2] = gl.Width;
-            viewport[3] = gl.Height;
-            var aspect = gl.Width / (float)gl.Height;
-            var o = Matrix4.CreateOrthographic(OrthoWidth, OrthoWidth / aspect, -25e4f, 25e4f);
+            viewport[2] = size.Width;
+            viewport[3] = size.Height;
+            var aspect = size.Width / (float)size.Height;
+            var o = Matrix4d.CreateOrthographic(OrthoWidth, OrthoWidth / aspect, ZNear, ZFar);
 
-            Matrix4 mp = Matrix4.CreatePerspectiveFieldOfView((float)(Fov * Math.PI / 180) * zoom,
-                gl.Width / (float)gl.Height, 1, 25e4f);
+            Matrix4d mp = Matrix4d.CreatePerspectiveFieldOfView((float)(Fov * Math.PI / 180) * zoom,
+                size.Width / (float)size.Height, 1, 25e4f);
 
             GL.MatrixMode(MatrixMode.Projection);
             if (IsOrtho)
@@ -205,21 +269,23 @@ namespace FxEngine.Cameras
                 GL.LoadMatrix(ref mp);
             }
 
-            Matrix4 modelview = Matrix4.LookAt(CamFrom, CamTo, CamUp);
+            Matrix4d modelview = Matrix4d.LookAt(Eye, Target, Up);
             GL.MatrixMode(MatrixMode.Modelview);
             GL.LoadMatrix(ref modelview);
-            ViewMatrix = modelview;  
+            ViewMatrix = modelview;
             GL.MultMatrix(ref WorldMatrix);
 
         }
         public float OrthoZoom = 1;
+        public float ZNear = -25e4f;
+        public float ZFar = 25e4f;
 
-        public float OrthoWidth { get; set; } = 1000;
-        public float Fov { get; set; } = 60;
+        public double OrthoWidth { get; set; } = 1000;
+        public double Fov { get; set; } = 60;
 
         public void SetupViewOnly()
         {
-            Matrix4 modelview = Matrix4.LookAt(CamFrom, CamTo, CamUp);
+            Matrix4d modelview = Matrix4d.LookAt(Eye, Target, Up);
             GL.MatrixMode(MatrixMode.Modelview);
             GL.LoadMatrix(ref modelview);
             GL.MultMatrix(ref WorldMatrix);
@@ -228,9 +294,9 @@ namespace FxEngine.Cameras
 
         public void CopyFrom(Camera cam)
         {
-            CamFrom = cam.CamFrom;
-            CamTo = cam.CamTo;
-            CamUp = cam.CamUp;
+            Eye = cam.Eye;
+            Target = cam.Target;
+            Up = cam.Up;
             IsOrtho = cam.IsOrtho;
         }
 

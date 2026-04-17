@@ -114,8 +114,8 @@ namespace FxEngine.Gui
 
 
             Drawer.RectShader.Use();
-            var proj = dc.Camera.ProjectionMatrix;
-            var view = dc.Camera.ViewMatrix;
+            var proj = dc.Camera.ProjectionMatrix.ToMatrix4();
+            var view = dc.Camera.ViewMatrix.ToMatrix4();
             var model = Matrix4.CreateScale(Rect.Width, Rect.Height, 1);
 
             var ww1 = dc.Camera.viewport[2];
