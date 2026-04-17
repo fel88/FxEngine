@@ -5,6 +5,7 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Security.Cryptography.X509Certificates;
 
 namespace FxEngine.Shaders
 {
@@ -55,9 +56,12 @@ namespace FxEngine.Shaders
         }
 
 
-        public void setMat4(string v, Matrix4d projection)
+        public void setMat4(string v, Matrix4d projection, bool convertToFloat = true)
         {
-            GL.UniformMatrix4(GL.GetUniformLocation(ID, v), false, ref projection);
+            if (convertToFloat)
+                setMat4(v, projection.ToMatrix4());
+            else
+                GL.UniformMatrix4(GL.GetUniformLocation(ID, v), false, ref projection);
         }
 
         public void setVec4(string v, Vector4 newPos)
@@ -79,10 +83,12 @@ namespace FxEngine.Shaders
         {
             GL.UniformMatrix4(GL.GetUniformLocation(ID, v), false, ref projection);
         }
+
         public void setVec3(string v, Vector3 newPos)
         {
             GL.Uniform3(GL.GetUniformLocation(ID, v), ref newPos);
         }
+
         void checkCompileErrors(int shader, string type)
         {
             int success;
