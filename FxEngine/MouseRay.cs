@@ -62,14 +62,14 @@ namespace FxEngine
         }
 
         public static int[] viewport = new int[4];
-        
+
 
         public static Matrix4d modelMatrix;
         public static Matrix4d projMatrix;
 
-        public static Vector3 Project(Vector3 point, Matrix4 projection, Matrix4 view, Size viewport)
+        public static Vector3d Project(Vector3d point, Matrix4d projection, Matrix4d view, Size viewport)
         {
-            return Project(point, projection, view, Matrix4.Identity, viewport.Width, viewport.Height);
+            return Project(point, projection, view, Matrix4d.Identity, viewport.Width, viewport.Height);
         }
 
         public static bool WithinEpsilon(double a, double b)
@@ -82,45 +82,35 @@ namespace FxEngine
         {
             var w = viewport[2];
             var h = viewport[3];
-            int x = 0;
-            int y = 0;
+            return Project(_source, projection, view, Matrix4d.Identity, w, h);
+        }
+
+        public static Vector3d Project(Vector3d _source,
+            Matrix4d projection,
+            Matrix4d view,
+            Matrix4d world,
+            int width,
+            int height,
+            float MaxDepth = 10,
+            float MinDepth = 1
+           )
+        {
 
             Matrix4d matrix = Matrix4d.Mult(Matrix4d.Mult(world, view), projection);
+
             Vector3d vector = Vector3d.TransformVector(_source, matrix);
-            var a = (((_source.X * matrix.M14) + (_source.Y * matrix.M24)) + (_source.Z * matrix.M34)) + matrix.M44;
+
+            double a = (_source.X * matrix.M14) + (_source.Y * matrix.M24) + (_source.Z * matrix.M34) + matrix.M44;
             if (!WithinEpsilon(a, 1f))
             {
-                vector = (vector / a);
+                vector /= a;
             }
-            vector.X = (((vector.X + 1f) * 0.5f) * w) + x;
-            vector.Y = (((-vector.Y + 1f) * 0.5f) * h) + y;
-            //vector.Z = (vector.Z * (this.MaxDepth - this.MinDepth)) + this.MinDepth;
+            vector.X = (vector.X + 1f) * 0.5f * width;
+            vector.Y = (-vector.Y + 1f) * 0.5f * height;
+            vector.Z = (vector.Z * (MaxDepth - MinDepth)) + MinDepth;
             return vector;
         }
 
-        public static Vector3 Project(Vector3 _source, Matrix4 projection, Matrix4 view, Matrix4 world, int wid, int heig)
-        {
-            Vector4 source = new Vector4(_source, 1);
-
-            Vector3 ret = new Vector3();
-            float MaxDepth = 10;
-            float MinDepth = 1;
-            float thisX = 0;
-            float thisY = 0;
-            Matrix4 matrix = Matrix4.Mult(Matrix4.Mult(world, view), projection);
-            //Vector3 vector = Vector3.Transform(source, matrix);
-            Vector4 vector = source * matrix;
-            float a = (((source.X * matrix.M14) + (source.Y * matrix.M24) + (source.Z * matrix.M34))) + matrix.M44;
-            if (!WithinEpsilon(a, 1f))
-            {
-                vector = (Vector4)(vector / a);
-            }
-            vector.X = (((vector.X + 1f) * 0.5f) * wid) + thisX;
-            vector.Y = (((-vector.Y + 1f) * 0.5f) * heig) + thisY;
-            vector.Z = (vector.Z * (MaxDepth - MinDepth)) + MinDepth;
-            return vector.Xyz;
-
-        }
         public static void UpdateMatrices()
         {
             GL.GetDouble(GetPName.ModelviewMatrix, out modelMatrix);
@@ -195,7 +185,7 @@ namespace FxEngine
             Matrix4d projInv = Matrix4d.Invert(projection);
 
             vec *= projInv;
-            vec *= viewInv;            
+            vec *= viewInv;
 
             if (vec.W > 0.000001f || vec.W < -0.000001f)
             {
