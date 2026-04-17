@@ -17,9 +17,6 @@ namespace FxEngine.Fonts
         {
             shader = new DefaultTextShader();
 
-
-            GL.Viewport(0, 0, width, height);
-
             Matrix4 projection = Matrix4.CreateOrthographicOffCenter(0, width, 0, height, 0, 1);
 
             shader.use();
