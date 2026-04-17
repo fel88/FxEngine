@@ -64,6 +64,7 @@
             toolStripDropDownButton2 = new System.Windows.Forms.ToolStripDropDownButton();
             orthoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             perspectiveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            deleteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             tableLayoutPanel1.SuspendLayout();
             tabControl1.SuspendLayout();
             tabPage1.SuspendLayout();
@@ -174,21 +175,21 @@
             // 
             // contextMenuStrip1
             // 
-            contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { openToolStripMenuItem, exportToColladaToolStripMenuItem });
+            contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { openToolStripMenuItem, exportToColladaToolStripMenuItem, deleteToolStripMenuItem });
             contextMenuStrip1.Name = "contextMenuStrip1";
-            contextMenuStrip1.Size = new System.Drawing.Size(164, 48);
+            contextMenuStrip1.Size = new System.Drawing.Size(181, 92);
             // 
             // openToolStripMenuItem
             // 
             openToolStripMenuItem.Name = "openToolStripMenuItem";
-            openToolStripMenuItem.Size = new System.Drawing.Size(163, 22);
+            openToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             openToolStripMenuItem.Text = "Open";
             openToolStripMenuItem.Click += openToolStripMenuItem_Click;
             // 
             // exportToColladaToolStripMenuItem
             // 
             exportToColladaToolStripMenuItem.Name = "exportToColladaToolStripMenuItem";
-            exportToColladaToolStripMenuItem.Size = new System.Drawing.Size(163, 22);
+            exportToColladaToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             exportToColladaToolStripMenuItem.Text = "export to collada";
             exportToColladaToolStripMenuItem.Click += exportToColladaToolStripMenuItem_Click;
             // 
@@ -401,6 +402,14 @@
             perspectiveToolStripMenuItem.Text = "perspective";
             perspectiveToolStripMenuItem.Click += perspectiveToolStripMenuItem_Click;
             // 
+            // deleteToolStripMenuItem
+            // 
+            deleteToolStripMenuItem.Image = FxStudio.Properties.Resources.cross;
+            deleteToolStripMenuItem.Name = "deleteToolStripMenuItem";
+            deleteToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            deleteToolStripMenuItem.Text = "delete";
+            deleteToolStripMenuItem.Click += deleteToolStripMenuItem_Click;
+            // 
             // PrefabEditor
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -463,5 +472,6 @@
         private System.Windows.Forms.ToolStripMenuItem orthoToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem perspectiveToolStripMenuItem;
         private System.Windows.Forms.CheckBox checkBox3;
+        private System.Windows.Forms.ToolStripMenuItem deleteToolStripMenuItem;
     }
 }

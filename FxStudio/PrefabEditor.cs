@@ -654,7 +654,7 @@ namespace FxEngineEditor
 
             if (ofd.ShowDialog() != DialogResult.OK)
                 return;
-
+                        
             var ll = (ObjVolume.LoadFromFile(ofd.FileName, Matrix4d.Identity));
             var ff = new FileInfo(ofd.FileName);
             Static.Library.AddModel(new ObjModelBlueprint("obj export: " + ff.Name, ll) { Id = Static.Library.ModelNewId });
@@ -720,6 +720,19 @@ namespace FxEngineEditor
         private void checkBox3_CheckedChanged(object sender, EventArgs e)
         {
             autoFitAll = checkBox3.Checked;
+        }
+
+        private void deleteToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (listView1.FirstSelected() == null)
+                return;
+
+            var fr = listView1.FirstSelected().Tag as ModelBlueprint;
+            if (CurrentBlueprint == fr)
+                CurrentBlueprint = null;
+
+            Static.Library.RemoveModel(fr);
+            UpdatePrefabsList();
         }
     }
 }

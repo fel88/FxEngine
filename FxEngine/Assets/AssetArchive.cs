@@ -9,7 +9,7 @@ using System.Xml.Linq;
 
 namespace FxEngine.Assets
 {
-    public class AssetArchive : IDataProvider,ISearchFileProvider
+    public class AssetArchive : IDataProvider, ISearchFileProvider
     {
         public List<AssetFile> Files = new List<AssetFile>();
         public byte[] GetFile(string path)

@@ -72,11 +72,11 @@ namespace FxEngine
                 return levels.ToArray();
             }
         }
-        public IEnumerable<ModelBlueprint> Models
+        public List<ModelBlueprint> Models
         {
             get
             {
-                return models.ToArray();
+                return models;
             }
         }
 
@@ -625,6 +625,13 @@ namespace FxEngine
                     var er = GL.GetError();
                 }
             }
+        }
+
+        public void RemoveModel(ModelBlueprint currentBlueprint)
+        {
+            //remove all related files of model?            
+            models.Remove(currentBlueprint);
+            
         }
     }
 }
