@@ -1,11 +1,12 @@
-﻿using OpenTK.Graphics.OpenGL;
+﻿using FxEngine.Interfaces;
+using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
 using System;
 using System.Collections.Generic;
 
 namespace FxEngine
 {
-    public class GpuObject : IDisposable
+    public class GpuObject : IDisposable, IGpuObject
     {
         bool deleted = false;
 
@@ -51,7 +52,7 @@ namespace FxEngine
             {
                 vertices[idx++] = (float)verts[i].X;
                 vertices[idx++] = (float)verts[i].Y;
-                vertices[idx++] = (float)verts[i].Z;                
+                vertices[idx++] = (float)verts[i].Z;
             }
 
             numTriangles = verts.Count;
@@ -65,7 +66,7 @@ namespace FxEngine
             GL.BindVertexArray(VAO);
             GL.VertexAttribPointer(0, 3, VertexAttribPointerType.Float, false, 3 * sizeof(float), 0);
             GL.EnableVertexAttribArray(0);
-            
+
             GL.BindVertexArray(0);
         }
 

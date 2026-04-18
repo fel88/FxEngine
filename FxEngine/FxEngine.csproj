@@ -40,6 +40,8 @@
     <EmbeddedResource Include="Graphics\Shaders\font2d.fs" />
     <EmbeddedResource Include="Graphics\Shaders\font2d.vs" />
     <EmbeddedResource Include="Graphics\Shaders\fragmentShader1.glsl" />
+    <EmbeddedResource Include="Graphics\Shaders\hatch_2d.fs" />
+    <EmbeddedResource Include="Graphics\Shaders\hatch_2d.vs" />
     <EmbeddedResource Include="Graphics\Shaders\model.fs" />
     <EmbeddedResource Include="Graphics\Shaders\model.vs" />
     <EmbeddedResource Include="Graphics\Shaders\model2.fs" />
@@ -52,6 +54,8 @@
     <EmbeddedResource Include="Graphics\Shaders\rectTexture.vs" />
     <EmbeddedResource Include="Graphics\Shaders\sdf.fs" />
     <EmbeddedResource Include="Graphics\Shaders\sdf.vs" />
+    <EmbeddedResource Include="Graphics\Shaders\shader_2d.fs" />
+    <EmbeddedResource Include="Graphics\Shaders\shader_2d.vs" />
     <EmbeddedResource Include="Graphics\Shaders\vertexShader1.glsl" />
     <EmbeddedResource Include="Fonts\Shaders\text.fs" />
     <EmbeddedResource Include="Fonts\Shaders\text.vs" />
