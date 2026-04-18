@@ -1,6 +1,7 @@
 ﻿using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
 using OpenTK.Windowing.Desktop;
+using SharpFont;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -90,9 +91,7 @@ namespace FxEngine.Cameras
             return side;
         }
 
-      
-
-        public void FitToPoints(Vector3d[] pnts, int w, int h)
+        public void FitToPoints(Vector3d[] pnts, int w, int h, double gap = 10)
         {
             List<Vector2d> vv = new List<Vector2d>();
             foreach (var vertex in pnts)
@@ -102,10 +101,10 @@ namespace FxEngine.Cameras
             }
 
             //prjs->xy coords
-            var minx = vv.Min(z => z.X);
-            var maxx = vv.Max(z => z.X);
-            var miny = vv.Min(z => z.Y);
-            var maxy = vv.Max(z => z.Y);
+            var minx = vv.Min(z => z.X) - gap;
+            var maxx = vv.Max(z => z.X) + gap;
+            var miny = vv.Min(z => z.Y) - gap;
+            var maxy = vv.Max(z => z.Y) + gap;
 
 
             var dx = (maxx - minx);
@@ -157,7 +156,7 @@ namespace FxEngine.Cameras
             ViewMatrix = modelview;
         }
 
-     
+
 
         public void SetupCore(GameWindow glControl)
         {
@@ -186,7 +185,7 @@ namespace FxEngine.Cameras
             Matrix4d modelview = Matrix4d.LookAt(Eye, Target, Up);
             ViewMatrix = modelview;
         }
-        
+
         public void Setup(Vector2i size) => Setup(new Size(size.X, size.Y));
 
         public void Setup(Size size)
@@ -222,7 +221,7 @@ namespace FxEngine.Cameras
             GL.MultMatrix(ref WorldMatrix);
 
         }
-       
+
 
         public void SetupViewOnly()
         {
