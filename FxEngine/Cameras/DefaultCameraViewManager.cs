@@ -225,7 +225,7 @@ namespace FxEngine.Cameras
                     {
                         drag = true;
                         //var shift = Camera.CamTo - inter.Value;
-                        
+
                         bool fixedLen = false;
                         if (fixedLen)
                         {
@@ -289,11 +289,14 @@ namespace FxEngine.Cameras
         }
         protected bool drag = false;
         protected bool drag2 = false;
-
-        private void Control_MouseUp(object sender, MouseEventArgs e)
+        public void ResetDrag()
         {
             drag = false;
             drag2 = false;
+        }
+        private void Control_MouseUp(object sender, MouseEventArgs e)
+        {
+            ResetDrag();
         }
     }
 }

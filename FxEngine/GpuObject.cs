@@ -73,6 +73,8 @@ namespace FxEngine
         {
             GL.BindVertexArray(VAO);
             GL.DrawArrays(PrimitiveType.Triangles, 0, numTriangles);
+            GL.BindVertexArray(0);
+
         }
 
         public void Dispose()
