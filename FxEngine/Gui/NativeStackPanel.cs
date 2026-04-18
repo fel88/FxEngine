@@ -4,8 +4,8 @@
     {        
         public override void Update(BaseGlDrawingContext dc)
         {
-            float h = 0;
-            float yy = 30;
+            double h = 0;
+            double yy = 30;
             foreach (var item in Childs)
             {
                 h += item.Rect.Height;

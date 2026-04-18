@@ -87,7 +87,8 @@ namespace FxEngine.Gui
             }
             base.Event(dc, ev);
         }
-        public float TempHeight = 0;
+
+        public double TempHeight = 0;
         public string Title;
         public bool IsExpanded = true;
 

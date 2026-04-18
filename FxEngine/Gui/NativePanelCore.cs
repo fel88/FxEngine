@@ -83,7 +83,7 @@ namespace FxEngine.Gui
             }
             base.Event(dc, ev);
         }
-        public float TempHeight = 0;
+        public double TempHeight = 0;
         public string Title;
         public bool IsExpanded = true;
 
@@ -114,15 +114,15 @@ namespace FxEngine.Gui
 
 
             Drawer.RectShader.Use();
-            var proj = dc.Camera.ProjectionMatrix.ToMatrix4();
-            var view = dc.Camera.ViewMatrix.ToMatrix4();
-            var model = Matrix4.CreateScale(Rect.Width, Rect.Height, 1);
+            var proj = dc.Camera.ProjectionMatrix;
+            var view = dc.Camera.ViewMatrix;
+            var model = Matrix4d.CreateScale(Rect.Width, Rect.Height, 1);
 
             var ww1 = dc.Camera.viewport[2];
             var hh1 = dc.Camera.viewport[3];
-            model *= Matrix4.CreateTranslation(-ww1 / 2, hh1 / 2, 1);
+            model *= Matrix4d.CreateTranslation(-ww1 / 2, hh1 / 2, 1);
 
-            model *= Matrix4.CreateTranslation(Rect.Left, -Rect.Top, 1);
+            model *= Matrix4d.CreateTranslation(Rect.Left, -Rect.Top, 1);
 
             Drawer.RectShader.SetTransform(model * view * proj);
             if (IsExpanded)

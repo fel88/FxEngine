@@ -123,7 +123,7 @@ namespace FxEngine.Gui
             rect3.DrawAllTriangles();
         }
 
-        public void DrawRectangle(float x, float y, float w, float h)
+        public void DrawRectangle(double x, double y, double w, double h)
         {
             GL.Begin(PrimitiveType.LineLoop);
             Vertex(x, y);
@@ -133,7 +133,7 @@ namespace FxEngine.Gui
             GL.End();
         }
 
-        public void DrawRectangleCore(float x, float y, float w, float h)
+        public void DrawRectangleCore(double x, double y, double w, double h)
         {
             RectShader.Use();
             RectShader.SetUniformsData();
@@ -142,12 +142,12 @@ namespace FxEngine.Gui
             rect2.DrawAllLineLoop();
         }
 
-        public void FillTriangleCore(float x, float y, float w, float h)
+        public void FillTriangleCore(double x, double y, double w, double h)
         {
             return;
         }
 
-        public void FillTriangle(float x, float y, float w, float h)
+        public void FillTriangle(double x, double y, double w, double h)
         {
             GL.Begin(PrimitiveType.Triangles);
             Vertex(x, y);
@@ -156,25 +156,25 @@ namespace FxEngine.Gui
             GL.End();
         }
 
-        public void TranslateAccum(float x, float y)
+        public void TranslateAccum(double x, double y)
         {
             ShiftX = x;
             ShiftY = y;
         }
 
-        public void Translate(float x, float y)
+        public void Translate(double x, double y)
         {
             GL.Translate(x, Context.Height - y, 0);
             //ShiftX = x;
             // ShiftY = y;
         }
 
-        public float ShiftX;
-        public float ShiftY;
+        public double ShiftX;
+        public double ShiftY;
 
         public GuiBounds CurrentBound { get; internal set; }
 
-        public void Vertex(float x, float y)
+        public void Vertex(double x, double y)
         {
             var y1 = Context.Height - y;
             GL.Vertex3(x + ShiftX, y1 + ShiftY, 0);

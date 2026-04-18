@@ -40,8 +40,7 @@ namespace FxEngine.Gui
 
         public Action<NativeTrackBar> ValueChanged;
 
-        public float Value;
-
+        public double Value;
         public override void Draw(BaseGlDrawingContext dc)
         {
             DrawingContext = dc;

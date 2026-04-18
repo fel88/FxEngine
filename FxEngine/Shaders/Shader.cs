@@ -128,11 +128,7 @@ namespace FxEngine.Shaders
             return this;
         }
 
-        public void SetVec3(string nm, Vector3 v)
-        {
-            var loc = GL.GetUniformLocation(shaderProgram, nm);
-            GL.Uniform3(loc, v);
-        }
+        
 
         public void SetVec4(string nm, Vector4 v)
         {
@@ -142,10 +138,13 @@ namespace FxEngine.Shaders
 
         public void SetMatrix4(string nm, Matrix4 v)
         {
-            var loc = GL.GetUniformLocation(shaderProgram, nm);
-            GL.UniformMatrix4(loc, false, ref v);
+            setMat4(nm, v);            
         }
 
+        public void SetMatrix4(string nm, Matrix4d v)
+        {
+            setMat4(nm, v);
+        }
         public int GetProgramId()
         {
             return shaderProgram;

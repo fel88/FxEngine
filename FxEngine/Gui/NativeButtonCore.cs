@@ -39,15 +39,15 @@ namespace FxEngine.Gui
                 }
             }
 
-            var proj = dc.Camera.ProjectionMatrix.ToMatrix4();
-            var view = dc.Camera.ViewMatrix.ToMatrix4();
-            var model = Matrix4.CreateScale(Rect.Width, Rect.Height, 1);
+            var proj = dc.Camera.ProjectionMatrix;
+            var view = dc.Camera.ViewMatrix;
+            var model = Matrix4d.CreateScale(Rect.Width, Rect.Height, 1);
 
             var ww1 = dc.Camera.viewport[2];
             var hh1 = dc.Camera.viewport[3];
-            model *= Matrix4.CreateTranslation(-ww1 / 2, hh1 / 2, 1);
+            model *= Matrix4d.CreateTranslation(-ww1 / 2, hh1 / 2, 1);
 
-            model *= Matrix4.CreateTranslation(Rect.Left, -Rect.Top, 1);
+            model *= Matrix4d.CreateTranslation(Rect.Left, -Rect.Top, 1);
 
             Drawer.RectShader.SetTransform(model * view * proj);
 
@@ -87,7 +87,7 @@ namespace FxEngine.Gui
 
             var proj = ctx.Camera.ProjectionMatrix;
             sdf.SetMatrix4("projection", proj.ToMatrix4());
-            var view2 = Matrix4.LookAt(new Vector3(0, 0, 1f), Vector3.Zero, Vector3.UnitY);
+            var view2 = Matrix4d.LookAt(new Vector3(0, 0, 1f), Vector3.Zero, Vector3.UnitY);
             sdf.Color = new Vector3(1, 1, 1);
 
             sdf.SetTexture();
@@ -102,24 +102,24 @@ namespace FxEngine.Gui
                 var s = Caption[i];
                 var fr = ctx.TextRoutine.infos.First(z => z.Key == s).Value;
                 
-                Matrix4 local3 = Matrix4.Identity;
+                Matrix4d local3 = Matrix4d.Identity;
                 var dp = rgs[i].DrawPoint;
 
                 var offset = fr.Char.Offset;
-                local3 *= Matrix4.CreateTranslation(offset.X, -offset.Y, 0);
+                local3 *= Matrix4d.CreateTranslation(offset.X, -offset.Y, 0);
 
-                local3 *= Matrix4.CreateTranslation(dp.X, dp.Y, 0);               
+                local3 *= Matrix4d.CreateTranslation(dp.X, dp.Y, 0);               
 
-                local3 *= Matrix4.CreateScale(TextScale);
+                local3 *= Matrix4d.CreateScale(TextScale);
 
-                local3 *= Matrix4.CreateTranslation(-ww1 / 2, hh1 / 2, 0);
-                local3 *= Matrix4.CreateTranslation(Rect.Left, -Rect.Top, 0);
-                local3 *= Matrix4.CreateTranslation(Drawer.ShiftX, Drawer.ShiftY, 0);
+                local3 *= Matrix4d.CreateTranslation(-ww1 / 2, hh1 / 2, 0);
+                local3 *= Matrix4d.CreateTranslation(Rect.Left, -Rect.Top, 0);
+                local3 *= Matrix4d.CreateTranslation(Drawer.ShiftX, Drawer.ShiftY, 0);
 
 
                 if (TextAlign == GlGuiTextAlign.Center)
                 {
-                    local3 *= Matrix4.CreateTranslation(Rect.Width / 2 - width / 2, 0, 0);
+                    local3 *= Matrix4d.CreateTranslation(Rect.Width / 2 - width / 2, 0, 0);
                 }
 
                 sdf.SetMatrix4("transformation", local3 * view2);

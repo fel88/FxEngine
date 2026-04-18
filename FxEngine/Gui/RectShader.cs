@@ -20,6 +20,10 @@ namespace FxEngine.Gui
         {
             SetMatrix4("transform", mtr);
         }
+        public void SetTransform(Matrix4d mtr)
+        {
+            SetMatrix4("transform", mtr);
+        }
         public void SetColor(Color color)
         {
             Color = new Vector4(color.R / 255f, color.G / 255f, color.B / 255f, 1);

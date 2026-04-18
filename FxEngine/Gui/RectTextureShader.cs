@@ -24,14 +24,17 @@ namespace FxEngine.Gui
         Vector3 Color;
         public override void SetUniformsData()
         {
-            SetVec3("color", Color);
+            setVec3("color", Color);
         }
 
         public void SetTransform(Matrix4 mtr)
         {
             SetMatrix4("transform", mtr);
         }
-
+        public void SetTransform(Matrix4d mtr)
+        {
+            SetMatrix4("transform", mtr);
+        }
         public void SetColor(Color color)
         {
             Color = new Vector3(color.R / 255f, color.G / 255f, color.B / 255f);

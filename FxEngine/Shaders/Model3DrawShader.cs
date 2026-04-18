@@ -31,11 +31,11 @@ namespace FxEngine.Shaders
             ShaderProgram = shaderProgram;
         }
 
-        public Vector3 lightColor = new Vector3(1, 1, 1);
+        public Vector3d lightColor = new Vector3d(1, 1, 1);
 
-        public Vector3 lightPos = new Vector3(-100.0f, -100.0f, 100.0f);
-        public Vector3 viewPos;
-        public Matrix4 Model;
+        public Vector3d lightPos = new Vector3d(-100.0f, -100.0f, 100.0f);
+        public Vector3d viewPos;
+        public Matrix4d Model;
         public override void SetUniformsData()
         {
             /*
@@ -43,9 +43,9 @@ namespace FxEngine.Shaders
             uniform vec3 viewPos;
             uniform vec3 lightColor;
             uniform vec3 objectColor;*/
-            SetVec3("lightColor", lightColor);
-            SetVec3("lightPos", lightPos);
-            SetVec3("viewPos", viewPos);
+            setVec3("lightColor", lightColor);
+            setVec3("lightPos", lightPos);
+            setVec3("viewPos", viewPos);
             SetMatrix4("model", Model);
             int unif_mult;
 

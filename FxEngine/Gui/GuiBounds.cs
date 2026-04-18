@@ -14,7 +14,7 @@ namespace FxEngine.Gui
             Parent = DefaultBound;
         }
 
-        public GuiBounds(float l, float t, float w, float h, GuiAnchor anchor = GuiAnchor.Left) : base()
+        public GuiBounds(double l, double t, double w, double h, GuiAnchor anchor = GuiAnchor.Left) : base()
         {
             XOffset = l;
             YOffset = t;
@@ -23,8 +23,8 @@ namespace FxEngine.Gui
             Anchor = anchor;
         }        
 
-        public float XOffset { get; set; }
-        public float YOffset { get; set; }
+        public double XOffset { get; set; }
+        public double YOffset { get; set; }
 
         public void Update()
         {
@@ -56,17 +56,17 @@ namespace FxEngine.Gui
                 Top = Parent.Top + Parent.Height / 2 + YOffset;
             }
         }
-        public float Left { get; set; }
+        public double Left { get; set; }
 
-        public float Top { get; set; }
+        public double Top { get; set; }
 
-        public float Width;
-        public float Height;
+        public double Width;
+        public double Height;
 
-        public float Right => Left + Width;
-        public float Bottom => Top + Height;
+        public double Right => Left + Width;
+        public double Bottom => Top + Height;
 
-        public bool IntersectsWith(float x, float y)
+        public bool IntersectsWith(double x, double y)
         {
             return x >= Left && x <= Right && y >= Top && y <= Bottom;
         }
