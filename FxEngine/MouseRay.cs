@@ -31,6 +31,7 @@ namespace FxEngine
             _start = UnProject(new Vector3d(x, y, 0.0f), projMatrix, modelMatrix, new Size(viewport[2], viewport[3]));
             _end = UnProject(new Vector3d(x, y, 1.0f), projMatrix, modelMatrix, new Size(viewport[2], viewport[3]));
         }
+
         public MouseRay(Point mouse)
             : this(mouse.X, mouse.Y)
         {
@@ -82,7 +83,7 @@ namespace FxEngine
         {
             var w = viewport[2];
             var h = viewport[3];
-            return Project(_source, projection, view, Matrix4d.Identity, w, h);
+            return Project(_source, projection, view, world, w, h);
         }
 
         public static Vector3d Project(Vector3d _source,
@@ -95,10 +96,11 @@ namespace FxEngine
             float MinDepth = 1
            )
         {
+            Vector4d source = new Vector4d(_source, 1);
 
             Matrix4d matrix = Matrix4d.Mult(Matrix4d.Mult(world, view), projection);
 
-            Vector3d vector = Vector3d.TransformVector(_source, matrix);
+            Vector4d vector = source * matrix;
 
             double a = (_source.X * matrix.M14) + (_source.Y * matrix.M24) + (_source.Z * matrix.M34) + matrix.M44;
             if (!WithinEpsilon(a, 1f))
@@ -108,7 +110,7 @@ namespace FxEngine
             vector.X = (vector.X + 1f) * 0.5f * width;
             vector.Y = (-vector.Y + 1f) * 0.5f * height;
             vector.Z = (vector.Z * (MaxDepth - MinDepth)) + MinDepth;
-            return vector;
+            return vector.Xyz;
         }
 
         public static void UpdateMatrices()

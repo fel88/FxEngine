@@ -139,7 +139,7 @@ namespace FxEngine.Fonts
         Dictionary<char, Character> Characters = new Dictionary<char, Character>();
         int VAO, VBO;
 
-        public Vector3 DefaultColor = new Vector3(0.3f, 0.7f, 0.9f);
+
         public bool AutoSetGLStatesOnRenderText = true;
         public void SetGLStates()
         {
@@ -147,11 +147,6 @@ namespace FxEngine.Fonts
             GL.Enable(EnableCap.Blend);
             GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
             GL.Disable(EnableCap.DepthTest);
-        }
-
-        public void RenderText(string text, float x, float y)
-        {
-            RenderText(text, x, y, DefaultColor);
         }
 
         public void UpdateWindowSize(int width, int height)
@@ -170,7 +165,13 @@ namespace FxEngine.Fonts
             GL.UseProgram(0);
         }
 
-        public Vector3 CurrentTextColor { get; private set; }
+        public Vector3 CurrentTextColor { get; private set; } = new Vector3(0.3f, 0.7f, 0.9f);
+
+        public void RenderText(string text, float x, float y)
+        {
+            RenderText(text, x, y, CurrentTextColor);
+        }
+
 
         // render line of text
         // -------------------
@@ -186,10 +187,10 @@ namespace FxEngine.Fonts
             // activate corresponding render state	
             shader.use();
             //glUniform3f(glGetUniformLocation(shader.ID, "textColor"), color.x, color.y, color.z);
-            if (color != null)
-            {
-                shader.setVec3("textColor", color.Value);
-            }
+            if (color == null)
+                color = CurrentTextColor;
+
+            shader.setVec3("textColor", color.Value);
 
             GL.ActiveTexture(TextureUnit.Texture0);
             GL.BindVertexArray(VAO);
