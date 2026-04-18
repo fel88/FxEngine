@@ -1,6 +1,7 @@
-﻿using OpenTK.Mathematics;
-using OpenTK.Graphics.OpenGL;
+﻿using OpenTK.Graphics.OpenGL;
+using OpenTK.Mathematics;
 using System;
+using System.Collections.Generic;
 
 namespace FxEngine
 {
@@ -10,11 +11,11 @@ namespace FxEngine
 
         int numTriangles;
         int VBO, VAO;
-        public GpuObject(Vector3d[] verts, Vector3d[] normals)
+        public GpuObject(IReadOnlyList<Vector3d> verts, IReadOnlyList<Vector3d> normals)
         {
             int idx = 0;
-            float[] vertices = new float[verts.Length * 3 * 2];
-            for (int i = 0; i < verts.Length; i++)
+            float[] vertices = new float[verts.Count * 3 * 2];
+            for (int i = 0; i < verts.Count; i++)
             {
                 vertices[idx++] = (float)verts[i].X;
                 vertices[idx++] = (float)verts[i].Y;
@@ -25,7 +26,7 @@ namespace FxEngine
                 vertices[idx++] = (float)normals[i].Z;
             }
 
-            numTriangles = verts.Length;
+            numTriangles = verts.Count;
 
             GL.GenVertexArrays(1, out VAO);
             GL.GenBuffers(1, out VBO);
@@ -39,6 +40,33 @@ namespace FxEngine
 
             GL.VertexAttribPointer(1, 3, VertexAttribPointerType.Float, false, 6 * sizeof(float), 3 * sizeof(float));
             GL.EnableVertexAttribArray(1);
+            GL.BindVertexArray(0);
+        }
+
+        public GpuObject(IReadOnlyList<Vector3d> verts)
+        {
+            int idx = 0;
+            float[] vertices = new float[verts.Count * 3];
+            for (int i = 0; i < verts.Count; i++)
+            {
+                vertices[idx++] = (float)verts[i].X;
+                vertices[idx++] = (float)verts[i].Y;
+                vertices[idx++] = (float)verts[i].Z;                
+            }
+
+            numTriangles = verts.Count;
+
+            GL.GenVertexArrays(1, out VAO);
+            GL.GenBuffers(1, out VBO);
+
+            GL.BindBuffer(BufferTarget.ArrayBuffer, VBO);
+            GL.BufferData(BufferTarget.ArrayBuffer, vertices.Length * sizeof(float), vertices, BufferUsageHint.StaticDraw);
+
+            GL.BindVertexArray(VAO);
+            GL.VertexAttribPointer(0, 3, VertexAttribPointerType.Float, false, 3 * sizeof(float), 0);
+            GL.EnableVertexAttribArray(0);
+            
+            GL.BindVertexArray(0);
         }
 
         public void Draw()
@@ -46,6 +74,7 @@ namespace FxEngine
             GL.BindVertexArray(VAO);
             GL.DrawArrays(PrimitiveType.Triangles, 0, numTriangles);
         }
+
         public void Dispose()
         {
             if (deleted)
