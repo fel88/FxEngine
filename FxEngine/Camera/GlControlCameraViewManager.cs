@@ -7,10 +7,11 @@ using FxEngine.Gui;
 using OpenTK.GLControl;
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Desktop;
+using FxEngine.Interfaces;
 
 namespace FxEngine.Cameras
 {
-    public class CameraViewManagerExt : CameraViewManager
+    public class GlControlCameraViewManager : AbstractGameControlCameraViewManager
     {
         public override void Update()
         {
@@ -51,40 +52,20 @@ namespace FxEngine.Cameras
         public float AlongRotate = 0;
         public Camera Camera;
 
-        public override void Attach(BaseGlDrawingContext ctx, Camera camera)
-        {
-            if (ctx is GlDrawingContext c)
-            {
-                Attach(c.GameWindow, camera);
-            }
-            if (ctx is GlControlDrawingContext cc)
-            {
-                Attach(cc.GameWindow, camera);
-            }
-        }
+     
 
-        public override void Attach(GameWindow control, Camera camera)
+        public GLControl GLControl => (Control as GlControlGameControlWrapper).Control;
+    
+        public override void Attach(IGameControlWrapper control, Camera camera)
         {
             base.Attach(control, camera);
             Camera = camera;
-            control.MouseUp += Control_MouseUp;
+            GLControl.MouseUp += Control_MouseUp1;
             //control.MouseDown += Control_MouseDown;
 
-            control.KeyUp += Control_KeyUp;
-            control.KeyDown += Control_KeyDown;
-            control.MouseWheel += Control_MouseWheel;
-        }
-
-        public override void Attach(GLControl control, Camera camera)
-        {
-            base.Attach(control, camera);
-            Camera = camera;
-            control.MouseUp += Control_MouseUp1;
-            //control.MouseDown += Control_MouseDown;
-
-            control.KeyUp += Control_KeyUp1;
-            control.KeyDown += Control_KeyDown1;
-            control.MouseWheel += Control_MouseWheel1;
+            GLControl.KeyUp += Control_KeyUp1;
+            GLControl.KeyDown += Control_KeyDown1;
+            GLControl.MouseWheel += Control_MouseWheel1;
         }
 
         private void Control_MouseWheel1(object sender, System.Windows.Forms.MouseEventArgs e)
@@ -110,28 +91,14 @@ namespace FxEngine.Cameras
             drag = false;
             drag2 = false;
         }
-        public override void Deattach(BaseGlDrawingContext ctx)
-        {
-            if (ctx is GlDrawingContext c)
-            {
-                Deattach(c.GameWindow);
-            }
-            if (ctx is GlControlDrawingContext cc)
-            {
-                Deattach(cc.GameWindow);
-            }
-        }
-        public override void Deattach(GLControl control)
+
+        
+
+        public override void Deattach(IGameControlWrapper control)
         {
 
         }
-        public override void Deattach(GameWindow control)
-        {
-            control.MouseUp -= Control_MouseUp;
-            control.KeyUp -= Control_KeyUp;
-            control.KeyDown -= Control_KeyDown;
-            control.MouseWheel -= Control_MouseWheel;
-        }
+        
 
         private void Control_MouseWheel(MouseWheelEventArgs e)
         {
@@ -143,33 +110,22 @@ namespace FxEngine.Cameras
         }
 
         public Point PointToClient(Point p)
-        {
-            if (GameWindow != null)
-            {
-                return GameWindow.PointToClient(p.ToVector2i()).ToPoint();
-            }
-            return GlControl.PointToClient(p);
+        {           
+            return GLControl.PointToClient(p);
         }
 
         public void MakeCurrent()
         {
-            if (GameWindow != null)
-            {
-                GameWindow.MakeCurrent();
-                return;
-            }
-            GlControl.MakeCurrent();
+           
+            GLControl.MakeCurrent();
         }
 
         public int Width
         {
             get
             {
-                if (GameWindow != null)
-                {
-                    return GameWindow.Width();
-                }
-                return GlControl.Width;
+             
+                return GLControl.Width;
             }
         }
 
@@ -177,22 +133,15 @@ namespace FxEngine.Cameras
         {
             get
             {
-                if (GameWindow != null)
-                {
-                    return GameWindow.ClientRectangle.ToRectangle();
-                }
-                return GlControl.ClientRectangle;
+                
+                return GLControl.ClientRectangle;
             }
         }
 
         public void UpdateMatricies(Camera cam)
         {
-            if (GameWindow != null)
-            {
-                cam.UpdateMatricies(GameWindow);
-                return;
-            }
-            cam.UpdateMatricies(GlControl);
+            
+            cam.UpdateMatricies(GLControl.Size);
         }
 
         public void MouseWheel(int delta)
@@ -369,11 +318,8 @@ namespace FxEngine.Cameras
         {
             get
             {
-                if (GameWindow != null)
-                {
-                    return GameWindow.PointToClient(Cursor.Position.ToVector2i()).ToPoint();
-                }
-                return GlControl.PointToClient(Cursor.Position);
+                
+                return GLControl.PointToClient(Cursor.Position);
             }
         }
         bool drag = false;
@@ -385,5 +331,4 @@ namespace FxEngine.Cameras
             drag2 = false;
         }
     }
-
 }

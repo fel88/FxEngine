@@ -1,4 +1,5 @@
 ﻿using OpenTK;
+using OpenTK.Windowing.Desktop;
 using System.Drawing;
 
 namespace FxEngine.Gui
@@ -9,9 +10,16 @@ namespace FxEngine.Gui
         public override bool Focused { get => GameWindow.IsFocused; }
         public override string Title { get => GameWindow.Title; }
 
-        public OpenTK.Windowing.Desktop.GameWindow GameWindow;
-        public override int Width { get => GameWindow.Width(); set => GameWindow.Size = new OpenTK.Mathematics.Vector2i(value, GameWindow.Height()); }
-        public override int Height { get => GameWindow.Height(); set => GameWindow.Size = new OpenTK.Mathematics.Vector2i(GameWindow.Width(), value); }
+        public OpenTK.Windowing.Desktop.GameWindow GameWindow { get => GameControl as GameWindow; }
+        public override int Width
+        {
+            get
+            {
+                return GameControl.Width();
+            }
+            set => GameWindow.Size = new OpenTK.Mathematics.Vector2i(value, GameControl.Height());
+        }
+        public override int Height { get => GameControl.Height(); set => GameWindow.Size = new OpenTK.Mathematics.Vector2i(GameControl.Width(), value); }
         public override void MakeCurrent()
         {
             GameWindow.MakeCurrent();

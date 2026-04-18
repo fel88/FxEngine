@@ -1,35 +1,40 @@
-﻿using FxEngine.Gui;
-using OpenTK.GLControl;
-using OpenTK.Graphics.OpenGL;
+﻿using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
 using OpenTK.Windowing.Desktop;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using System.Security.Policy;
 
 namespace FxEngine.Cameras
 {
     public class Camera
     {
-        public float zoom = 1;
-        public void UpdateMatricies(BaseGlDrawingContext ctx)
-        {
-            if (ctx is GlControlDrawingContext c)
-            {
-                UpdateMatricies(c.GameWindow);
-            }
-            if (ctx is GlDrawingContext cс)
-            {
-                UpdateMatricies(cс.GameWindow);
-            }
-        }
+        public Camera() { }
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public Vector3d Eye { get; set; } = new Vector3d(70, 70, 70);
 
-        public Vector3d DirNormalized
-        {
-            get { return (Eye - Target).Normalized(); }
-        }
+        public Vector3d Target { get; set; } = new Vector3d(0, 0, 0);
+        public Vector3d Up { get; set; } = new Vector3d(0, 0, 1);
+
+        public bool IsOrtho { get; set; } = false;
+        public float Fovy { get; set; } = 60;
+        public float Aspect { get; private set; }
+        public Vector3d Direction => Eye - Target;
+        public Matrix4d WorldMatrix = Matrix4d.Identity;
+
+        public Matrix4d ProjectionMatrix { get; set; }
+        public Matrix4d ViewMatrix { get; set; }
+        public int[] viewport = new int[4];
+        public float zoom = 1;
+        public float OrthoZoom = 1;
+        public float ZNear = -25e4f;
+        public float ZFar = 25e4f;
+
+        public double OrthoWidth { get; set; } = 1000;
+        public double Fov { get; set; } = 60;
+        public Vector3d DirNormalized => (Eye - Target).Normalized();
 
         public void MoveForw(float ang)
         {
@@ -85,34 +90,7 @@ namespace FxEngine.Cameras
             return side;
         }
 
-        public void UpdateMatricies(OpenTK.Windowing.Desktop.GameWindow glControl)
-        {
-
-            viewport[0] = 0;
-            viewport[1] = 0;
-            viewport[2] = glControl.Width();
-            viewport[3] = glControl.Height();
-            var aspect = glControl.Width() / (float)glControl.Height();
-            var o = Matrix4d.CreateOrthographic(OrthoWidth, OrthoWidth / aspect, -25e4f, 25e4f);
-
-            Matrix4d mp = Matrix4d.CreatePerspectiveFieldOfView((float)(Fov * Math.PI / 180) * zoom,
-                glControl.Width() / (float)glControl.Height(), 1, 25e4f);
-
-
-            if (IsOrtho)
-            {
-                ProjectionMatrix = o;
-
-            }
-            else
-            {
-                ProjectionMatrix = mp;
-
-            }
-
-            OpenTK.Mathematics.Matrix4d modelview = OpenTK.Mathematics.Matrix4d.LookAt(Eye, Target, Up);
-            ViewMatrix = modelview;
-        }
+      
 
         public void FitToPoints(Vector3d[] pnts, int w, int h)
         {
@@ -153,51 +131,33 @@ namespace FxEngine.Cameras
 
             OrthoWidth = Math.Max(dx, dy);
         }
-        public void UpdateMatricies(GLControl glControl)
-        {
 
+        public void UpdateMatricies(Vector2i size)
+        {
+            UpdateMatricies(new Size(size.X, size.Y));
+        }
+
+        public void UpdateMatricies(Size size)
+        {
             viewport[0] = 0;
             viewport[1] = 0;
-            viewport[2] = glControl.Width;
-            viewport[3] = glControl.Height;
-            var aspect = glControl.Width / (float)glControl.Height;
+            viewport[2] = size.Width;
+            viewport[3] = size.Height;
+            var aspect = size.Width / (float)size.Height;
 
             var o = Matrix4d.CreateOrthographic(OrthoWidth, OrthoWidth / aspect, ZNear, ZFar);
 
             Matrix4d mp = Matrix4d.CreatePerspectiveFieldOfView((float)(Fov * Math.PI / 180) * zoom,
-                glControl.Width / (float)glControl.Height, 1, 25e4f);
+                size.Width / (float)size.Height, 1, 25e4f);
 
 
-            if (IsOrtho)
-            {
-                ProjectionMatrix = o;
-
-            }
-            else
-            {
-                ProjectionMatrix = mp;
-
-            }
+            ProjectionMatrix = IsOrtho ? o : mp;
 
             Matrix4d modelview = Matrix4d.LookAt(Eye, Target, Up);
             ViewMatrix = modelview;
         }
-        public int Id { get; set; }
-        public string Name { get; set; }
-        public Vector3d Eye { get; set; } = new Vector3d(70, 70, 70);
 
-        public Vector3d Target { get; set; } = new Vector3d(0, 0, 0);
-        public Vector3d Up { get; set; } = new Vector3d(0, 0, 1);
-
-        public bool IsOrtho { get; set; } = false;
-        public float Fovy { get; set; } = 60;
-        public float Aspect { get; private set; }
-        public Vector3d Direction => Eye - Target;
-        public Matrix4d WorldMatrix = Matrix4d.Identity;
-
-        public Matrix4d ProjectionMatrix { get; set; }
-        public Matrix4d ViewMatrix { get; set; }
-        public int[] viewport = new int[4];
+     
 
         public void SetupCore(GameWindow glControl)
         {
@@ -226,21 +186,7 @@ namespace FxEngine.Cameras
             Matrix4d modelview = Matrix4d.LookAt(Eye, Target, Up);
             ViewMatrix = modelview;
         }
-
-        public void Setup(BaseGlDrawingContext ctx)
-        {
-            if (ctx is GlControlDrawingContext c)
-            {
-                Setup(c.GameWindow.Size);
-            }
-            else
-            if (ctx is GlDrawingContext cc)
-            {
-                Setup(cc.GameWindow.Size);
-            }
-        }
-
-
+        
         public void Setup(Vector2i size) => Setup(new Size(size.X, size.Y));
 
         public void Setup(Size size)
@@ -276,12 +222,7 @@ namespace FxEngine.Cameras
             GL.MultMatrix(ref WorldMatrix);
 
         }
-        public float OrthoZoom = 1;
-        public float ZNear = -25e4f;
-        public float ZFar = 25e4f;
-
-        public double OrthoWidth { get; set; } = 1000;
-        public double Fov { get; set; } = 60;
+       
 
         public void SetupViewOnly()
         {

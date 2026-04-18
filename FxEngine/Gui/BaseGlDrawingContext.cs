@@ -1,5 +1,6 @@
 ﻿using FxEngine.Cameras;
 using FxEngine.Fonts.SDF;
+using FxEngine.Interfaces;
 using System.Drawing;
 
 namespace FxEngine.Gui
@@ -14,6 +15,7 @@ namespace FxEngine.Gui
         public abstract bool Focused { get;  }
         public abstract string Title { get;  }
 
+        public IGameControlWrapper GameControl;
         public abstract void MakeCurrent();
 
         public abstract Point PointToClient(Point cursorPosition);
