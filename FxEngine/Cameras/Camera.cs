@@ -107,8 +107,8 @@ namespace FxEngine.Cameras
             var maxy = vv.Max(z => z.Y) + gap;
 
 
-            var dx = (maxx - minx);
-            var dy = (maxy - miny);
+            var dx = maxx - minx;
+            var dy = maxy - miny;
 
             var cx = dx / 2;
             var cy = dy / 2;
@@ -121,7 +121,7 @@ namespace FxEngine.Cameras
             Eye = v0;
             Target = Eye + dir;
 
-            var aspect = w / (float)(h);
+            var aspect = w / (float)h;
 
             dx /= w;
             dx *= OrthoWidth;

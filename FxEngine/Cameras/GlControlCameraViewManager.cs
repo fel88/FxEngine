@@ -1,4 +1,5 @@
-﻿using OpenTK.Mathematics;
+﻿using OpenTK;
+using OpenTK.Mathematics;
 using System;
 using System.Drawing;
 using System.Windows.Forms;
@@ -7,16 +8,17 @@ using OpenTK.GLControl;
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Desktop;
 using FxEngine.Interfaces;
+using FxEngine.Cameras;
 
 namespace FxEngine.Cameras
 {
-    public class GameWindowCameraViewManager : AbstractGameControlCameraViewManager
+    public class GlControlCameraViewManager : AbstractGameControlCameraViewManager
     {
         public override void Update()
         {
             var dir = Camera.Eye - Camera.Target;
             var cv = dir;
-            var a1 = Vector3d.Cross(Camera.Up, cv.Normalized()); ;
+            var a1 = Vector3d.Cross(Camera.Up, cv.Normalized()); ;            
             var moveVecTan = a1.Normalized();
             var moveVec = Vector3d.Cross(a1.Normalized(), cv.Normalized()).Normalized();
 
@@ -33,40 +35,41 @@ namespace FxEngine.Cameras
             if (drag)
             {
                 //rotate here
-                float kk = 3;
+                float kk = 3;                
                 Vector3d v1 = cameraFromStart - cameraToStart;
 
                 var m1 = Matrix3d.CreateFromAxisAngle(Vector3d.Cross(v1, cameraUpStart), -(startPosY - pos.Y) / 180f / kk * (float)Math.PI);
-                var m2 = Matrix3d.CreateFromAxisAngle(cameraUpStart, -(startPosX - pos.X) / 180f / kk * (float)Math.PI);
+                var m2 = Matrix3d.CreateFromAxisAngle(cameraUpStart, -(startPosX - pos.X) / 180f / kk * (float)Math.PI);                
 
                 v1 *= m1;
                 v1 *= m2;
                 var up1 = cameraUpStart;
 
-                Camera.Up = up1;
-                Camera.Eye = cameraToStart + v1;
+                Camera.Up = up1;                
+                Camera.Eye = cameraToStart + v1;              
             }
         }
 
         public float AlongRotate = 0;
         public Camera Camera;
 
-        public GameWindow GameWindow => (Control as GameWindowGameControlWrapper).Control;
+     
 
+        public GLControl GLControl => (Control as GlControlGameControlWrapper).Control;
+    
         public override void Attach(IGameControlWrapper control, Camera camera)
         {
             base.Attach(control, camera);
             Camera = camera;
-            GameWindow.MouseUp += Control_MouseUp;
+            GLControl.MouseUp += Control_MouseUp1;
             //control.MouseDown += Control_MouseDown;
 
-            GameWindow.KeyUp += Control_KeyUp;
-            GameWindow.KeyDown += Control_KeyDown;
-            GameWindow.MouseWheel += Control_MouseWheel;
+            GLControl.KeyUp += Control_KeyUp1;
+            GLControl.KeyDown += Control_KeyDown1;
+            GLControl.MouseWheel += Control_MouseWheel1;
         }
 
-
-        private void Control_MouseWheel1(object sender, System.Windows.Forms.MouseEventArgs e)
+        private void Control_MouseWheel1(object sender, MouseEventArgs e)
         {
             MouseWheel(e.Delta);
         }
@@ -84,55 +87,79 @@ namespace FxEngine.Cameras
             lshift = false;
         }
 
-        private void Control_MouseUp1(object sender, System.Windows.Forms.MouseEventArgs e)
+        private void Control_MouseUp1(object sender, MouseEventArgs e)
         {
             drag = false;
             drag2 = false;
         }
 
-        public override void Deattach(IGameControlWrapper wrapper)
+        
+
+        public override void Deattach(IGameControlWrapper control)
         {
-            var control = (wrapper as GameWindowGameControlWrapper).Control;
-            control.MouseUp -= Control_MouseUp;
-            control.KeyUp -= Control_KeyUp;
-            control.KeyDown -= Control_KeyDown;
-            control.MouseWheel -= Control_MouseWheel;
+
         }
+        
 
         private void Control_MouseWheel(MouseWheelEventArgs e)
         {
-            if (!Enable)
+            if (!Enable) 
                 return;
 
             //MouseWheel(e.Delta);
             MouseWheel((int)e.OffsetY);
         }
 
-        public Point PointToClient(Point p) => GameWindow.PointToClient(p.ToVector2i()).ToPoint();
+        public Point PointToClient(Point p)
+        {           
+            return GLControl.PointToClient(p);
+        }
 
-        public void MakeCurrent() => GameWindow.MakeCurrent();
+        public void MakeCurrent()
+        {
+           
+            GLControl.MakeCurrent();
+        }
 
-        public int Width => GameWindow.Width();
+        public int Width
+        {
+            get
+            {
+             
+                return GLControl.Width;
+            }
+        }
 
-        public Rectangle ClientRectangle => GameWindow.ClientRectangle.ToRectangle();
+        public Rectangle ClientRectangle
+        {
+            get
+            {
+                
+                return GLControl.ClientRectangle;
+            }
+        }
 
-        public void UpdateMatricies(Camera cam) => cam.UpdateMatricies(GameWindow.Size);
+        public void UpdateMatricies(Camera cam)
+        {
+            
+            cam.UpdateMatricies(GLControl.Size);
+        }
 
         public void MouseWheel(int delta)
         {
             float zoomK = 20;
             var cur = PointToClient(Cursor.Position);
-            MakeCurrent();
-            MouseRay mr = new MouseRay(cur.X, cur.Y, Camera);
+            MakeCurrent();            
+            MouseRay mr = new MouseRay(cur.X, cur.Y, Camera);            
 
             var camera = Camera;
             if (camera.IsOrtho)
             {
                 var shift = mr.Start - Camera.Eye;
-                shift.Normalize();
+                shift.Normalize();                
                 if (delta > 0)
                 {
-                    camera.OrthoWidth /= 1.2f;
+                    camera.OrthoWidth /= 1.2f;                    
                     Camera cam2 = new Camera();
                     cam2.Eye = camera.Eye;
                     cam2.Target = camera.Target;
@@ -141,7 +168,7 @@ namespace FxEngine.Cameras
                     cam2.IsOrtho = camera.IsOrtho;
 
                     UpdateMatricies(cam2);
-                    MouseRay mr2 = new MouseRay(cur.X, cur.Y, cam2);
+                    MouseRay mr2 = new MouseRay(cur.X, cur.Y, cam2);                    
                     var diff = mr.Start - mr2.Start;
                     shift *= diff.Length;
                     camera.Eye += shift;
@@ -150,7 +177,7 @@ namespace FxEngine.Cameras
                 else
                 {
                     camera.OrthoWidth *= 1.2f;
-
+                    
                     Camera cam2 = new Camera();
                     cam2.Eye = camera.Eye;
                     cam2.Target = camera.Target;
@@ -171,7 +198,7 @@ namespace FxEngine.Cameras
             }
             if (
                 ClientRectangle.IntersectsWith(new Rectangle(PointToClient(Cursor.Position),
-                    new System.Drawing.Size(1, 1))))
+                    new Size(1, 1))))
             {
                 var dir = mr.Dir;
                 dir.Normalize();
@@ -200,7 +227,7 @@ namespace FxEngine.Cameras
         {
             lshift = false;
         }
-
+        
         public static Vector3d? lineIntersection(Vector3d planePoint, Vector3d planeNormal, Vector3d linePoint, Vector3d lineDirection)
         {
             if (Math.Abs(Vector3d.Dot(planeNormal, lineDirection)) < 10e-6f)
@@ -226,7 +253,7 @@ namespace FxEngine.Cameras
             MouseDown(ee);
         }
 
-        public void Control_MouseDown1(object sender, System.Windows.Forms.MouseEventArgs e)
+        public void Control_MouseDown1(object sender, MouseEventArgs e)
         {
             var ee = new LocalMouseEventState();
             ee.IsLeftPressed = e.Button == MouseButtons.Left;
@@ -245,10 +272,10 @@ namespace FxEngine.Cameras
             cameraUpStart = Camera.Up;
 
             if (e.IsMiddlePressed)
-            {
+            {                
                 var d1 = Camera.Eye - Camera.Target;
                 //var plane1 : forw
-                var crs1 = Vector3d.Cross(cameraUpStart, d1);
+                var crs1 = Vector3d.Cross(cameraUpStart, d1);                
                 if (SnapModePlane)
                 {
                     var inter = lineIntersection(Vector3.Zero, Vector3.UnitZ, Camera.Eye, Camera.Target - Camera.Eye);
@@ -272,12 +299,12 @@ namespace FxEngine.Cameras
                 else
                 {
                     drag = true;
-                }
+                }                
             }
 
             if (e.IsRightPressed)
             {
-                drag2 = true;
+                drag2 = true;                
             }
         }
 
@@ -288,8 +315,14 @@ namespace FxEngine.Cameras
         Vector3d cameraFromStart;
         Vector3d cameraToStart;
         Vector3d cameraUpStart;
-        public PointF CursorPosition => GameWindow.PointToClient(Cursor.Position.ToVector2i()).ToPoint();
-        
+        public PointF CursorPosition
+        {
+            get
+            {
+                
+                return GLControl.PointToClient(Cursor.Position);
+            }
+        }
         bool drag = false;
         public bool drag2 = false;
 
