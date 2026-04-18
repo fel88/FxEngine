@@ -1,4 +1,5 @@
-﻿using OpenTK;
+﻿using FxEngine.Interfaces;
+using OpenTK;
 using System;
 using System.Drawing;
 
@@ -12,6 +13,11 @@ namespace FxEngine.Gui
         public override bool Focused { get => GameWindow.Focused; }
 
         public OpenTK.GLControl.GLControl GameWindow;
+
+        public GlControlDrawingContext(IGameControlWrapper gameControl) : base(gameControl)
+        {
+        }
+
         public override int Width { get => GameWindow.Width; set => GameWindow.Width = value; }
         public override int Height { get => GameWindow.Height; set => GameWindow.Height = value; }
 

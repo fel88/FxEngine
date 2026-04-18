@@ -1,4 +1,6 @@
-﻿using OpenTK;
+﻿using FxEngine.Cameras;
+using FxEngine.Interfaces;
+using OpenTK;
 using OpenTK.Windowing.Desktop;
 using System.Drawing;
 
@@ -7,10 +9,14 @@ namespace FxEngine.Gui
 
     public class GlDrawingContext : BaseGlDrawingContext
     {
+        public GlDrawingContext(IGameControlWrapper gameControl) : base(gameControl)
+        {
+        }
+
         public override bool Focused { get => GameWindow.IsFocused; }
         public override string Title { get => GameWindow.Title; }
 
-        public OpenTK.Windowing.Desktop.GameWindow GameWindow { get => GameControl as GameWindow; }
+        public OpenTK.Windowing.Desktop.GameWindow GameWindow { get => (GameControl as GameWindowGameControlWrapper).Control; }
         public override int Width
         {
             get

@@ -14,7 +14,7 @@ namespace FxEngine.Fonts.SDF
             shader = new SdfShader();
         }
 
-        public void RenderText(string text, Vector2d pos)
+        public virtual void RenderText(string text, Vector2d pos)
         {
             //InitCharTextures();
             if (string.IsNullOrEmpty(text))
@@ -51,7 +51,7 @@ namespace FxEngine.Fonts.SDF
                 GL.Disable(EnableCap.Blend);
             }
         }
-        public void RenderChar(char c, Vector2d pos)
+        public virtual void RenderChar(char c, Vector2d pos)
         {
             if (!infos.ContainsKey(c)) return;
             var fr = infos[c];

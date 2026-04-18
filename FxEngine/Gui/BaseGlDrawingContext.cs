@@ -7,6 +7,10 @@ namespace FxEngine.Gui
 {
     public abstract class BaseGlDrawingContext : DrawingContext
     {
+        public BaseGlDrawingContext(IGameControlWrapper gameControl)
+        {
+            GameControl = gameControl;
+        }
         public SdfTextRenderer TextRoutine;
 
         public Camera Camera;
@@ -15,7 +19,7 @@ namespace FxEngine.Gui
         public abstract bool Focused { get;  }
         public abstract string Title { get;  }
 
-        public IGameControlWrapper GameControl;
+        public readonly IGameControlWrapper GameControl;
         public abstract void MakeCurrent();
 
         public abstract Point PointToClient(Point cursorPosition);
