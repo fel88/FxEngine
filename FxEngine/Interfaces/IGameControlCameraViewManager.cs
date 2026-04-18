@@ -6,7 +6,7 @@ namespace FxEngine.Interfaces
     {
         IGameControlWrapper Control { get; set; }
         bool Enable { get; set; }
-        void Deattach(IGameControlWrapper control);
+        void Detach(IGameControlWrapper control);
         void Attach(IGameControlWrapper control, Camera camera);
         void Update();
 

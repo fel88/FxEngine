@@ -40,7 +40,7 @@ namespace FxEngine.Fonts
             GL.UseProgram(0);
         }
 
-
+        public uint FontSize = 48;
         private void InitFonts()
         {
             // FreeType
@@ -59,7 +59,7 @@ namespace FxEngine.Fonts
 
             // load font as face
             Face face = new Face(ft, fontBytes, 0);
-            face.SetPixelSizes(0, 48);
+            face.SetPixelSizes(0, FontSize);
             // set size to load glyphs as
             //FT_Set_Pixel_Sizes(face, 0, 48);
 
@@ -154,10 +154,29 @@ namespace FxEngine.Fonts
             RenderText(text, x, y, DefaultColor);
         }
 
+        public void UpdateWindowSize(int width, int height)
+        {
+            shader.use();
+            Matrix4 projection = Matrix4.CreateOrthographicOffCenter(0, width, 0, height, 0, 1);
+            shader.setMat4("projection", projection);
+            GL.UseProgram(0);
+        }
+
+        public void SetTextColor(Vector3 color)
+        {
+            CurrentTextColor = color;
+            shader.use();
+            shader.setVec3("textColor", color);
+            GL.UseProgram(0);
+        }
+
+        public Vector3 CurrentTextColor { get; private set; }
+
         // render line of text
         // -------------------
-        public void RenderText(string text, float x, float y, Vector3 color, float scale = 1f)
+        public void RenderText(string text, float x, float y, Vector3? color = null, float scale = 1f)
         {
+
             if (string.IsNullOrEmpty(text))
                 return;
 
@@ -167,7 +186,11 @@ namespace FxEngine.Fonts
             // activate corresponding render state	
             shader.use();
             //glUniform3f(glGetUniformLocation(shader.ID, "textColor"), color.x, color.y, color.z);
-            shader.setVec3("textColor", color);
+            if (color != null)
+            {
+                shader.setVec3("textColor", color.Value);
+            }
+
             GL.ActiveTexture(TextureUnit.Texture0);
             GL.BindVertexArray(VAO);
 

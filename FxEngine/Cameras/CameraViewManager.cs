@@ -10,13 +10,13 @@ namespace FxEngine.Cameras
         public GLControl Control;
         public EventWrapperGlControl EventWrapper;
 
-        public virtual void Deattach(EventWrapperGlControl control)
+        public virtual void Detach()
         {
-            control.MouseUpAction = null;
-            control.MouseDownAction = null;
-            control.MouseWheelAction = null;
-            control.KeyDownAction = null;
-            control.KeyUpUpAction = null;
+            EventWrapper.MouseUpAction = null;
+            EventWrapper.MouseDownAction = null;
+            EventWrapper.MouseWheelAction = null;
+            EventWrapper.KeyDownAction = null;
+            EventWrapper.KeyUpUpAction = null;
 
         }
 

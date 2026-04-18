@@ -91,7 +91,7 @@ namespace FxEngine.Cameras
             drag2 = false;
         }
 
-        public override void Deattach(IGameControlWrapper wrapper)
+        public override void Detach(IGameControlWrapper wrapper)
         {
             var control = (wrapper as GameWindowGameControlWrapper).Control;
             control.MouseUp -= Control_MouseUp;

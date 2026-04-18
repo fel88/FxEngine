@@ -5,7 +5,6 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Security.Cryptography.X509Certificates;
 
 namespace FxEngine.Shaders
 {
@@ -30,43 +29,48 @@ namespace FxEngine.Shaders
             GL.CompileShader(fragment);
             checkCompileErrors(fragment, "FRAGMENT");
             // shader Program
-            ID = GL.CreateProgram();
-            GL.AttachShader(ID, vertex);
-            GL.AttachShader(ID, fragment);
-            GL.LinkProgram(ID);
-            checkCompileErrors(ID, "PROGRAM");
+            shaderProgram = GL.CreateProgram();
+            GL.AttachShader(shaderProgram, vertex);
+            GL.AttachShader(shaderProgram, fragment);
+            GL.LinkProgram(shaderProgram);
+            checkCompileErrors(shaderProgram, "PROGRAM");
             // delete the shaders as they're linked into our program now and no longer necessary
             GL.DeleteShader(vertex);
             GL.DeleteShader(fragment);
             return this;
         }
-        protected int ID;
+
         public void use()
         {
-            GL.UseProgram(ID);
+            GL.UseProgram(shaderProgram);
         }
 
         public void setInt(string v1, int v2)
         {
-            GL.Uniform1(GL.GetUniformLocation(ID, v1), v2);
-        }
-        public void setFloat(string v1, float v2)
-        {
-            GL.Uniform1(GL.GetUniformLocation(ID, v1), v2);
+            GL.Uniform1(GL.GetUniformLocation(shaderProgram, v1), v2);
         }
 
+        public void setFloat(string v1, float v2)
+        {
+            GL.Uniform1(GL.GetUniformLocation(shaderProgram, v1), v2);
+        }
+
+        public void SetColor(Vector3 color)
+        {
+            setVec3("color", color);
+        }
 
         public void setMat4(string v, Matrix4d projection, bool convertToFloat = true)
         {
             if (convertToFloat)
                 setMat4(v, projection.ToMatrix4());
             else
-                GL.UniformMatrix4(GL.GetUniformLocation(ID, v), false, ref projection);
+                GL.UniformMatrix4(GL.GetUniformLocation(shaderProgram, v), false, ref projection);
         }
 
         public void setVec4(string v, Vector4 newPos)
         {
-            GL.Uniform4(GL.GetUniformLocation(ID, v), ref newPos);
+            GL.Uniform4(GL.GetUniformLocation(shaderProgram, v), ref newPos);
         }
 
         public void setVec3(string v, Vector3d newPos)
@@ -81,13 +85,15 @@ namespace FxEngine.Shaders
 
         public void setMat4(string v, Matrix4 projection)
         {
-            GL.UniformMatrix4(GL.GetUniformLocation(ID, v), false, ref projection);
+            GL.UniformMatrix4(GL.GetUniformLocation(shaderProgram, v), false, ref projection);
         }
 
         public void setVec3(string v, Vector3 newPos)
         {
-            GL.Uniform3(GL.GetUniformLocation(ID, v), ref newPos);
+            GL.Uniform3(GL.GetUniformLocation(shaderProgram, v), ref newPos);
         }
+
+
 
         void checkCompileErrors(int shader, string type)
         {
@@ -114,10 +120,10 @@ namespace FxEngine.Shaders
             }
         }
 
-        public Shader InitFromResources(string vShaderResourceName, string fShaderResourceName)
+        public Shader InitFromResources(string vShaderResourceName, string fShaderResourceName, Assembly assembly = null)
         {
-            var vShader = ResourceHelper.ReadResourceTxt(vShaderResourceName);
-            var fShader = ResourceHelper.ReadResourceTxt(fShaderResourceName);
+            var vShader = ResourceHelper.ReadResourceTxt(vShaderResourceName, assembly);
+            var fShader = ResourceHelper.ReadResourceTxt(fShaderResourceName, assembly);
             InitFromShaderCodes(vShader, fShader);
             return this;
         }
@@ -144,7 +150,7 @@ namespace FxEngine.Shaders
         {
             return shaderProgram;
         }
-        public int shaderProgram;
+        protected int shaderProgram;
 
         public virtual void Init()
         {

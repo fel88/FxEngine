@@ -80,6 +80,11 @@ namespace FxEngine.Cameras
             Target += vector3;
         }
 
+        public void Shift(Vector3 vector3)
+        {
+            Eye += vector3;
+            Target += vector3;
+        }
         public Vector3d GetSide()
         {
             var dirr = Eye - Target;

@@ -95,7 +95,7 @@ namespace FxEngine.Cameras
 
         
 
-        public override void Deattach(IGameControlWrapper control)
+        public override void Detach(IGameControlWrapper control)
         {
 
         }

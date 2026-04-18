@@ -17,12 +17,12 @@ namespace FxEngine.Cameras
             Attach(ctx.GameControl, camera);
         }
 
-        public void Deattach(BaseGlDrawingContext ctx)
+        public void Detach(BaseGlDrawingContext ctx)
         {
-            Deattach(ctx.GameControl);
+            Detach(ctx.GameControl);
         }
 
-        public abstract void Deattach(IGameControlWrapper control);
+        public abstract void Detach(IGameControlWrapper control);
         public abstract void Update();
 
         public virtual void Attach(IGameControlWrapper control, Camera camera)
