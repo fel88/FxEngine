@@ -1,4 +1,6 @@
-﻿namespace FxEngine.Gui
+﻿using FxEngine.Interfaces;
+
+namespace FxEngine.Gui
 {
     public abstract class GlGuiElement : IGuiElement
     {

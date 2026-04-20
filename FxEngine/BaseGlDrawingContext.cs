@@ -3,7 +3,7 @@ using FxEngine.Fonts.SDF;
 using FxEngine.Interfaces;
 using System.Drawing;
 
-namespace FxEngine.Gui
+namespace FxEngine
 {
     public abstract class BaseGlDrawingContext : DrawingContext
     {

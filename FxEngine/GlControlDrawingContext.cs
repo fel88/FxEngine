@@ -3,7 +3,7 @@ using OpenTK;
 using System;
 using System.Drawing;
 
-namespace FxEngine.Gui
+namespace FxEngine
 {
     public class GlControlDrawingContext : BaseGlDrawingContext
     {

@@ -1,4 +1,6 @@
-﻿namespace FxEngine.Gui
+﻿using FxEngine.Gui;
+
+namespace FxEngine.Interfaces
 {
     public interface IGuiElement
     {

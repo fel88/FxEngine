@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package >
+  <metadata>
+    <id>FxEngine</id>
+    <version>1.0.5</version>
+    <title>FxEngine</title>
+    <authors>fel88</authors>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <license type="expression">MIT</license>
+    <!-- <icon>icon.png</icon> -->
+    <projectUrl>https://github.com/fel88/FxEngine</projectUrl>
+    <description>OpenGL 3D game engine</description>
+    
+    <copyright>Copyrigth 2026</copyright>
+    
+  </metadata>
+  <files>
+    
+     <file src="..\FxEngine\bin\Release\net8.0-windows\FxEngine.dll" target="lib\net8.0\FxEngine.dll" /> 
+     <file src="..\FxEngine.Collada\bin\Release\net8.0-windows\FxEngine.Collada.dll" target="lib\net8.0\FxEngine.Collada.dll" /> 
+     <file src="..\FxEngine.Common\bin\Release\net8.0\FxEngine.Common.dll" target="lib\net8.0\FxEngine.Common.dll" /> 
+     <file src="..\FxEngine.Game\bin\Release\net8.0-windows\FxEngine.Game.dll" target="lib\net8.0\FxEngine.Game.dll" /> 
+     <file src="..\FxEngine.Gui\bin\Release\net8.0-windows\FxEngine.Gui.dll" target="lib\net8.0\FxEngine.Gui.dll" /> 
+     
+
+    
+  </files>
+</package>

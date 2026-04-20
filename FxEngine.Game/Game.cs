@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Xml.Linq;
 
-namespace FxEngine
+namespace FxEngine.Game
 {
     public class Game
     {

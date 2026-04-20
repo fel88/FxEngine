@@ -10,10 +10,14 @@ namespace FxEngine
     {
         bool deleted = false;
 
-        int numTriangles;
+        int numElements;
         int VBO, VAO;
-        public GpuObject(IReadOnlyList<Vector3d> verts, IReadOnlyList<Vector3d> normals)
+
+        public GpuObject(IReadOnlyList<Vector3d> verts, IReadOnlyList<Vector3d> normals, PrimitiveType? primitiveType = null)
         {
+            if (primitiveType != null)
+                PrimitiveType = primitiveType.Value;
+
             int idx = 0;
             float[] vertices = new float[verts.Count * 3 * 2];
             for (int i = 0; i < verts.Count; i++)
@@ -27,7 +31,7 @@ namespace FxEngine
                 vertices[idx++] = (float)normals[i].Z;
             }
 
-            numTriangles = verts.Count;
+            numElements = verts.Count;
 
             GL.GenVertexArrays(1, out VAO);
             GL.GenBuffers(1, out VBO);
@@ -44,8 +48,11 @@ namespace FxEngine
             GL.BindVertexArray(0);
         }
 
-        public GpuObject(IReadOnlyList<Vector3d> verts)
+        public GpuObject(IReadOnlyList<Vector3d> verts, PrimitiveType? primitiveType = null)
         {
+            if (primitiveType != null)
+                PrimitiveType = primitiveType.Value;
+
             int idx = 0;
             float[] vertices = new float[verts.Count * 3];
             for (int i = 0; i < verts.Count; i++)
@@ -55,7 +62,7 @@ namespace FxEngine
                 vertices[idx++] = (float)verts[i].Z;
             }
 
-            numTriangles = verts.Count;
+            numElements = verts.Count;
 
             GL.GenVertexArrays(1, out VAO);
             GL.GenBuffers(1, out VBO);
@@ -70,12 +77,12 @@ namespace FxEngine
             GL.BindVertexArray(0);
         }
 
+        public readonly PrimitiveType PrimitiveType = PrimitiveType.Triangles;
         public void Draw()
         {
             GL.BindVertexArray(VAO);
-            GL.DrawArrays(PrimitiveType.Triangles, 0, numTriangles);
+            GL.DrawArrays(PrimitiveType, 0, numElements);
             GL.BindVertexArray(0);
-
         }
 
         public void Dispose()

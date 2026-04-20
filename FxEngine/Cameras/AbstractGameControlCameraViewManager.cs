@@ -1,5 +1,4 @@
-﻿using FxEngine.Gui;
-using FxEngine.Interfaces;
+﻿using FxEngine.Interfaces;
 using OpenTK;
 using System.Net.NetworkInformation;
 using System.Windows.Forms;

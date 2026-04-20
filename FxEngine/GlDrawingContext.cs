@@ -4,7 +4,7 @@ using OpenTK;
 using OpenTK.Windowing.Desktop;
 using System.Drawing;
 
-namespace FxEngine.Gui
+namespace FxEngine
 {
 
     public class GlDrawingContext : BaseGlDrawingContext

@@ -1,6 +1,4 @@
 ﻿using FxEngine.Assets;
-using FxEngine.Gui;
-using FxEngine.Loaders.Collada;
 using FxEngine.Tiles;
 using OpenTK.Mathematics;
 using OpenTK.Graphics.OpenGL;
@@ -16,8 +14,9 @@ using FxEngine.Cameras;
 using FxEngine.Loaders.OBJ;
 using System.IO.Compression;
 using FxEngine.Interfaces;
+using FxEngine.Loaders.Collada;
 
-namespace FxEngine
+namespace FxEngine.Game
 {
     public class GameResourcesLibrary
     {
@@ -25,7 +24,7 @@ namespace FxEngine
         public string Name { get; set; }
         public bool Dirty = false;
         public List<string> LoadedObjs = new List<string>();
-        public List<GlGuiElement> GuiElements = new List<GlGuiElement>();
+        public List<IGuiElement> GuiElements = new List<IGuiElement>();
 
         public string LibraryPath { get; set; }
 
@@ -246,8 +245,8 @@ namespace FxEngine
 
                         ObjVolume[] obj = null;
                         if (datap.IsFileExists(path2))
-                        obj = ObjVolume.LoadFromFile(path2, mtr4, datap);
-                        else if(datap is ISearchFileProvider sfp)
+                            obj = ObjVolume.LoadFromFile(path2, mtr4, datap);
+                        else if (datap is ISearchFileProvider sfp)
                         {
                             var file = sfp.TrySearchFileByName(Path.GetFileName(path2));
                             if (file != null)
@@ -255,12 +254,13 @@ namespace FxEngine
                                 obj = ObjVolume.LoadFromFile(file.Path, mtr4, datap);
                             }
                         }
-                            var t = new ObjModelBlueprint(nm, obj);
+                        var t = new ObjModelBlueprint(nm, obj);
                         t.Id = int.Parse(item.Attribute("id").Value);
                         //t.FilePath = (item.Attribute("path").Value);
                         t.FilePath = path2;
                         ret.AddModel(t);
                     }
+                    else
                     if (filePath.EndsWith("dae"))
                     {
                         try
@@ -437,7 +437,7 @@ namespace FxEngine
                                 Matrix4d mtr = Matrix4d.Identity;
                                 if (titem.Attribute("matrix") != null)
                                 {
-                                    mtr = ColladaStuff.MatrixFromArray((titem.Attribute("matrix").Value).Split(new char[] { ' ', '\n', '\r', ';' }, StringSplitOptions.RemoveEmptyEntries).Select(x => float.Parse(x.Replace(",", "."), CultureInfo.InvariantCulture)).ToArray(), true);
+                                    mtr = MatrixFromArray((titem.Attribute("matrix").Value).Split(new char[] { ' ', '\n', '\r', ';' }, StringSplitOptions.RemoveEmptyEntries).Select(x => float.Parse(x.Replace(",", "."), CultureInfo.InvariantCulture)).ToArray(), true);
                                 }
 
                                 var fr = titem.Descendants().FirstOrDefault(z => z.Name == "transforms");
@@ -448,7 +448,8 @@ namespace FxEngine
                                         mtr = Matrix4d.Identity;//should it accum?
                                         mtr = mtr * LoadTransforms(fr);
                                     }
-                                }catch(Exception ex)
+                                }
+                                catch (Exception ex)
                                 {
 
                                 }
@@ -459,7 +460,8 @@ namespace FxEngine
                                     Blueprint = ret.Models.First(z => z.Id == mid),
                                     Matrix = mtr
                                 });
-                            }catch(Exception ex)
+                            }
+                            catch (Exception ex)
                             {
 
                             }
@@ -477,7 +479,7 @@ namespace FxEngine
                             Matrix4d mtr = Matrix4d.Identity;
                             if (tiles.Attribute("matrix") != null)
                             {
-                                mtr = ColladaStuff.MatrixFromArray((titem.Attribute("matrix").Value).Split(new char[] { ' ', '\n', '\r', ';' }, StringSplitOptions.RemoveEmptyEntries).Select(x => float.Parse(x.Replace(",", "."), CultureInfo.InvariantCulture)).ToArray(), true);
+                                mtr = MatrixFromArray((titem.Attribute("matrix").Value).Split(new char[] { ' ', '\n', '\r', ';' }, StringSplitOptions.RemoveEmptyEntries).Select(x => float.Parse(x.Replace(",", "."), CultureInfo.InvariantCulture)).ToArray(), true);
                             }
 
                             var fr = titem.Descendants().FirstOrDefault(z => z.Name == "transforms");
@@ -534,7 +536,27 @@ namespace FxEngine
             ret.Dirty = false;
             return ret;
         }
-
+        public static Matrix4d MatrixFromArray(float[] arr, bool rowForawrd = false)
+        {
+            if (rowForawrd)
+            {
+                return new Matrix4d(
+                                    new Vector4(arr[0], arr[4], arr[8], arr[12]),
+                                    new Vector4(arr[1], arr[5], arr[9], arr[13]),
+                                    new Vector4(arr[2], arr[6], arr[10], arr[14]),
+                                    new Vector4(arr[3], arr[7], arr[11], arr[15])
+                                    );
+            }
+            else
+            {
+                return new Matrix4d(
+                                    new Vector4(arr[0], arr[1], arr[2], arr[3]),
+                                    new Vector4(arr[4], arr[5], arr[6], arr[7]),
+                                    new Vector4(arr[8], arr[9], arr[10], arr[11]),
+                                    new Vector4(arr[12], arr[13], arr[14], arr[15])
+                                    );
+            }
+        }
         public void Save(string path)
         {
 
@@ -631,7 +653,7 @@ namespace FxEngine
         {
             //remove all related files of model?            
             models.Remove(currentBlueprint);
-            
+
         }
     }
 }

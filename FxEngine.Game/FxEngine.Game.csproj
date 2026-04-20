@@ -1,0 +1,16 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\FxEngine.Collada\FxEngine.Collada.csproj" />
+    <ProjectReference Include="..\FxEngine.Common\FxEngine.Common.csproj" />
+    <ProjectReference Include="..\FxEngine.Gui\FxEngine.Gui.csproj" />
+    <ProjectReference Include="..\FxEngine\FxEngine.csproj" />
+  </ItemGroup>
+
+</Project>

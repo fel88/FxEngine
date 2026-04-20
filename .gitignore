@@ -6,3 +6,4 @@ obj/
 !FxEngine/Loaders/Obj
 packages/
 old_FxEngine.Framework/
+nuget.exe
