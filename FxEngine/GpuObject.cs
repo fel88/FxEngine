@@ -10,8 +10,8 @@ namespace FxEngine
     {
         bool deleted = false;
 
-        int numElements;
-        int VBO, VAO;
+        protected int numElements;
+        protected int VBO, VAO;
 
         public GpuObject(IReadOnlyList<Vector3d> verts, IReadOnlyList<Vector3d> normals, PrimitiveType? primitiveType = null)
         {
@@ -73,6 +73,44 @@ namespace FxEngine
             GL.BindVertexArray(VAO);
             GL.VertexAttribPointer(0, 3, VertexAttribPointerType.Float, false, 3 * sizeof(float), 0);
             GL.EnableVertexAttribArray(0);
+
+            GL.BindVertexArray(0);
+        }
+
+        public GpuObject(PreloadedMeshArray meshArray, PrimitiveType? primitiveType = null)
+            : this(meshArray.Data, meshArray.TrianglesQty, meshArray.WithNormals, primitiveType)
+        {
+
+        }
+
+        public GpuObject(float[] vertices, int qty, bool withNormals = true, PrimitiveType? primitiveType = null)
+        {
+            if (primitiveType != null)
+                PrimitiveType = primitiveType.Value;
+
+            numElements = qty;
+
+            GL.GenVertexArrays(1, out VAO);
+            GL.GenBuffers(1, out VBO);
+
+            GL.BindBuffer(BufferTarget.ArrayBuffer, VBO);
+            GL.BufferData(BufferTarget.ArrayBuffer, vertices.Length * sizeof(float), vertices, BufferUsageHint.StaticDraw);
+
+            GL.BindVertexArray(VAO);
+            if (withNormals)
+            {
+                GL.VertexAttribPointer(0, 3, VertexAttribPointerType.Float, false, 6 * sizeof(float), 0);
+                GL.EnableVertexAttribArray(0);
+
+                GL.VertexAttribPointer(1, 3, VertexAttribPointerType.Float, false, 6 * sizeof(float), 3 * sizeof(float));
+                GL.EnableVertexAttribArray(1);
+            }
+            else
+            {
+                GL.VertexAttribPointer(0, 3, VertexAttribPointerType.Float, false, 3 * sizeof(float), 0);
+                GL.EnableVertexAttribArray(0);
+
+            }
 
             GL.BindVertexArray(0);
         }
