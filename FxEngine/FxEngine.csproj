@@ -9,7 +9,7 @@
     <RepositoryUrl>https://github.com/fel88/FxEngine</RepositoryUrl>
     <Description>3D game engine</Description>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
-    <Version>1.0.7</Version>
+    <Version>1.0.8</Version>
     <Title>FxEngine</Title>
   </PropertyGroup>
   <ItemGroup>
