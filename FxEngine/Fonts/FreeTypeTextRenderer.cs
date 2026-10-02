@@ -14,6 +14,18 @@ namespace FxEngine.Fonts
     {
         Shader shader;
         public void Init(int width, int height)
+        {            
+            var fontBytes = ResourceHelper.ReadResourceRaw("OCRAEXT.TTF");
+            Init(width, height, fontBytes, 48);
+        }
+
+        public void Init(int width, int height, string pathToTTFfont, uint fontSize = 48)
+        {            
+            var fontBytes = File.ReadAllBytes(pathToTTFfont);            
+            Init(width, height, fontBytes, fontSize);
+        }
+
+        public void Init(int width, int height, byte[] fontBytes, uint fontSize)
         {
             shader = new DefaultTextShader();
 
@@ -23,8 +35,9 @@ namespace FxEngine.Fonts
             // glUniformMatrix4fv(glGetUniformLocation(shader.ID, "projection"), 1, false, glm::value_ptr(projection));
 
             shader.setMat4("projection", projection);
-            InitFonts();
 
+
+            InitFonts(fontBytes, fontSize);
 
             // configure VAO/VBO for texture quads
             // -----------------------------------
@@ -40,8 +53,7 @@ namespace FxEngine.Fonts
             GL.UseProgram(0);
         }
 
-        public uint FontSize = 48;
-        private void InitFonts()
+        private void InitFonts(byte[] fontBytes, uint fontSize = 48)
         {
             // FreeType
             // --------
@@ -54,12 +66,10 @@ namespace FxEngine.Fonts
                 //  return -1;
             }
 
-            // find path to font
-            var fontBytes = ResourceHelper.ReadResourceRaw("OCRAEXT.TTF");
 
             // load font as face
             Face face = new Face(ft, fontBytes, 0);
-            face.SetPixelSizes(0, FontSize);
+            face.SetPixelSizes(0, fontSize);
             // set size to load glyphs as
             //FT_Set_Pixel_Sizes(face, 0, 48);
 

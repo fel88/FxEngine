@@ -1,0 +1,38 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <UseWindowsForms>true</UseWindowsForms>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Consolas-Regular.ttf" />
+    <None Remove="Verdana.ttf" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Verdana.ttf" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Consolas-Regular.ttf" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\FxEngine.Collada\FxEngine.Collada.csproj" />
+    <ProjectReference Include="..\FxEngine.Common\FxEngine.Common.csproj" />
+    <ProjectReference Include="..\FxEngine.Game\FxEngine.Game.csproj" />
+    <ProjectReference Include="..\FxEngine.Gui\FxEngine.Gui.csproj" />
+    <ProjectReference Include="..\FxEngine\FxEngine.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="freetype6.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+</Project>

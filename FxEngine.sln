@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FxEngine.Collada", "FxEngin
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FxEngine.Game", "FxEngine.Game\FxEngine.Game.csproj", "{1ACBAFDE-A2A2-4A5F-8C46-6838A2F9F7FD}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestApp", "TestApp\TestApp.csproj", "{3C3BB15D-DC35-4AB9-B502-35BAB8DB5F92}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{1ACBAFDE-A2A2-4A5F-8C46-6838A2F9F7FD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1ACBAFDE-A2A2-4A5F-8C46-6838A2F9F7FD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1ACBAFDE-A2A2-4A5F-8C46-6838A2F9F7FD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3C3BB15D-DC35-4AB9-B502-35BAB8DB5F92}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3C3BB15D-DC35-4AB9-B502-35BAB8DB5F92}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3C3BB15D-DC35-4AB9-B502-35BAB8DB5F92}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3C3BB15D-DC35-4AB9-B502-35BAB8DB5F92}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

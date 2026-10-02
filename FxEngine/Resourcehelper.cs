@@ -24,9 +24,8 @@ namespace FxEngine
             }
         }
 
-        public static byte[] ReadResourceRaw(string resourceName)
-        {
-            var assembly = Assembly.GetExecutingAssembly();
+        public static byte[] ReadResourceRaw(string resourceName, Assembly assembly)
+        {            
             var fr1 = assembly.GetManifestResourceNames().First(z => z.Contains(resourceName));
 
             using (Stream stream = assembly.GetManifestResourceStream(fr1))
@@ -35,6 +34,12 @@ namespace FxEngine
                 stream.CopyTo(ms);
                 return ms.ToArray();
             }
+        }
+
+        public static byte[] ReadResourceRaw(string resourceName)
+        {
+            var assembly = Assembly.GetCallingAssembly();
+            return ReadResourceRaw(resourceName, assembly);            
         }
     }
 }
