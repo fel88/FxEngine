@@ -11,7 +11,7 @@ namespace TestApp
             InitializeComponent();
             glControl = new OpenTK.GLControl.GLControl(new OpenTK.GLControl.GLControlSettings()
             {
-
+                NumberOfSamples = 32
             });
             glControl.Dock = DockStyle.Fill;
             glControl.Paint += GlControl_Paint;
@@ -39,10 +39,12 @@ namespace TestApp
 
             GL.ClearColor(Color.RebeccaPurple);
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
-            
-            textRenderer.RenderText("Hello world! 123.458", 10, 10);
-            textRenderer2.RenderText("Hello world! 123.458", 10, 100);
-            textRenderer3.RenderText("Hello world! 123.458", 10, 200);
+
+            var greenColor = new OpenTK.Mathematics.Vector3(0.3f, 1, 0.3f);
+
+            textRenderer.RenderText("Hello world! 123.458", 10, 10, greenColor);
+            textRenderer2.RenderText("Hello world! 123.458", 10, 100, greenColor);
+            textRenderer3.RenderText("Hello world! 123.458", 10, 200, greenColor);
             glControl.SwapBuffers();
         }
 
