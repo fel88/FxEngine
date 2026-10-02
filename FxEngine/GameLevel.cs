@@ -1,4 +1,5 @@
 ﻿using FxEngine.Cameras;
+using FxEngine.Extensions;
 using FxEngine.Shaders;
 using FxEngine.Tiles;
 using OpenTK.Graphics.OpenGL;

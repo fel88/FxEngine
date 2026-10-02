@@ -1,4 +1,5 @@
-﻿using OpenTK;
+﻿using FxEngine.Extensions;
+using OpenTK;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
 using System;

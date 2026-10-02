@@ -5,7 +5,7 @@ using System.Drawing;
 using System.Globalization;
 using System.Windows.Forms;
 
-namespace FxEngine
+namespace FxEngine.Extensions
 {
     public static class StaticHelpers
     {

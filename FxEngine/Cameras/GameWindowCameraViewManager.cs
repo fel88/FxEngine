@@ -7,6 +7,7 @@ using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Desktop;
 using FxEngine.Interfaces;
 using FxEngine.Cameras;
+using FxEngine.Extensions;
 
 namespace FxEngine.Cameras
 {

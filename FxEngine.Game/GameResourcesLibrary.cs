@@ -15,6 +15,7 @@ using FxEngine.Loaders.OBJ;
 using System.IO.Compression;
 using FxEngine.Interfaces;
 using FxEngine.Loaders.Collada;
+using FxEngine.Extensions;
 
 namespace FxEngine.Game
 {

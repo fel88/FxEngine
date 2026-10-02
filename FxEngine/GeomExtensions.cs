@@ -4,9 +4,9 @@ using OpenTK.Windowing.Desktop;
 using System.Drawing;
 using System.Text;
 
-namespace FxEngine
+namespace FxEngine.Extensions
 {
-    public static class Extensions
+    public static class GeomExtensions
     {
         public static Rectangle ToRectangle(this Box2i box)
         {

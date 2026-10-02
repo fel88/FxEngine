@@ -1,6 +1,7 @@
 ﻿using OpenTK.Mathematics;
 using OpenTK.Graphics.OpenGL;
 using FxEngine.Cameras;
+using FxEngine.Extensions;
 
 namespace FxEngine.Loaders.Collada
 {

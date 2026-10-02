@@ -4,6 +4,7 @@ using OpenTK.Graphics.OpenGL;
 using System.Drawing;
 using OpenTK.Mathematics;
 using FxEngine.Fonts.SDF;
+using FxEngine.Extensions;
 
 namespace FxEngine.Gui
 {

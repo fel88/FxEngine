@@ -1,4 +1,5 @@
-﻿using OpenTK.Mathematics;
+﻿using FxEngine.Extensions;
+using OpenTK.Mathematics;
 using System;
 using System.Linq;
 using static FxEngine.MeshModel;

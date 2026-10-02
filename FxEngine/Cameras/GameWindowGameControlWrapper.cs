@@ -1,4 +1,5 @@
-﻿using FxEngine.Interfaces;
+﻿using FxEngine.Extensions;
+using FxEngine.Interfaces;
 using OpenTK.Windowing.Desktop;
 
 namespace FxEngine.Cameras
